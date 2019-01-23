@@ -6,15 +6,20 @@
       @map-init="mapInitialized"
     >
     </mapbox>
+    <Console></Console>
   </div>
 </template>
 
 <script>
-import Mapbox from "mapbox-gl-vue";
+import Mapbox from 'mapbox-gl-vue';
+import Console from './components/Console.vue'
 
 export default {
   name: "app",
-  components: { Mapbox },
+  components: { 
+    Mapbox,
+    Console
+   },
   data() {
     return {
       accessToken:
