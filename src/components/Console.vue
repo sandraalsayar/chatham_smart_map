@@ -82,7 +82,7 @@ export default {
 
     #layers_list > li {
       padding-bottom: 8px;
-      cursor: pointer; 
+      cursor: pointer;
     }
 
     #layers_list > li > * {
