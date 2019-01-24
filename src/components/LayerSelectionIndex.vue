@@ -43,6 +43,7 @@ export default {
               items[i].style.color = 'black'
 			}
             document.getElementById(id).style.color = color;
+            this.$root.$emit('update_legend', id);
 		}
 	}
 }
@@ -91,7 +92,7 @@ export default {
 
     #layers_list > li {
       padding-bottom: 8px;
-      cursor: pointer; 
+      cursor: pointer;
     }
 
     #layers_list > li > * {

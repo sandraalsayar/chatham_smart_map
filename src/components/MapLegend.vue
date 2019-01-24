@@ -30,6 +30,20 @@
 
 export default {
 	name: 'MapLegend',
+  mounted() {
+    this.$root.$on('update_legend', id => {
+        var elements = document.getElementsByClassName('legend_row');
+        for (var i= 0; i < elements.length; ++i) {
+          if (elements[i].getAttribute('data-layer') == id) {
+            elements[i].style.display = "block";
+          } else {
+            if (elements[i].getAttribute('data-layer') != 'layer_default') {
+              elements[i].style.display = "none";
+            }
+          }
+        }
+    });
+  }
 }
 
 </script>
@@ -65,7 +79,7 @@ export default {
 
     #layers_list > li {
       padding-bottom: 8px;
-      cursor: pointer; 
+      cursor: pointer;
     }
 
     #layers_list > li > * {
