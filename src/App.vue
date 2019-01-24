@@ -8,20 +8,19 @@
       @map-init="mapInitialized"
     >
     </mapbox>
-    <Console></Console>
+    <TheConsole />
   </div>
 </template>
 
 <script>
-import Mapbox from 'mapbox-gl-vue';
-import Console from './components/Console.vue'
+import Mapbox from "mapbox-gl-vue";
+import TheConsole from "./components/TheConsole.vue";
 
 export default {
-  name: "app",
-  components: { 
+  components: {
     Mapbox,
-    Console
-   },
+    TheConsole
+  },
   data() {
     return {
       accessToken:
@@ -35,11 +34,11 @@ export default {
       },
       navControl: {
         show: true,
-        position: 'bottom-right'
+        position: "bottom-right"
       },
       geoControl: {
         show: true,
-        position: 'bottom-right'
+        position: "bottom-right"
       }
     };
   },
@@ -55,8 +54,8 @@ export default {
         if (marker) {
           marker.remove();
         }
-        marker = new mapboxgl.Marker( {
-          color: 'crimson'
+        marker = new mapboxgl.Marker({
+          color: "crimson"
         })
           .setLngLat(ev.result.geometry.coordinates)
           .addTo(map);
@@ -68,7 +67,7 @@ export default {
 
 <style>
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: Roboto, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -78,5 +77,11 @@ export default {
   top: 0;
   bottom: 0;
   width: 100%;
+}
+
+/* Override default CSS for search box */
+.mapboxgl-ctrl-top-left .mapboxgl-ctrl {
+  margin: 20px 0 0 18px;
+  width: 270px;
 }
 </style>

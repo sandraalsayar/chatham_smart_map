@@ -5,6 +5,7 @@ import "vuetify/dist/vuetify.min.css";
 
 Vue.config.productionTip = false;
 Vue.use(Vuetify);
+export const eventBus = new Vue();
 
 new Vue({
   render: h => h(App)
