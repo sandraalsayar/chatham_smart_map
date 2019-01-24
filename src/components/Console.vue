@@ -24,29 +24,6 @@ export default {
 
 <style scoped>
 
-    h2 {
-      font-size: 14px;
-      line-height: 20px;
-    }
-
-    s1 {
-        font-size: 12px;
-        line-height: 16px;
-        color: #a9a9a9;
-    }
-
-    a {
-      text-decoration: none;
-      color: #2dc4b2;
-    }
-
-    #map {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        width: 100%;
-    }
-
     #console {
       position: absolute;
       width: 270px;
