@@ -17,6 +17,7 @@ import Mapbox from "mapbox-gl-vue";
 import TheConsole from "./components/TheConsole.vue";
 
 export default {
+  name: 'app',
   components: {
     Mapbox,
     TheConsole
