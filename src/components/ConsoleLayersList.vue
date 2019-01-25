@@ -25,7 +25,7 @@ export default {
           id: 1,
           name: "Sensors",
           color: "steelblue",
-          description: "Display water sesnors on map.",
+          description: "Display water sensors on map.",
           icon: "bubble_chart",
           selected: true
         },

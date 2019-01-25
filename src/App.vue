@@ -61,7 +61,7 @@ export default {
           .setLngLat(ev.result.geometry.coordinates)
           .addTo(map);
       });
-      geocoder.on("clear", function(ev) {
+      geocoder.on("clear", () => {
         if (marker) {
           marker.remove();
         }
