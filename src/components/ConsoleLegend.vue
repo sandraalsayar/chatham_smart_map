@@ -40,7 +40,7 @@ export default {
   created() {
     eventBus.$on("update-legend", emitterId => {
       this.legends.forEach(legend => {
-        legend.displayed = legend.id === emitterId || legend.id === 1; // always display sensor legend
+        legend.displayed = legend.id === emitterId || legend.id === 1; // always display the first legend
       });
     });
   }
