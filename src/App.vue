@@ -61,6 +61,11 @@ export default {
           .setLngLat(ev.result.geometry.coordinates)
           .addTo(map);
       });
+      geocoder.on("clear", function(ev) {
+        if (marker) {
+          marker.remove();
+        }
+      });
     }
   }
 };
