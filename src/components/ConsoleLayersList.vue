@@ -25,7 +25,7 @@ export default {
           id: 1,
           name: "Sensors",
           color: "steelblue",
-          description: "A description of this layer goes here",
+          description: "Display water sesnors on map.",
           icon: "bubble_chart",
           selected: true
         },
@@ -33,7 +33,7 @@ export default {
           id: 2,
           name: "Inundation",
           color: "dodgerblue",
-          description: "A description of this layer goes here",
+          description: "Display water-inundation levels on map.",
           icon: "waves",
           selected: false
         }
