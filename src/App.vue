@@ -6,6 +6,7 @@
       :nav-control="navControl"
       :geolocate-control="geoControl"
       @map-init="mapInitialized"
+      @map-load="mapLoaded"
     >
     </mapbox>
     <TheConsole />
@@ -14,7 +15,8 @@
 
 <script>
 import Mapbox from "mapbox-gl-vue";
-import TheConsole from "./components/TheConsole.vue";
+import TheConsole from "./components/TheConsole";
+import { addGeocoder, getSensorData, parseSensorData } from "./helpers/helper";
 
 export default {
   name: "app",
@@ -45,27 +47,35 @@ export default {
   },
   methods: {
     mapInitialized(map) {
-      const geocoder = new MapboxGeocoder({
-        accessToken: this.accessToken
-      });
-      map.addControl(geocoder, "top-left");
+      addGeocoder(map, this.accessToken);
+    },
+    mapLoaded(map) {
+      getSensorData()
+        .then(responses => {
+          const parsedData = parseSensorData(responses);
+          map.addSource("point", {
+            type: "geojson",
+            data: {
+              type: "FeatureCollection",
+              features: parsedData
+            }
+          });
 
-      let marker;
-      geocoder.on("result", function(ev) {
-        if (marker) {
-          marker.remove();
-        }
-        marker = new mapboxgl.Marker({
-          color: "crimson"
+          map.addLayer({
+            id: "point",
+            source: "point",
+            type: "circle",
+            paint: {
+              "circle-radius": 6,
+              "circle-radius-transition": { duration: 0 },
+              "circle-opacity-transition": { duration: 0 },
+              "circle-color": "#007cbf"
+            }
+          });
         })
-          .setLngLat(ev.result.geometry.coordinates)
-          .addTo(map);
-      });
-      geocoder.on("clear", () => {
-        if (marker) {
-          marker.remove();
-        }
-      });
+        .catch(() => { // This will catch ALL errors
+          throw Error("Oops!");
+        });
     }
   }
 };
