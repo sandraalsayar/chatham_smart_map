@@ -33,7 +33,7 @@ const createGeoJSON = coordinates => ({
 
 const parseSensorData = responses =>
   responses.map(el => {
-    const location = el.data["Locations"][0];
+    const location = el.data.Locations[0];
     return createGeoJSON(location.location.coordinates);
   });
 
