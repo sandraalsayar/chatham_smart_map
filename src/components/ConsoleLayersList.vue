@@ -13,8 +13,8 @@
 
 <script>
 import { eventBus } from "../main";
-import ConsoleCard from "./ConsoleCard.vue";
-import ConsoleLayersListItem from "./ConsoleLayersListItem.vue";
+import ConsoleCard from "./ConsoleCard";
+import ConsoleLayersListItem from "./ConsoleLayersListItem";
 
 export default {
   components: { ConsoleCard, ConsoleLayersListItem },

@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import ConsoleLayersList from "./ConsoleLayersList.vue";
-import ConsoleLegend from "./ConsoleLegend.vue";
+import ConsoleLayersList from "./ConsoleLayersList";
+import ConsoleLegend from "./ConsoleLegend";
 
 export default {
   components: {
