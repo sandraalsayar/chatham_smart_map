@@ -1,8 +1,9 @@
 import axios from "axios";
 import encodeUrl from "encodeurl";
+import stringSimilarity from "string-similarity";
 
 const addGeocoder = (map, accessToken) => {
-  const geocoder = new MapboxGeocoder({ accessToken });
+  const geocoder = new MapboxGeocoder({ accessToken, trackProximity: true });
   map.addControl(geocoder, "top-left");
 
   let marker;
@@ -23,18 +24,42 @@ const addGeocoder = (map, accessToken) => {
   });
 };
 
-const createGeoJSON = coordinates => ({
+const sensorGeocoder = (query, sensorGeoJSON) => {
+  const temp = query.toLowerCase();
+  const matches = temp.includes("sensor");
+  if (!matches) {
+    return null;
+  }
+  return sensorGeoJSON.sort(
+    (el1, el2) =>
+      stringSimilarity.compareTwoStrings(temp, el2.properties.description) -
+      stringSimilarity.compareTwoStrings(temp, el1.properties.description)
+  );
+};
+
+// Follows Carmen GeoJSON format:
+const createGeoJSON = (coordinates, name, description) => ({
   type: "Feature",
   geometry: {
     type: "Point",
     coordinates
-  }
+  },
+  properties: {
+    description
+  },
+  place_name: `${name} Sensor, Chatham, GA`,
+  place_type: ["place"],
+  center: coordinates
 });
 
 const parseSensorData = responses =>
   responses.map(el => {
     const location = el.data.Locations[0];
-    return createGeoJSON(location.location.coordinates);
+    return createGeoJSON(
+      location.location.coordinates,
+      location.name,
+      el.data.description.toLowerCase()
+    );
   });
 
 const getSensorData = () => {
@@ -57,4 +82,4 @@ const getSensorData = () => {
   });
 };
 
-export { addGeocoder, getSensorData, parseSensorData };
+export { addGeocoder, getSensorData, parseSensorData, sensorGeocoder };

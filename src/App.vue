@@ -16,7 +16,12 @@
 <script>
 import Mapbox from "mapbox-gl-vue";
 import TheConsole from "./components/TheConsole";
-import { addGeocoder, getSensorData, parseSensorData } from "./helpers/helper";
+import {
+  addGeocoder,
+  getSensorData,
+  parseSensorData,
+  sensorGeocoder
+} from "./helpers/helper";
 
 export default {
   name: "app",
@@ -52,12 +57,13 @@ export default {
     mapLoaded(map) {
       getSensorData()
         .then(responses => {
-          const parsedData = parseSensorData(responses);
+          const sensorGeoJSON = parseSensorData(responses);
+
           map.addSource("point", {
             type: "geojson",
             data: {
               type: "FeatureCollection",
-              features: parsedData
+              features: sensorGeoJSON
             }
           });
 
@@ -72,8 +78,12 @@ export default {
               "circle-color": "#007cbf"
             }
           });
+          // assumes that Geocoder is at index 2, change if more controls are added to the map:
+          map._controls[2].options.localGeocoder = query =>
+            sensorGeocoder(query, sensorGeoJSON);
         })
-        .catch(() => { // This will catch ALL errors
+        .catch(() => {
+          // This will catch ALL errors
           throw Error("Oops!");
         });
     }
