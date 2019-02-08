@@ -22,6 +22,8 @@ const addGeocoder = (map, accessToken) => {
       marker.remove();
     }
   });
+  // return the geocoder object so that a localGeocoder can be added later:
+  return geocoder;
 };
 
 const addSensorLayer = (map, sensorGeoJSON) => {

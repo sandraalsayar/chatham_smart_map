@@ -51,13 +51,12 @@ export default {
   methods: {
     mapLoaded(map) {
       eventBus.$emit("show-console");
-      addGeocoder(map, this.accessToken);
+      const geocoder = addGeocoder(map, this.accessToken);
       getSensorData()
         .then(responses => {
           const sensorGeoJSON = parseSensorData(responses);
           addSensorLayer(map, sensorGeoJSON);
-          // assumes that Geocoder is at index 2, change if more controls are added to the map:
-          map._controls[2].options.localGeocoder = query =>
+          geocoder.options.localGeocoder = query =>
             sensorGeocoder(query, sensorGeoJSON);
         })
         .catch(() => {
