@@ -16,7 +16,7 @@ export default {
 
 <style scoped>
 .v-alert {
-  z-index: 1;
+  z-index: 3;
   border-radius: 3px;
   padding: 8px;
   border-style: none;

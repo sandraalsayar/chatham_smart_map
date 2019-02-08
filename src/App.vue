@@ -47,7 +47,7 @@ export default {
     eventBus.$on("map-error", () => {
       this.mapError = true;
     });
-    eventBus.$on("show-console", warningText => {
+    eventBus.$on("show-console", () => {
       this.mapLoaded = true;
     });
   }
