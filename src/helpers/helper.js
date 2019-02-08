@@ -24,6 +24,28 @@ const addGeocoder = (map, accessToken) => {
   });
 };
 
+const addSensorLayer = (map, sensorGeoJSON) => {
+  map.addSource("point", {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: sensorGeoJSON
+    }
+  });
+
+  map.addLayer({
+    id: "point",
+    source: "point",
+    type: "circle",
+    paint: {
+      "circle-radius": 6,
+      "circle-radius-transition": { duration: 0 },
+      "circle-opacity-transition": { duration: 0 },
+      "circle-color": "#007cbf"
+    }
+  });
+};
+
 const sensorGeocoder = (query, sensorGeoJSON) => {
   const temp = query.toLowerCase();
   const matches = temp.includes("sensor");
@@ -82,4 +104,10 @@ const getSensorData = () => {
   });
 };
 
-export { addGeocoder, getSensorData, parseSensorData, sensorGeocoder };
+export {
+  addGeocoder,
+  getSensorData,
+  parseSensorData,
+  sensorGeocoder,
+  addSensorLayer
+};
