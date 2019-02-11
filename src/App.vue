@@ -17,6 +17,7 @@
 import Mapbox from "mapbox-gl-vue";
 import TheConsole from "./components/TheConsole";
 import {
+  popupHover,
   addGeocoder,
   getSensorData,
   parseSensorData,
@@ -58,7 +59,6 @@ export default {
       getSensorData()
         .then(responses => {
           const sensorGeoJSON = parseSensorData(responses);
-
           map.addSource("point", {
             type: "geojson",
             data: {
@@ -86,39 +86,7 @@ export default {
           // This will catch ALL errors
           throw Error("Oops!");
         });
-
-
-      // Create a popup, but don't add it to the map yet.
-      var popup = new mapboxgl.Popup({
-        closeButton: false,
-        closeOnClick: false
-      });
-       
-      map.on('mouseenter', 'point', function(e) {
-      // Change the cursor style as a UI indicator.
-        map.getCanvas().style.cursor = 'pointer';
-        var coordinates = e.features[0].geometry.coordinates.slice();
-        var description = e.features[0].properties.description;
-         
-        // Ensure that if the map is zoomed out such that multiple copies of the feature are visible,
-        // the popup appears over the copy being pointed to.
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
-       
-      // Populate the popup and set its coordinates.
-        popup.setLngLat(coordinates)
-        // Need to be replaced with sensor location
-        .setHTML("<h3>Sensor</h3>" +
-          "<body>Reading: <br></body>" +
-          "<body>Time: </body>")
-        .addTo(map);
-      });
-       
-      map.on('mouseleave', 'point', function() {
-        map.getCanvas().style.cursor = '';
-        popup.remove();
-      });
+        popupHover(map);
     }
   }
 };
@@ -139,10 +107,6 @@ export default {
 }
 
 /* Card poopup for sensors */
-.mapboxgl-popup {
-  max-width: 400px;
-  font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-}
 .mapboxgl-popup-tip {
   border: 0px;
 }
