@@ -16,11 +16,12 @@ import { eventBus } from "../main";
 import Mapbox from "mapbox-gl-vue";
 
 import {
+  addPopupOnHover,
   addGeocoder,
+  addSensorLayer,
   getSensorData,
   parseSensorData,
-  sensorGeocoder,
-  addSensorLayer
+  sensorGeocoder
 } from "./../helpers/helper";
 
 export default {
@@ -52,10 +53,11 @@ export default {
     mapLoaded(map) {
       eventBus.$emit("show-console");
       const geocoder = addGeocoder(map, this.accessToken);
+
       getSensorData()
         .then(responses => {
           const sensorGeoJSON = parseSensorData(responses);
-          addSensorLayer(map, sensorGeoJSON);
+          addSensorLayer(map, sensorGeoJSON); // addAndPulsatePoints(map, sensorGeoJSON);
           geocoder.options.localGeocoder = query =>
             sensorGeocoder(query, sensorGeoJSON);
         })
@@ -69,6 +71,8 @@ export default {
         .finally(() => {
           eventBus.$emit("stop-loading");
         });
+
+      addPopupOnHover(map);
     },
     mapError() {
       eventBus.$emit("stop-loading");

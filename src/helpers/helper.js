@@ -7,7 +7,7 @@ const addGeocoder = (map, accessToken) => {
   map.addControl(geocoder, "top-left");
 
   let marker;
-  geocoder.on("result", function(ev) {
+  geocoder.on("result", ev => {
     if (marker) {
       marker.remove();
     }
@@ -26,28 +26,6 @@ const addGeocoder = (map, accessToken) => {
   return geocoder;
 };
 
-const addSensorLayer = (map, sensorGeoJSON) => {
-  map.addSource("point", {
-    type: "geojson",
-    data: {
-      type: "FeatureCollection",
-      features: sensorGeoJSON
-    }
-  });
-
-  map.addLayer({
-    id: "point",
-    source: "point",
-    type: "circle",
-    paint: {
-      "circle-radius": 6,
-      "circle-radius-transition": { duration: 0 },
-      "circle-opacity-transition": { duration: 0 },
-      "circle-color": "#007cbf"
-    }
-  });
-};
-
 const sensorGeocoder = (query, sensorGeoJSON) => {
   const temp = query.toLowerCase();
   const matches = temp.includes("sensor");
@@ -62,16 +40,18 @@ const sensorGeocoder = (query, sensorGeoJSON) => {
 };
 
 // Follows Carmen GeoJSON format:
-const createGeoJSON = (coordinates, name, description) => ({
+const createGeoJSON = (coordinates, name, description, observation) => ({
   type: "Feature",
   geometry: {
     type: "Point",
     coordinates
   },
   properties: {
-    description
+    name,
+    description,
+    observation
   },
-  place_name: `${name} Sensor, Chatham, GA`,
+  place_name: `${location.name} Sensor, Chatham, GA`,
   place_type: ["place"],
   center: coordinates
 });
@@ -79,12 +59,55 @@ const createGeoJSON = (coordinates, name, description) => ({
 const parseSensorData = responses =>
   responses.map(el => {
     const location = el.data.Locations[0];
+    const description = el.data.description.toLowerCase();
+    const observation = el.data.Datastreams[0].Observations[0];
+
     return createGeoJSON(
       location.location.coordinates,
       location.name,
-      el.data.description.toLowerCase()
+      description,
+      observation || {
+        resultTime: "N/A",
+        result: "No reading"
+      }
     );
   });
+
+const addPopupOnHover = map => {
+  let popup;
+  map.on("mouseenter", "inner_point", e => {
+    // Change the cursor style as a UI indicator.
+    map.getCanvas().style.cursor = "pointer";
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const { name, observation } = e.features[0].properties;
+    const reading = JSON.parse(observation);
+    // Ensure that if the map is zoomed out such that multiple copies of the feature are visible,
+    // the popup appears over the copy being pointed to.
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
+
+    const html = `
+        <h4>${name} Sensor</h4>
+        <div>Reading: ${reading.result}</div>
+        <div>Time: ${reading.resultTime}</div>
+        `;
+
+    // Populate the popup and set its coordinates.
+    popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false
+    })
+      .setLngLat(coordinates)
+      .setHTML(html)
+      .addTo(map);
+  });
+
+  map.on("mouseleave", "inner_point", () => {
+    map.getCanvas().style.cursor = "";
+    popup.remove();
+  });
+};
 
 const getSensorData = () => {
   // URL to get ids of all Things:
@@ -106,10 +129,65 @@ const getSensorData = () => {
   });
 };
 
+const addSensorLayer = (map, sensorGeoJSON) => {
+  const framesPerSecond = 15;
+  const initialOpacity = 1;
+  const initialRadius = 6;
+  const maxRadius = 15;
+
+  let radius = initialRadius;
+  let opacity = initialOpacity;
+
+  map.addSource("inner_point", {
+    type: "geojson",
+    data: {
+      type: "FeatureCollection",
+      features: sensorGeoJSON
+    }
+  });
+
+  map.addLayer({
+    id: "inner_point",
+    source: "inner_point",
+    type: "circle",
+    paint: {
+      "circle-radius": initialRadius,
+      "circle-radius-transition": { duration: 0 },
+      "circle-opacity-transition": { duration: 0 },
+      "circle-color": "#007cbf"
+    }
+  });
+  map.addLayer({
+    id: "outer_point",
+    source: "inner_point",
+    type: "circle",
+    paint: {
+      "circle-radius": initialRadius,
+      "circle-color": "#007cbf"
+    }
+  });
+
+  function animateMarker() {
+    setTimeout(() => {
+      requestAnimationFrame(animateMarker);
+      radius += (maxRadius - radius) / framesPerSecond;
+      opacity -= 0.9 / framesPerSecond;
+      if (opacity <= 0) {
+        radius = initialRadius;
+        opacity = initialOpacity;
+      }
+      map.setPaintProperty("inner_point", "circle-radius", radius);
+      map.setPaintProperty("inner_point", "circle-opacity", opacity);
+    }, 1000 / framesPerSecond);
+  }
+  animateMarker(0);
+};
+
 export {
   addGeocoder,
   getSensorData,
   parseSensorData,
   sensorGeocoder,
-  addSensorLayer
+  addSensorLayer,
+  addPopupOnHover
 };
