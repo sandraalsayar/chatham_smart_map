@@ -2,44 +2,6 @@ import axios from "axios";
 import encodeUrl from "encodeurl";
 import stringSimilarity from "string-similarity";
 
-const popupHover = (map) => {
-// Create a popup, but don't add it to the map yet.
-  const popup = new mapboxgl.Popup({
-    closeButton: false,
-    closeOnClick: false
-  });
-
-      map.on('mouseenter', 'point', function(e) {
-      // Change the cursor style as a UI indicator.
-        map.getCanvas().style.cursor = 'pointer';
-        const coordinates = e.features[0].geometry.coordinates.slice();
-        const description = e.features[0].properties.description;
-         
-        // Ensure that if the map is zoomed out such that multiple copies of the feature are visible,
-        // the popup appears over the copy being pointed to.
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
-       
-        const html = `
-        <h3 class='no_margin_heading'>Sensor ${description}</h3>
-        <div>Reading: </div>
-        <div>Time: </div>
-        `;
-
-        // Populate the popup and set its coordinates.
-        popup.setLngLat(coordinates)
-        // Need to be replaced with sensor location
-        .setHTML(html)
-        .addTo(map);
-      });
-
-        map.on('mouseleave', 'point', function() {
-        map.getCanvas().style.cursor = '';
-        popup.remove();
-      });
-}
-
 const addGeocoder = (map, accessToken) => {
   const geocoder = new MapboxGeocoder({ accessToken, trackProximity: true });
   map.addControl(geocoder, "top-left");
@@ -85,10 +47,8 @@ const createGeoJSON = (location, description, readingData) => ({
   properties: {
     locationName: location.name,
     description,
-    observations: {
-      reading: readingData[0].result,
-      readingTime: readingData[0].resultTime
-    }
+    reading: readingData[0].result,
+    readingTime: readingData[0].resultTime
   },
   place_name: `${location.name} Sensor, Chatham, GA`,
   place_type: ["place"],
@@ -99,18 +59,59 @@ const parseSensorData = responses =>
   responses.map(el => {
     const location = el.data.Locations[0];
     let readingData = el.data.Datastreams[0].Observations;
+
     if (readingData.length === 0) {
       readingData = [{
         resultTime: "N/A",
         result: "No reading"
       }];
     }
+    
     return createGeoJSON(
       location,
       el.data.description.toLowerCase(),
       readingData
     );
   });
+
+const popupHover = (map) => {
+// Create a popup, but don't add it to the map yet.
+  const popup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false
+  });
+
+      map.on('mouseenter', 'inner_point', function(e) {
+      // Change the cursor style as a UI indicator.
+        map.getCanvas().style.cursor = 'pointer';
+        const coordinates = e.features[0].geometry.coordinates.slice();
+        const sensorName = e.features[0].properties.locationName;
+        const sensorReading = e.features[0].properties.reading;
+        const sensorReadingTime = e.features[0].properties.readingTime;
+  
+        // Ensure that if the map is zoomed out such that multiple copies of the feature are visible,
+        // the popup appears over the copy being pointed to.
+        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+        }
+       
+        const html = `
+        <h3 class='no_margin_heading'>${sensorName} Sensor</h3>
+        <div>Reading: ${sensorReading}</div>
+        <div>Time: ${sensorReadingTime}</div>
+        `;
+
+        // Populate the popup and set its coordinates.
+        popup.setLngLat(coordinates)
+        .setHTML(html)
+        .addTo(map);
+      });
+
+        map.on('mouseleave', 'inner_point', function() {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+      });
+}
 
 const getSensorData = () => {
   // URL to get ids of all Things:
