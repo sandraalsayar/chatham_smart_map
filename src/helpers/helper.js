@@ -94,4 +94,56 @@ const getSensorData = () => {
   });
 };
 
-export { addGeocoder, getSensorData, parseSensorData, sensorGeocoder };
+const addAndPulsatePoints = (map, sensorGeoJSON) => {
+  const framesPerSecond = 15;
+  const initialOpacity = 1
+  const initialRadius = 6;
+  const maxRadius = 15;
+  let radius = initialRadius;
+  let opacity = initialOpacity;
+  map.addSource("inner_point", {
+              type: "geojson",
+              data: {
+                type: "FeatureCollection",
+                features: sensorGeoJSON
+              }
+            });
+
+            map.addLayer({
+                id: 'inner_point',
+                source: 'inner_point',
+                type: 'circle',
+                paint: {
+                    'circle-radius': initialRadius,
+                    'circle-radius-transition': {duration: 0},
+                    'circle-opacity-transition': {duration: 0},
+                    'circle-color': '#007cbf'
+                }
+            });
+            map.addLayer({
+                id: 'outer_point',
+                source: 'inner_point',
+                type: 'circle',
+                paint: {
+                    'circle-radius': initialRadius,
+                    'circle-color': '#007cbf'
+                }
+            });
+  function animateMarker() {
+    setTimeout(function(){
+        requestAnimationFrame(animateMarker);
+        radius += (maxRadius - radius) / framesPerSecond;
+        opacity -= ( .9 / framesPerSecond );
+        if (opacity <= 0) {
+            radius = initialRadius;
+            opacity = initialOpacity;
+        }
+        map.setPaintProperty('inner_point', 'circle-radius', radius);
+        map.setPaintProperty('inner_point', 'circle-opacity', opacity);
+    }, 1000 / framesPerSecond);
+  }
+  animateMarker(0);
+
+};
+
+export { addGeocoder, getSensorData, parseSensorData, sensorGeocoder, addAndPulsatePoints };
