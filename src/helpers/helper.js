@@ -38,27 +38,39 @@ const sensorGeocoder = (query, sensorGeoJSON) => {
 };
 
 // Follows Carmen GeoJSON format:
-const createGeoJSON = (coordinates, name, description) => ({
+const createGeoJSON = (location, description, readingData) => ({
   type: "Feature",
   geometry: {
     type: "Point",
-    coordinates
+    coordinates: location.location.coordinates
   },
   properties: {
-    description
+    locationName: location.name,
+    description,
+    observations: {
+      reading: readingData[0].result,
+      readingTime: readingData[0].resultTime
+    }
   },
-  place_name: `${name} Sensor, Chatham, GA`,
+  place_name: `${location.name} Sensor, Chatham, GA`,
   place_type: ["place"],
-  center: coordinates
+  center: location.location.coordinates
 });
 
 const parseSensorData = responses =>
   responses.map(el => {
     const location = el.data.Locations[0];
+    let readingData = el.data.Datastreams[0].Observations;
+    if (readingData.length === 0) {
+      readingData = [{
+        resultTime: "N/A",
+        result: "No reading"
+      }];
+    }
     return createGeoJSON(
-      location.location.coordinates,
-      location.name,
-      el.data.description.toLowerCase()
+      location,
+      el.data.description.toLowerCase(),
+      readingData
     );
   });
 
