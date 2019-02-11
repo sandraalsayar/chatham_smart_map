@@ -20,7 +20,8 @@ import {
   addGeocoder,
   getSensorData,
   parseSensorData,
-  sensorGeocoder
+  sensorGeocoder,
+  addAndPulsatePoints
 } from "./helpers/helper";
 
 export default {
@@ -58,70 +59,7 @@ export default {
       getSensorData()
         .then(responses => {
           const sensorGeoJSON = parseSensorData(responses);
-          const framesPerSecond = 15;
-          const initialOpacity = 1
-          const initialRadius = 6;
-          const maxRadius = 15;
-          let radius = initialRadius;
-          let opacity = initialOpacity;
-          const feature = (coordinates, id = '1', loc = 'Savannah, GA', reading = '8ft') => ({
-              'type': 'Feature',
-              'geometry': {
-                  'type': 'Point',
-                  coordinates
-              },
-              'properties': {
-                  id,
-                  loc,
-                  reading
-              }
-          });
-
-          map.addSource("point", {
-            type: "geojson",
-            data: {
-              type: "FeatureCollection",
-              features: sensorGeoJSON
-            }
-          });
-
-          map.addLayer({
-              id: 'point',
-              source: 'point',
-              type: 'circle',
-              paint: {
-                  'circle-radius': initialRadius,
-                  'circle-radius-transition': {duration: 0},
-                  'circle-opacity-transition': {duration: 0},
-                  'circle-color': '#007cbf'
-              }
-          });
-          map.addLayer({
-              id: 'point1',
-              source: 'point',
-              type: 'circle',
-              paint: {
-                  'circle-radius': initialRadius,
-                  'circle-color': '#007cbf'
-              }
-          });
-          function animateMarker(timestamp) {
-              setTimeout(function(){
-                  requestAnimationFrame(animateMarker);
-                  radius += (maxRadius - radius) / framesPerSecond;
-                  opacity -= ( .9 / framesPerSecond );
-                  if (opacity <= 0) {
-                      radius = initialRadius;
-                      opacity = initialOpacity;
-                  }
-                  map.setPaintProperty('point', 'circle-radius', radius);
-                  map.setPaintProperty('point', 'circle-opacity', opacity);
-              }, 1000 / framesPerSecond);
-          }
-          // Start the animation.
-          animateMarker(0);
-
-
+           addAndPulsatePoints(map, sensorGeoJSON);
           // assumes that Geocoder is at index 2, change if more controls are added to the map:
           map._controls[2].options.localGeocoder = query =>
             sensorGeocoder(query, sensorGeoJSON);
@@ -130,6 +68,7 @@ export default {
           // This will catch ALL errors
           throw Error("Oops!");
         });
+
     }
   }
 };
