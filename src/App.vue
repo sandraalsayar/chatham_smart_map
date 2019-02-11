@@ -21,7 +21,8 @@ import {
   addGeocoder,
   getSensorData,
   parseSensorData,
-  sensorGeocoder
+  sensorGeocoder,
+  addAndPulsatePoints
 } from "./helpers/helper";
 
 export default {
@@ -59,25 +60,7 @@ export default {
       getSensorData()
         .then(responses => {
           const sensorGeoJSON = parseSensorData(responses);
-          map.addSource("point", {
-            type: "geojson",
-            data: {
-              type: "FeatureCollection",
-              features: sensorGeoJSON
-            }
-          });
-
-          map.addLayer({
-            id: "point",
-            source: "point",
-            type: "circle",
-            paint: {
-              "circle-radius": 6,
-              "circle-radius-transition": { duration: 0 },
-              "circle-opacity-transition": { duration: 0 },
-              "circle-color": "#007cbf"
-            }
-          });
+           addAndPulsatePoints(map, sensorGeoJSON);
           // assumes that Geocoder is at index 2, change if more controls are added to the map:
           map._controls[2].options.localGeocoder = query =>
             sensorGeocoder(query, sensorGeoJSON);
@@ -91,7 +74,6 @@ export default {
   }
 };
 </script>
-
 <style>
 #app {
   font-family: Roboto, Arial, sans-serif;
