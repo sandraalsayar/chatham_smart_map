@@ -45,6 +45,7 @@ const createGeoJSON = (location, description, readingData) => ({
     coordinates: location.location.coordinates
   },
   properties: {
+    locationName: location.name,
     description,
     observations: {
       reading: readingData[0].result,
@@ -59,8 +60,8 @@ const createGeoJSON = (location, description, readingData) => ({
 const parseSensorData = responses =>
   responses.map(el => {
     const location = el.data.Locations[0];
-    var readingData = el.data.Datastreams[0].Observations;
-    if (readingData.length == 0) {
+    let readingData = el.data.Datastreams[0].Observations;
+    if (readingData.length === 0) {
       readingData = [{
         resultTime: "N/A",
         result: "No reading"
@@ -68,7 +69,7 @@ const parseSensorData = responses =>
     }
     return createGeoJSON(
       location,
-      el.data.description,
+      el.data.description.toLowerCase(),
       readingData
     );
   });
