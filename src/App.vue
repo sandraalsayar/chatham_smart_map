@@ -76,7 +76,6 @@ export default {
                   reading
               }
           });
-
           map.addSource("point", {
             type: "geojson",
             data: {
