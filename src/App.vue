@@ -58,7 +58,7 @@ export default {
       getSensorData()
         .then(responses => {
           const sensorGeoJSON = parseSensorData(responses);
-
+          
           map.addSource("point", {
             type: "geojson",
             data: {
