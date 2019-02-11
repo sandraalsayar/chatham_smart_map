@@ -17,6 +17,7 @@
 import Mapbox from "mapbox-gl-vue";
 import TheConsole from "./components/TheConsole";
 import {
+  popupHover,
   addGeocoder,
   getSensorData,
   parseSensorData,
@@ -68,7 +69,7 @@ export default {
           // This will catch ALL errors
           throw Error("Oops!");
         });
-
+        popupHover(map);
     }
   }
 };
@@ -85,6 +86,11 @@ export default {
   top: 0;
   bottom: 0;
   width: 100%;
+}
+
+/* Card poopup for sensors */
+.mapboxgl-popup-tip {
+  border: 0px;
 }
 
 /* Override default CSS for search box */
