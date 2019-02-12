@@ -11,6 +11,6 @@ describe('The web app', function() {
   	cy.get('[aria-label="Zoom in"]').click() // zoom in button
   	cy.get('[aria-label="Zoom out"]').click() // zoom out button
   	cy.get('[aria-label="Reset bearing to north"]').click() // bearing button
-  	cy.get('input[placeholder="Search"')
+  	cy.get('input[placeholder="Search"]')
   })
 })
