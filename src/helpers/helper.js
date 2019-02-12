@@ -51,7 +51,7 @@ const createGeoJSON = (coordinates, name, description, observation) => ({
     description,
     observation
   },
-  place_name: `${location.name} Sensor, Chatham, GA`,
+  place_name: `${name} Sensor, Chatham, GA`,
   place_type: ["place"],
   center: coordinates
 });
