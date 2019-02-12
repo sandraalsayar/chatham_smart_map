@@ -6,21 +6,15 @@ const addGeocoder = (map, accessToken) => {
   const geocoder = new MapboxGeocoder({ accessToken, trackProximity: true });
   map.addControl(geocoder, "top-left");
 
-  let marker;
+  const marker = new mapboxgl.Marker({
+    color: "crimson"
+  });
   geocoder.on("result", ev => {
-    if (marker) {
-      marker.remove();
-    }
-    marker = new mapboxgl.Marker({
-      color: "crimson"
-    })
-      .setLngLat(ev.result.geometry.coordinates)
-      .addTo(map);
+    marker.remove();
+    marker.setLngLat(ev.result.geometry.coordinates).addTo(map);
   });
   geocoder.on("clear", () => {
-    if (marker) {
-      marker.remove();
-    }
+    marker.remove();
   });
   // return the geocoder object so that a localGeocoder can be added later:
   return geocoder;
@@ -74,7 +68,12 @@ const parseSensorData = responses =>
   });
 
 const addPopupOnHover = map => {
-  let popup;
+  let timer;
+  // Create a popup, but don't add it to the map yet.
+  const popup = new mapboxgl.Popup({
+    closeButton: false,
+    closeOnClick: false
+  });
   map.on("mouseenter", "inner_point", e => {
     // Change the cursor style as a UI indicator.
     map.getCanvas().style.cursor = "pointer";
@@ -93,17 +92,17 @@ const addPopupOnHover = map => {
         <div>Time: ${reading.resultTime}</div>
         `;
 
-    // Populate the popup and set its coordinates.
-    popup = new mapboxgl.Popup({
-      closeButton: false,
-      closeOnClick: false
-    })
-      .setLngLat(coordinates)
-      .setHTML(html)
-      .addTo(map);
+    // Populate the popup and set its coordinates. Adds a slight delay to the popup.
+    timer = setTimeout(() => {
+      popup
+        .setLngLat(coordinates)
+        .setHTML(html)
+        .addTo(map);
+    }, 700);
   });
 
   map.on("mouseleave", "inner_point", () => {
+    clearTimeout(timer);
     map.getCanvas().style.cursor = "";
     popup.remove();
   });
