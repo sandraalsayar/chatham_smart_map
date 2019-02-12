@@ -74,43 +74,45 @@ const parseSensorData = responses =>
     );
   });
 
+// Popup hover function
 const popupHover = (map) => {
-// Create a popup, but don't add it to the map yet.
+  // Create a popup, but don't add it to the map yet.
   const popup = new mapboxgl.Popup({
     closeButton: false,
     closeOnClick: false
   });
 
-      map.on('mouseenter', 'inner_point', function(e) {
-      // Change the cursor style as a UI indicator.
-        map.getCanvas().style.cursor = 'pointer';
-        const coordinates = e.features[0].geometry.coordinates.slice();
-        const sensorName = e.features[0].properties.locationName;
-        const sensorReading = e.features[0].properties.reading;
-        const sensorReadingTime = e.features[0].properties.readingTime;
+  map.on('mouseenter', 'inner_point', function(e) {
+  // Change the cursor style as a UI indicator.
+    map.getCanvas().style.cursor = 'pointer';
+    const coordinates = e.features[0].geometry.coordinates.slice();
+    const sensorName = e.features[0].properties.locationName;
+    const sensorReading = e.features[0].properties.reading;
+    const sensorReadingTime = e.features[0].properties.readingTime;
   
-        // Ensure that if the map is zoomed out such that multiple copies of the feature are visible,
-        // the popup appears over the copy being pointed to.
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
+    // Ensure that if the map is zoomed out such that multiple copies of the feature are visible,
+    // the popup appears over the copy being pointed to.
+    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+      coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+    }
        
-        const html = `
-        <h3 class='no_margin_heading'>${sensorName} Sensor</h3>
-        <div>Reading: ${sensorReading}</div>
-        <div>Time: ${sensorReadingTime}</div>
-        `;
+    const html = `
+    <h3 class='no_margin_heading'>${sensorName} Sensor</h3>
+    <div>Reading: ${sensorReading}</div>
+    <div>Time: ${sensorReadingTime}</div>
+    `;
 
-        // Populate the popup and set its coordinates.
-        popup.setLngLat(coordinates)
-        .setHTML(html)
-        .addTo(map);
-      });
+    // Populate the popup and set its coordinates. Adds a slight delay to the popup.
+    var timeout = setTimeout(function() {
+      popup.setLngLat(coordinates)
+      .setHTML(html)
+      .addTo(map);}, 700); 
+  });
 
-        map.on('mouseleave', 'inner_point', function() {
-        map.getCanvas().style.cursor = '';
-        popup.remove();
-      });
+  map.on('mouseleave', 'inner_point', function() {
+    map.getCanvas().style.cursor = '';
+    popup.remove();
+  });
 }
 
 const getSensorData = () => {
