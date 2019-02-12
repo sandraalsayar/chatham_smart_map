@@ -1,3 +1,12 @@
 language: node_js
 node_js:
-  - "10.15.0"
+  - 10.15.0
+cache:
+  directories:
+    - ~/.cache
+install:
+  - yarn install --frozen-lockfile
+script:
+  - yarn test
+  - yarn serve & wait-on http://localhost:8080
+  - yarn run cypress run
