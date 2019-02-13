@@ -11,11 +11,15 @@ const addGeocoder = (map, accessToken) => {
     if (marker) {
       marker.remove();
     }
-    marker = new mapboxgl.Marker({
-      color: "crimson"
-    })
-      .setLngLat(ev.result.geometry.coordinates)
-      .addTo(map);
+    const temp = ev.result.place_name.toLowerCase();
+    const matches = temp.includes("sensor");
+    if (!matches) {
+      marker = new mapboxgl.Marker({
+        color: "crimson"
+      })
+        .setLngLat(ev.result.geometry.coordinates)
+        .addTo(map);
+    }
   });
   geocoder.on("clear", () => {
     if (marker) {
