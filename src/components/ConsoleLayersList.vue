@@ -33,7 +33,7 @@ export default {
           id: 2,
           name: "Inundation",
           color: "dodgerblue",
-          description: "View altitude-adjusted water levels.",
+          description: "Display altitude-adjusted water levels.",
           icon: "waves",
           selected: false
         }
