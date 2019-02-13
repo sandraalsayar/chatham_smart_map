@@ -10,12 +10,14 @@
     >
     </mapbox>
     <TheConsole />
+    <TimelapseBar />
   </div>
 </template>
 
 <script>
 import Mapbox from "mapbox-gl-vue";
 import TheConsole from "./components/TheConsole";
+import TimelapseBar from "./components/TimelapseBar"
 import {
   popupHover,
   addGeocoder,
@@ -29,7 +31,8 @@ export default {
   name: "app",
   components: {
     Mapbox,
-    TheConsole
+    TheConsole,
+    TimelapseBar
   },
   data() {
     return {
