@@ -160,8 +160,8 @@ const getSensorData = () => {
 const addSensorLayer = (map, sensorGeoJSON) => {
   const framesPerSecond = 15;
   const initialOpacity = 1;
-  const initialRadius = 6;
-  const maxRadius = 15;
+  const initialRadius = 10;
+  const maxRadius = 20;
 
   let radius = initialRadius;
   let opacity = initialOpacity;
