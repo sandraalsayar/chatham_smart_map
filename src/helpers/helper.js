@@ -72,7 +72,7 @@ const parseSensorData = responses =>
   });
 
 const onSensorInteraction = map => {
-  let timer;
+  //let timer;
   // Create a popup, but don't add it to the map yet.
   const popup = new mapboxgl.Popup({
     closeButton: false,
@@ -102,11 +102,11 @@ const onSensorInteraction = map => {
         .setLngLat(coordinates)
         .setHTML(html)
         .addTo(map);
-    }, 700);
-  //});
+    //}, 700);
+  });
 
   map.on("mouseleave", "inner_point", () => {
-    clearTimeout(timer);
+    //clearTimeout(timer);
     map.getCanvas().style.cursor = "";
     popup.remove();
   });
