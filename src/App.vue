@@ -1,79 +1,58 @@
 <template>
   <div id="app">
-    <mapbox
-      :access-token="accessToken"
-      :map-options="mapOptions"
-      :nav-control="navControl"
-      :geolocate-control="geoControl"
-      @map-init="mapInitialized"
-      @map-load="mapLoaded"
-    >
-    </mapbox>
-    <TheConsole />
-    <TimelapseBar />
+    <v-app>
+      <TheProgressCircle v-if="loadingData" />
+      <TheWarningAlert :text="warningText" v-if="showWarning" />
+      <TheErrorModal :display="mapError" />
+      <TheMap />
+      <TheConsole v-if="mapLoaded" />
+      <TimelapseBar v-if="mapLoaded" />
+    </v-app>
   </div>
 </template>
 
 <script>
-import Mapbox from "mapbox-gl-vue";
+import { eventBus } from "./main";
 import TheConsole from "./components/TheConsole";
+import TheErrorModal from "./components/TheErrorModal";
+import TheMap from "./components/TheMap";
+import TheProgressCircle from "./components/TheProgressCircle";
+import TheWarningAlert from "./components/TheWarningAlert";
 import TimelapseBar from "./components/TimelapseBar"
-import {
-  popupHover,
-  addGeocoder,
-  getSensorData,
-  parseSensorData,
-  sensorGeocoder,
-  addAndPulsatePoints
-} from "./helpers/helper";
 
 export default {
   name: "app",
   components: {
-    Mapbox,
     TheConsole,
+    TheErrorModal,
+    TheMap,
+    TheProgressCircle,
+    TheWarningAlert,
     TimelapseBar
   },
   data() {
     return {
-      accessToken:
-        "pk.eyJ1IjoicGNoYXdsYTgiLCJhIjoiY2pvb2IxeHhjMGFpbzNwcXJzbjkxenphbCJ9.PLLJazTRjDbljE9IniyWpg",
-      mapOptions: {
-        container: "map",
-        style: "mapbox://styles/mapbox/streets-v10",
-        center: { lon: -81.2, lat: 32 },
-        zoom: 9.6,
-        hash: true
-      },
-      navControl: {
-        show: true,
-        position: "bottom-right"
-      },
-      geoControl: {
-        show: true,
-        position: "bottom-right"
-      }
+      loadingData: true,
+      mapError: false,
+      mapLoaded: false,
+      showWarning: false,
+      warningText: ""
     };
   },
-  methods: {
-    mapInitialized(map) {
-      addGeocoder(map, this.accessToken);
-    },
-    mapLoaded(map) {
-      getSensorData()
-        .then(responses => {
-          const sensorGeoJSON = parseSensorData(responses);
-           addAndPulsatePoints(map, sensorGeoJSON);
-          // assumes that Geocoder is at index 2, change if more controls are added to the map:
-          map._controls[2].options.localGeocoder = query =>
-            sensorGeocoder(query, sensorGeoJSON);
-        })
-        .catch(() => {
-          // This will catch ALL errors
-          throw Error("Oops!");
-        });
-        popupHover(map);
-    }
+  created() {
+    eventBus.$on("map-error", () => {
+      this.mapError = true;
+    });
+    eventBus.$on("show-console", () => {
+      this.mapLoaded = true;
+    });
+    eventBus.$on("stop-loading", () => {
+      this.loadingData = false;
+    });
+    eventBus.$on("warning-alert", warningText => {
+      this.warningText = warningText;
+      this.showWarning = true;
+    });
   }
 };
 </script>
@@ -84,16 +63,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#map {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
-}
-
-/* Card poopup for sensors */
-.mapboxgl-popup-tip {
-  border: 0px;
+/* Card poppup for sensors */  
+.mapboxgl-popup-tip { 
+  border: 0px;  
 }
 
 /* Override default CSS for search box */
