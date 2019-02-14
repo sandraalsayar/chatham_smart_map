@@ -1,6 +1,7 @@
 import axios from "axios";
 import encodeUrl from "encodeurl";
 import stringSimilarity from "string-similarity";
+import { eventBus } from "../main";
 
 const addGeocoder = (map, accessToken) => {
   const geocoder = new MapboxGeocoder({ accessToken, trackProximity: true });
@@ -34,7 +35,8 @@ const sensorGeocoder = (query, sensorGeoJSON) => {
 };
 
 // Follows Carmen GeoJSON format:
-const createGeoJSON = (coordinates, name, description, observation) => ({
+const createGeoJSON = (id, coordinates, name, description, observation) => ({
+  id,
   type: "Feature",
   geometry: {
     type: "Point",
@@ -55,8 +57,10 @@ const parseSensorData = responses =>
     const location = el.data.Locations[0];
     const description = el.data.description.toLowerCase();
     const observation = el.data.Datastreams[0].Observations[0];
+    const iotID = el.data["@iot.id"];
 
     return createGeoJSON(
+      iotID,
       location.location.coordinates,
       location.name,
       description,
@@ -67,7 +71,7 @@ const parseSensorData = responses =>
     );
   });
 
-const addPopupOnHover = map => {
+const onSensorInteraction = map => {
   let timer;
   // Create a popup, but don't add it to the map yet.
   const popup = new mapboxgl.Popup({
@@ -93,18 +97,32 @@ const addPopupOnHover = map => {
         `;
 
     // Populate the popup and set its coordinates. Adds a slight delay to the popup.
-    timer = setTimeout(() => {
+    //timer = setTimeout(() => {
       popup
         .setLngLat(coordinates)
         .setHTML(html)
         .addTo(map);
     }, 700);
-  });
+  //});
 
   map.on("mouseleave", "inner_point", () => {
     clearTimeout(timer);
     map.getCanvas().style.cursor = "";
     popup.remove();
+  });
+
+  map.on('click', 'inner_point', function(e) {
+    eventBus.$emit("sensor-clicked");
+    popup.remove();
+    const geoJSONid = e.features[0].id;
+    map.setPaintProperty('inner_point', 'circle-color',
+      ["case",
+        ["==", ["id"], geoJSONid],
+          '#008000', '#007cbf']);
+    map.setPaintProperty('outer_point', 'circle-color',
+      ["case",
+        ["==", ["id"], geoJSONid],
+          '#008000', '#007cbf']);
   });
 };
 
@@ -188,5 +206,5 @@ export {
   parseSensorData,
   sensorGeocoder,
   addSensorLayer,
-  addPopupOnHover
+  onSensorInteraction
 };

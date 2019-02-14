@@ -40,7 +40,6 @@ export default {
     eventBus.$on("map-error", () => {
       this.mapError = true;
     });
-
     eventBus.$on("show-console", () => {
       this.mapLoaded = true;
     });
@@ -59,11 +58,6 @@ export default {
   font-family: Roboto, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-/* Card poopup for sensors */
-.mapboxgl-popup-tip {
-  border: 0px;
 }
 
 /* Override default CSS for search box */
