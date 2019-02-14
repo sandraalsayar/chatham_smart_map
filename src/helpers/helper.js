@@ -19,6 +19,7 @@ const addGeocoder = (map, accessToken) => {
     } else {
       const geoJSONid = ev.result.id;
       eventBus.$emit("sensor-clicked", geoJSONid);
+      changeThePaint(geoJSONid, map);
     }
   });
   geocoder.on("clear", () => {
@@ -122,20 +123,22 @@ const onSensorInteraction = map => {
     popup.remove();
     const geoJSONid = e.features[0].id;
     eventBus.$emit("sensor-clicked", geoJSONid);
-
+    changeThePaint(geoJSONid, map)
   });
 
-  eventBus.$on("sensor-clicked", geoJSONid => {
-    map.setPaintProperty('inner_point', 'circle-color',
-      ["case",
-        ["==", ["id"], geoJSONid],
-          '#008000', '#007cbf']);
-    map.setPaintProperty('outer_point', 'circle-color',
-      ["case",
-        ["==", ["id"], geoJSONid],
-          '#008000', '#007cbf']);
-  });
+
 };
+
+const changeThePaint = (geoJSONid, map) => {
+  map.setPaintProperty('inner_point', 'circle-color',
+    ["case",
+      ["==", ["id"], geoJSONid],
+        '#008000', '#007cbf']);
+  map.setPaintProperty('outer_point', 'circle-color',
+    ["case",
+      ["==", ["id"], geoJSONid],
+        '#008000', '#007cbf']);
+}
 
 const getSensorData = () => {
   // URL to get ids of all Things:
