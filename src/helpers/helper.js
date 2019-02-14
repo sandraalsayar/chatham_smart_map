@@ -16,6 +16,9 @@ const addGeocoder = (map, accessToken) => {
     const matches = temp.includes("sensor");
     if (!matches) {
       marker.setLngLat(ev.result.geometry.coordinates).addTo(map);
+    } else {
+      const geoJSONid = ev.result.id;
+      eventBus.$emit("sensor-clicked", geoJSONid);
     }
   });
   geocoder.on("clear", () => {
@@ -116,9 +119,13 @@ const onSensorInteraction = map => {
   });
 
   map.on('click', 'inner_point', function(e) {
-    eventBus.$emit("sensor-clicked");
     popup.remove();
     const geoJSONid = e.features[0].id;
+    eventBus.$emit("sensor-clicked", geoJSONid);
+
+  });
+
+  eventBus.$on("sensor-clicked", geoJSONid => {
     map.setPaintProperty('inner_point', 'circle-color',
       ["case",
         ["==", ["id"], geoJSONid],
