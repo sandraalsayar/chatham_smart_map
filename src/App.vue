@@ -6,7 +6,7 @@
       <TheErrorModal :display="mapError" />
       <TheMap />
       <TheConsole v-if="mapLoaded" />
-      <TimelapseBar v-if="mapLoaded" />
+      <Timelapse v-if="mapLoaded" />
     </v-app>
   </div>
 </template>
@@ -18,7 +18,7 @@ import TheErrorModal from "./components/TheErrorModal";
 import TheMap from "./components/TheMap";
 import TheProgressCircle from "./components/TheProgressCircle";
 import TheWarningAlert from "./components/TheWarningAlert";
-import TimelapseBar from "./components/TimelapseBar"
+import Timelapse from "./components/Timelapse"
 
 export default {
   name: "app",
@@ -28,7 +28,7 @@ export default {
     TheMap,
     TheProgressCircle,
     TheWarningAlert,
-    TimelapseBar
+    Timelapse
   },
   data() {
     return {
