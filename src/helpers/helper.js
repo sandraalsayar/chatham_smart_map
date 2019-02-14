@@ -12,7 +12,15 @@ const addGeocoder = (map, accessToken) => {
   });
   geocoder.on("result", ev => {
     marker.remove();
-    marker.setLngLat(ev.result.geometry.coordinates).addTo(map);
+    const temp = ev.result.place_name.toLowerCase();
+    const matches = temp.includes("sensor");
+    if (!matches) {
+      marker.setLngLat(ev.result.geometry.coordinates).addTo(map);
+    } else {
+      const geoJSONid = ev.result.id;
+      eventBus.$emit("sensor-clicked", geoJSONid);
+      changeThePaint(geoJSONid, map);
+    }
   });
   geocoder.on("clear", () => {
     marker.remove();
@@ -112,19 +120,25 @@ const onSensorInteraction = map => {
   });
 
   map.on('click', 'inner_point', function(e) {
-    eventBus.$emit("sensor-clicked");
     popup.remove();
     const geoJSONid = e.features[0].id;
-    map.setPaintProperty('inner_point', 'circle-color',
-      ["case",
-        ["==", ["id"], geoJSONid],
-          '#008000', '#007cbf']);
-    map.setPaintProperty('outer_point', 'circle-color',
-      ["case",
-        ["==", ["id"], geoJSONid],
-          '#008000', '#007cbf']);
+    eventBus.$emit("sensor-clicked", geoJSONid);
+    changeThePaint(geoJSONid, map)
   });
+
+
 };
+
+const changeThePaint = (geoJSONid, map) => {
+  map.setPaintProperty('inner_point', 'circle-color',
+    ["case",
+      ["==", ["id"], geoJSONid],
+        '#008000', '#007cbf']);
+  map.setPaintProperty('outer_point', 'circle-color',
+    ["case",
+      ["==", ["id"], geoJSONid],
+        '#008000', '#007cbf']);
+}
 
 const getSensorData = () => {
   // URL to get ids of all Things:
@@ -149,8 +163,8 @@ const getSensorData = () => {
 const addSensorLayer = (map, sensorGeoJSON) => {
   const framesPerSecond = 15;
   const initialOpacity = 1;
-  const initialRadius = 6;
-  const maxRadius = 15;
+  const initialRadius = 10;
+  const maxRadius = 20;
 
   let radius = initialRadius;
   let opacity = initialOpacity;
