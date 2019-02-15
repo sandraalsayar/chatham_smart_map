@@ -60,9 +60,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Card poppup for sensors */  
-.mapboxgl-popup-tip { 
-  border: 0px;  
+/* Card popup for sensors */
+.mapboxgl-popup-tip {
+  border: 0px;
 }
 
 /* Override default CSS for search box */
