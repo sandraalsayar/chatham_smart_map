@@ -10,6 +10,7 @@ const addGeocoder = (map, accessToken) => {
   const marker = new mapboxgl.Marker({
     color: "crimson"
   });
+
   geocoder.on("result", ev => {
     marker.remove();
     const temp = ev.result.place_name.toLowerCase();
@@ -17,13 +18,13 @@ const addGeocoder = (map, accessToken) => {
     if (!matches) {
       marker.setLngLat(ev.result.geometry.coordinates).addTo(map);
     } else {
-      const geoJSONid = ev.result.id;
-      eventBus.$emit("sensor-clicked", geoJSONid);
-      changeThePaint(geoJSONid, map);
+      // ev.result represents the entire sensor GeoJSON
+      selectSensor(ev.result.id, ev.result.place_name, map, geocoder);
     }
   });
   geocoder.on("clear", () => {
     marker.remove();
+    unselectSenor(map, geocoder);
   });
   // return the geocoder object so that a localGeocoder can be added later:
   return geocoder;
@@ -42,6 +43,7 @@ const sensorGeocoder = (query, sensorGeoJSON) => {
   );
 };
 
+const getPlaceName = (name) => `${name} Sensor, Chatham, GA`
 // Follows Carmen GeoJSON format:
 const createGeoJSON = (id, coordinates, name, description, observation) => ({
   id,
@@ -55,7 +57,7 @@ const createGeoJSON = (id, coordinates, name, description, observation) => ({
     description,
     observation
   },
-  place_name: `${name} Sensor, Chatham, GA`,
+  place_name: getPlaceName(name),
   place_type: ["place"],
   center: coordinates
 });
@@ -65,10 +67,10 @@ const parseSensorData = responses =>
     const location = el.data.Locations[0];
     const description = el.data.description.toLowerCase();
     const observation = el.data.Datastreams[0].Observations[0];
-    const iotID = el.data["@iot.id"];
+    const id = el.data["@iot.id"];
 
     return createGeoJSON(
-      iotID,
+      id,
       location.location.coordinates,
       location.name,
       description,
@@ -79,14 +81,13 @@ const parseSensorData = responses =>
     );
   });
 
-const onSensorInteraction = map => {
-  //let timer;
+const onSensorInteraction = (map, geocoder) => {
   // Create a popup, but don't add it to the map yet.
   const popup = new mapboxgl.Popup({
     closeButton: false,
     closeOnClick: false
   });
-  map.on("mouseenter", "inner_point", e => {
+  map.on("mouseenter", "outer_point", e => {
     // Change the cursor style as a UI indicator.
     map.getCanvas().style.cursor = "pointer";
     const coordinates = e.features[0].geometry.coordinates.slice();
@@ -104,41 +105,51 @@ const onSensorInteraction = map => {
         <div>Time: ${reading.resultTime}</div>
         `;
 
-    // Populate the popup and set its coordinates. Adds a slight delay to the popup.
-    //timer = setTimeout(() => {
-      popup
-        .setLngLat(coordinates)
-        .setHTML(html)
-        .addTo(map);
-    //}, 700);
+    // Populate the popup and set its coordinates.
+    popup
+      .setLngLat(coordinates)
+      .setHTML(html)
+      .addTo(map);
   });
 
-  map.on("mouseleave", "inner_point", () => {
-    //clearTimeout(timer);
+  map.on("mouseleave", "outer_point", () => {
     map.getCanvas().style.cursor = "";
     popup.remove();
   });
 
-  map.on('click', 'inner_point', function(e) {
+  map.on("click", "outer_point", function(e) {
     popup.remove();
-    const geoJSONid = e.features[0].id;
-    eventBus.$emit("sensor-clicked", geoJSONid);
-    changeThePaint(geoJSONid, map)
+    // Beware that this isn't the entire sensor GeoJSON but a representation of it returned as part of the event object
+    const sensor = e.features[0];
+    const select = sensor.layer.paint["circle-color"][1][2] !== sensor.id;
+
+    if (select) {
+      const place_name = getPlaceName(sensor.properties.name)
+      selectSensor(sensor.id, place_name, map, geocoder);
+    } else {
+      unselectSenor(map, geocoder);
+    }
   });
-
-
 };
 
-const changeThePaint = (geoJSONid, map) => {
-  map.setPaintProperty('inner_point', 'circle-color',
-    ["case",
-      ["==", ["id"], geoJSONid],
-        '#008000', '#007cbf']);
-  map.setPaintProperty('outer_point', 'circle-color',
-    ["case",
-      ["==", ["id"], geoJSONid],
-        '#008000', '#007cbf']);
-}
+// Assumes that no sensor has an id of -99
+const getPaintProperty = (id = -99) => ["case", ["==", ["id"], id], "#008000", "#007cbf"];
+
+const selectSensor = (id, place_name, map, geocoder) => {
+  const paintProperty = getPaintProperty(id)
+  eventBus.$emit("sensor-clicked", true, id);
+  geocoder.setInput(place_name);
+  map.setPaintProperty("outer_point", "circle-color", paintProperty);
+  map.setPaintProperty("inner_point", "circle-color", paintProperty);
+};
+
+const unselectSenor = (map, geocoder) => {
+  const paintProperty = getPaintProperty()
+  eventBus.$emit("sensor-clicked", false);
+  geocoder.setInput("");
+  map.setPaintProperty("outer_point", "circle-color", paintProperty);
+  map.setPaintProperty("inner_point", "circle-color", paintProperty);
+};
 
 const getSensorData = () => {
   // URL to get ids of all Things:
@@ -169,7 +180,7 @@ const addSensorLayer = (map, sensorGeoJSON) => {
   let radius = initialRadius;
   let opacity = initialOpacity;
 
-  map.addSource("inner_point", {
+  map.addSource("outer_point", {
     type: "geojson",
     data: {
       type: "FeatureCollection",
@@ -178,23 +189,23 @@ const addSensorLayer = (map, sensorGeoJSON) => {
   });
 
   map.addLayer({
-    id: "inner_point",
-    source: "inner_point",
+    id: "outer_point",
+    source: "outer_point",
     type: "circle",
     paint: {
       "circle-radius": initialRadius,
       "circle-radius-transition": { duration: 0 },
       "circle-opacity-transition": { duration: 0 },
-      "circle-color": "#007cbf"
+      "circle-color": getPaintProperty()
     }
   });
   map.addLayer({
-    id: "outer_point",
-    source: "inner_point",
+    id: "inner_point",
+    source: "outer_point",
     type: "circle",
     paint: {
       "circle-radius": initialRadius,
-      "circle-color": "#007cbf"
+      "circle-color": getPaintProperty()
     }
   });
 
@@ -207,8 +218,8 @@ const addSensorLayer = (map, sensorGeoJSON) => {
         radius = initialRadius;
         opacity = initialOpacity;
       }
-      map.setPaintProperty("inner_point", "circle-radius", radius);
-      map.setPaintProperty("inner_point", "circle-opacity", opacity);
+      map.setPaintProperty("outer_point", "circle-radius", radius);
+      map.setPaintProperty("outer_point", "circle-opacity", opacity);
     }, 1000 / framesPerSecond);
   }
   animateMarker(0);
