@@ -11,7 +11,7 @@
 
 <script>
 import { eventBus } from "../main";
-import ConsoleCard from "./ConsoleCard.vue";
+import ConsoleCard from "./ConsoleCard";
 
 export default {
   components: { ConsoleCard },

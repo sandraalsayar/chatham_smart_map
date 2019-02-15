@@ -1,76 +1,61 @@
 <template>
   <div id="app">
-    <mapbox
-      :access-token="accessToken"
-      :map-options="mapOptions"
-      :nav-control="navControl"
-      :geolocate-control="geoControl"
-      @map-init="mapInitialized"
-    >
-    </mapbox>
-    <TheConsole />
+    <v-app>
+      <TheProgressCircle v-if="loadingData" />
+      <TheWarningAlert :text="warningText" v-if="showWarning" />
+      <TheErrorModal :display="mapError" />
+      <TheMap />
+      <TheConsole v-if="mapLoaded" />
+      <Timelapse v-if="mapLoaded" />
+    </v-app>
   </div>
 </template>
 
 <script>
-import Mapbox from "mapbox-gl-vue";
-import TheConsole from "./components/TheConsole.vue";
+import { eventBus } from "./main";
+import TheConsole from "./components/TheConsole";
+import TheErrorModal from "./components/TheErrorModal";
+import TheMap from "./components/TheMap";
+import TheProgressCircle from "./components/TheProgressCircle";
+import TheWarningAlert from "./components/TheWarningAlert";
+import Timelapse from "./components/Timelapse"
 
 export default {
   name: "app",
   components: {
-    Mapbox,
-    TheConsole
+    TheConsole,
+    TheErrorModal,
+    TheMap,
+    TheProgressCircle,
+    TheWarningAlert,
+    Timelapse
   },
   data() {
     return {
-      accessToken:
-        "pk.eyJ1IjoicGNoYXdsYTgiLCJhIjoiY2pvb2IxeHhjMGFpbzNwcXJzbjkxenphbCJ9.PLLJazTRjDbljE9IniyWpg",
-      mapOptions: {
-        container: "map",
-        style: "mapbox://styles/mapbox/streets-v10",
-        center: { lon: -81.2, lat: 32 },
-        zoom: 9.6,
-        hash: true
-      },
-      navControl: {
-        show: true,
-        position: "bottom-right"
-      },
-      geoControl: {
-        show: true,
-        position: "bottom-right"
-      }
+      loadingData: true,
+      mapError: false,
+      mapLoaded: false,
+      showWarning: false,
+      warningText: ""
     };
   },
-  methods: {
-    mapInitialized(map) {
-      const geocoder = new MapboxGeocoder({
-        accessToken: this.accessToken
-      });
-      map.addControl(geocoder, "top-left");
-
-      let marker;
-      geocoder.on("result", function(ev) {
-        if (marker) {
-          marker.remove();
-        }
-        marker = new mapboxgl.Marker({
-          color: "crimson"
-        })
-          .setLngLat(ev.result.geometry.coordinates)
-          .addTo(map);
-      });
-      geocoder.on("clear", () => {
-        if (marker) {
-          marker.remove();
-        }
-      });
-    }
+  created() {
+    eventBus.$on("map-error", () => {
+      this.mapError = true;
+    });
+    eventBus.$on("show-console", () => {
+      this.mapLoaded = true;
+    });
+    eventBus.$on("stop-loading", () => {
+      this.loadingData = false;
+    });
+    eventBus.$on("warning-alert", warningText => {
+      this.warningText = warningText;
+      this.showWarning = true;
+    });
   }
 };
 </script>
-
 <style>
 #app {
   font-family: Roboto, Arial, sans-serif;
@@ -78,11 +63,9 @@ export default {
   -moz-osx-font-smoothing: grayscale;
 }
 
-#map {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%;
+/* Card popup for sensors */
+.mapboxgl-popup-tip {
+  border: 0px;
 }
 
 /* Override default CSS for search box */
