@@ -43,7 +43,7 @@ const sensorGeocoder = (query, sensorGeoJSON) => {
   );
 };
 
-const getPlaceName = (name) => `${name} Sensor, Chatham, GA`
+const getPlaceName = name => `${name} Sensor, Chatham, GA`;
 // Follows Carmen GeoJSON format:
 const createGeoJSON = (id, coordinates, name, description, observation) => ({
   id,
@@ -124,7 +124,7 @@ const onSensorInteraction = (map, geocoder) => {
     const select = sensor.layer.paint["circle-color"][1][2] !== sensor.id;
 
     if (select) {
-      const place_name = getPlaceName(sensor.properties.name)
+      const place_name = getPlaceName(sensor.properties.name);
       selectSensor(sensor.id, place_name, map, geocoder);
     } else {
       unselectSenor(map, geocoder);
@@ -133,10 +133,15 @@ const onSensorInteraction = (map, geocoder) => {
 };
 
 // Assumes that no sensor has an id of -99
-const getPaintProperty = (id = -99) => ["case", ["==", ["id"], id], "#008000", "#007cbf"];
+const getPaintProperty = (id = -99) => [
+  "case",
+  ["==", ["id"], id],
+  "#008000",
+  "#007cbf"
+];
 
 const selectSensor = (id, place_name, map, geocoder) => {
-  const paintProperty = getPaintProperty(id)
+  const paintProperty = getPaintProperty(id);
   eventBus.$emit("sensor-clicked", true, id);
   geocoder.setInput(place_name);
   map.setPaintProperty("outer_point", "circle-color", paintProperty);
@@ -144,7 +149,7 @@ const selectSensor = (id, place_name, map, geocoder) => {
 };
 
 const unselectSenor = (map, geocoder) => {
-  const paintProperty = getPaintProperty()
+  const paintProperty = getPaintProperty();
   eventBus.$emit("sensor-clicked", false);
   geocoder.setInput("");
   map.setPaintProperty("outer_point", "circle-color", paintProperty);
