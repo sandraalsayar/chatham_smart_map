@@ -18,13 +18,13 @@ const addGeocoder = (map, accessToken) => {
     if (!matches) {
       marker.setLngLat(ev.result.geometry.coordinates).addTo(map);
     } else {
-      // ev.result represents the entire sensor GeoJSON
+      // ev.result is the entire GeoJSON for the selected sensor
       selectSensor(ev.result.id, ev.result.place_name, map, geocoder);
     }
   });
   geocoder.on("clear", () => {
     marker.remove();
-    unselectSenor(map, geocoder);
+    unselectSensor(map, geocoder);
   });
   // return the geocoder object so that a localGeocoder can be added later:
   return geocoder;
@@ -119,7 +119,7 @@ const onSensorInteraction = (map, geocoder) => {
 
   map.on("click", "outer_point", function(e) {
     popup.remove();
-    // Beware that this isn't the entire sensor GeoJSON but a representation of it returned as part of the event object
+    // Beware that this isn't the entire sensor GeoJSON but a simpler representation of it returned as part of the event object
     const sensor = e.features[0];
     const select = sensor.layer.paint["circle-color"][1][2] !== sensor.id;
 
@@ -127,7 +127,7 @@ const onSensorInteraction = (map, geocoder) => {
       const place_name = getPlaceName(sensor.properties.name);
       selectSensor(sensor.id, place_name, map, geocoder);
     } else {
-      unselectSenor(map, geocoder);
+      unselectSensor(map, geocoder);
     }
   });
 };
@@ -148,7 +148,7 @@ const selectSensor = (id, place_name, map, geocoder) => {
   map.setPaintProperty("inner_point", "circle-color", paintProperty);
 };
 
-const unselectSenor = (map, geocoder) => {
+const unselectSensor = (map, geocoder) => {
   const paintProperty = getPaintProperty();
   eventBus.$emit("sensor-clicked", false);
   geocoder.setInput("");
