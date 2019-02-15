@@ -5,8 +5,7 @@
     <div style="height: 6px;"></div>
     <ConsoleLegend />
     <div style="height: 6px;"></div>
-    <console-card v-if = "infoCardVisible"
-      heading = "SENSOR INFORMATION">
+    <console-card v-if="infoCardVisible" heading="SENSOR INFORMATION">
     </console-card>
   </div>
 </template>
@@ -29,8 +28,8 @@ export default {
     };
   },
   created() {
-    eventBus.$on("sensor-clicked", () => {
-      this.infoCardVisible = true;
+    eventBus.$on("sensor-clicked", (selected, _) => {
+      this.infoCardVisible = selected;
     });
   }
 };

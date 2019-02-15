@@ -72,7 +72,7 @@ export default {
           eventBus.$emit("stop-loading");
         });
 
-      onSensorInteraction(map);
+      onSensorInteraction(map, geocoder);
     },
     mapError() {
       eventBus.$emit("stop-loading");
