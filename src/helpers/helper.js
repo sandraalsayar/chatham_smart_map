@@ -13,8 +13,7 @@ const addGeocoder = (map, accessToken) => {
 
   geocoder.on("result", ev => {
     marker.remove();
-    const temp = ev.result.place_name.toLowerCase();
-    const matches = temp.includes("sensor");
+    const matches = geocoderMatches(ev.result.place_name);
     if (!matches) {
       marker.setLngLat(ev.result.geometry.coordinates).addTo(map);
     } else {
@@ -30,16 +29,22 @@ const addGeocoder = (map, accessToken) => {
   return geocoder;
 };
 
-const sensorGeocoder = (query, sensorGeoJSON) => {
+const geocoderMatches = query => {
   const temp = query.toLowerCase();
-  const matches = temp.includes("sensor");
+  return temp
+    .split(" ")
+    .some(el => stringSimilarity.compareTwoStrings(el, "sensor") > 0.65);
+};
+
+const sensorGeocoder = (query, sensorGeoJSON) => {
+  const matches = geocoderMatches(query);
   if (!matches) {
     return null;
   }
   return sensorGeoJSON.sort(
     (el1, el2) =>
-      stringSimilarity.compareTwoStrings(temp, el2.properties.description) -
-      stringSimilarity.compareTwoStrings(temp, el1.properties.description)
+      stringSimilarity.compareTwoStrings(query, el2.properties.description) -
+      stringSimilarity.compareTwoStrings(query, el1.properties.description)
   );
 };
 
@@ -117,7 +122,7 @@ const onSensorInteraction = (map, geocoder) => {
     popup.remove();
   });
 
-  map.on("click", "outer_point", function(e) {
+  map.on("click", "outer_point", e => {
     popup.remove();
     // Beware that this isn't the entire sensor GeoJSON but a simpler representation of it returned as part of the event object
     const sensor = e.features[0];
@@ -151,6 +156,9 @@ const selectSensor = (id, place_name, map, geocoder) => {
 const unselectSensor = (map, geocoder) => {
   const paintProperty = getPaintProperty();
   eventBus.$emit("sensor-clicked", false);
+  document.getElementsByClassName(
+    "geocoder-icon geocoder-icon-close"
+  )[0].style.display = "none";
   geocoder.setInput("");
   map.setPaintProperty("outer_point", "circle-color", paintProperty);
   map.setPaintProperty("inner_point", "circle-color", paintProperty);
@@ -214,7 +222,7 @@ const addSensorLayer = (map, sensorGeoJSON) => {
     }
   });
 
-  function animateMarker() {
+  const animateMarker = () => {
     setTimeout(() => {
       requestAnimationFrame(animateMarker);
       radius += (maxRadius - radius) / framesPerSecond;
@@ -226,8 +234,8 @@ const addSensorLayer = (map, sensorGeoJSON) => {
       map.setPaintProperty("outer_point", "circle-radius", radius);
       map.setPaintProperty("outer_point", "circle-opacity", opacity);
     }, 1000 / framesPerSecond);
-  }
-  animateMarker(0);
+  };
+  animateMarker();
 };
 
 export {

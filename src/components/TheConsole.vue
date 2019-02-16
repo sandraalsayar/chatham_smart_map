@@ -28,7 +28,8 @@ export default {
     };
   },
   created() {
-    eventBus.$on("sensor-clicked", (selected, _) => {
+    // use the passed in id here in the future
+    eventBus.$on("sensor-clicked", (selected) => {
       this.infoCardVisible = selected;
     });
   }

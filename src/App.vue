@@ -18,7 +18,7 @@ import TheErrorModal from "./components/TheErrorModal";
 import TheMap from "./components/TheMap";
 import TheProgressCircle from "./components/TheProgressCircle";
 import TheWarningAlert from "./components/TheWarningAlert";
-import Timelapse from "./components/Timelapse"
+import Timelapse from "./components/Timelapse";
 
 export default {
   name: "app",
