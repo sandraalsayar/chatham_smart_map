@@ -2,6 +2,7 @@ import axios from "axios";
 import encodeUrl from "encodeurl";
 import stringSimilarity from "string-similarity";
 import { eventBus } from "../main";
+import moment from 'moment';
 
 const addGeocoder = (map, accessToken) => {
   const geocoder = new MapboxGeocoder({ accessToken, trackProximity: true });
@@ -98,11 +99,14 @@ const onSensorInteraction = (map, geocoder) => {
     while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
       coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
+    const d = new Date(reading.resultTime)
+    const current = moment()
+    const date_string = d ? moment(d).from(current) : "N/A"
 
     let html = `
         <h4>${name} Sensor</h4>
         <div>Sea Level: ${reading.result} m</div>
-        <div>Last Measured At: ${reading.resultTime}</div>
+        <div>Last Measured: ${date_string}</div>
         `;
 
     if (reading.result == "No reading") {
@@ -111,7 +115,7 @@ const onSensorInteraction = (map, geocoder) => {
           <div>Sea Level: ${reading.result}</div>
           <div>Last Measured At: ${reading.resultTime}</div>
           `;
-    }    
+    }
 
     // Populate the popup and set its coordinates.
     popup
