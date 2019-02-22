@@ -53,8 +53,8 @@ export default {
 #bar {
   position: fixed;
   bottom: 10px;
-  right: 100px;
-  width: 1000px;
+  right: 70px;
+  width: 800px;
   margin: 10px;
   padding: 8px 8px;
   border-radius: 3px;

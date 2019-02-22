@@ -7,7 +7,7 @@
       fab
       @click="toggle"
     >
-      <v-icon 
+      <v-icon
         v-if="isPlaying"
         large
       >pause</v-icon>
@@ -48,7 +48,7 @@ var isPlaying = false
 #button {
   position: fixed;
   bottom: 20px;
-  right: 1120px;
+  right: 870px;
   margin: 10px;
   padding: 8px 8px;
   border-radius: 3px;

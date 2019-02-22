@@ -2,22 +2,23 @@
     <div id="datepicker">
 
         <v-layout row wrap>
-            <v-flex xs12 sm6 md4>
+            <v-flex justify-space-around xs4 sm2>
+                <v-icon x-large color="teal">event</v-icon>
+            </v-flex>
+
+            <v-flex xs4 sm4>
                 <v-menu
                 ref="menu"
                 v-model="menu"
                 :return-value.sync="startdate"
                 :close-on-content-click="false"
                 transition="scale-transition"
-                lazy
 
                 >
                     <v-text-field
                     slot="activator"
-                    prepend-icon="event"
                     v-model="startdate"
                     label="Start date"
-                    box
                     readonly
                   ></v-text-field>
                   <v-date-picker v-model="startdate">
@@ -27,7 +28,7 @@
                   </v-date-picker>
                 </v-menu>
             </v-flex>
-            <v-flex xs12 sm6 md4>
+            <v-flex xs4 sm4>
                 <v-menu
                 ref="menu1"
                 v-model="menu1"
@@ -38,7 +39,6 @@
                     <v-text-field
                     slot="activator"
                     v-model="enddate"
-                    box
                     label="End date"
                     readonly
                   ></v-text-field>
@@ -76,13 +76,13 @@ export default {
 <style>
 #datepicker {
     position: fixed;
-    margin: 450px 0 0 50px;
+    margin: 590px 0 0 10px;
 }
 
-.v-input__icon--prepend .v-icon {
+/*.v-input__icon--prepend .v-icon {
     font-size: 35px;
     color: teal;
-}
+}*/
 
 
 

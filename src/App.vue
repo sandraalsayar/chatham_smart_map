@@ -5,9 +5,8 @@
       <TheWarningAlert :text="warningText" v-if="showWarning" />
       <TheErrorModal :display="mapError" />
       <TheMap />
-      <DatePicker v-if="mapLoaded" />
       <TheConsole v-if="mapLoaded" />
-
+      <DatePicker v-if="mapLoaded" />
       <Timelapse v-if="mapLoaded" />
     </v-app>
   </div>
