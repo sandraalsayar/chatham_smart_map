@@ -2,7 +2,7 @@ import axios from "axios";
 import encodeUrl from "encodeurl";
 import stringSimilarity from "string-similarity";
 import { eventBus } from "../main";
-import moment from 'moment';
+import moment from "moment";
 
 const addGeocoder = (map, accessToken) => {
   const geocoder = new MapboxGeocoder({ accessToken, trackProximity: true });
@@ -68,6 +68,21 @@ const createGeoJSON = (id, coordinates, name, description, observation) => ({
   center: coordinates
 });
 
+const parseObservation = observation => {
+  if (observation) {
+    const parse = JSON.parse(observation);
+    return {
+      result: `${parse.result} m`,
+      resultTime: moment(parse.resultTime).fromNow()
+    };
+  } else {
+    return {
+      resultTime: "N/A",
+      result: "No reading"
+    };
+  }
+};
+
 const parseSensorData = responses =>
   responses.map(el => {
     const location = el.data.Locations[0];
@@ -80,10 +95,7 @@ const parseSensorData = responses =>
       location.location.coordinates,
       location.name,
       description,
-      observation || {
-        resultTime: "N/A",
-        result: "No reading"
-      }
+      observation
     );
   });
 
@@ -98,30 +110,17 @@ const onSensorInteraction = (map, geocoder) => {
     map.getCanvas().style.cursor = "pointer";
     const coordinates = e.features[0].geometry.coordinates.slice();
     const { name, observation } = e.features[0].properties;
-    const reading = JSON.parse(observation);
+    const reading = parseObservation(observation);
     // Ensure that if the map is zoomed out such that multiple copies of the feature are visible,
     // the popup appears over the copy being pointed to.
     while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
       coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
-    const d = new Date(reading.resultTime)
-    const current = moment()
-    const date_string = d ? moment(d).from(current) : "N/A"
-
-    let html = `
+    const html = `
         <h4>${name} Sensor</h4>
-        <div>Sea Level: ${reading.result} m</div>
-        <div>Last Measured: ${date_string}</div>
+        <div>Sea Level: ${reading.result}</div>
+        <div>Last Measured: ${reading.resultTime}</div>
         `;
-
-    if (reading.result == "No reading") {
-        html = `
-          <h4>${name} Sensor</h4>
-          <div>Sea Level: ${reading.result}</div>
-          <div>Last Measured At: ${reading.resultTime}</div>
-          `;
-    }
-
     // Populate the popup and set its coordinates.
     popup
       .setLngLat(coordinates)
