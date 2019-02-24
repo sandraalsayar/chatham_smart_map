@@ -2,7 +2,7 @@ import axios from "axios";
 import encodeUrl from "encodeurl";
 import stringSimilarity from "string-similarity";
 import { eventBus } from "../main";
-import moment from "moment";
+import { distanceInWordsToNow } from "date-fns";
 
 const addGeocoder = (map, accessToken) => {
   const geocoder = new MapboxGeocoder({ accessToken, trackProximity: true });
@@ -50,6 +50,7 @@ const sensorGeocoder = (query, sensorGeoJSON) => {
 };
 
 const getPlaceName = name => `${name} Sensor, Chatham, GA`;
+
 // Follows Carmen GeoJSON format:
 const createGeoJSON = (id, coordinates, name, description, observation) => ({
   id,
@@ -73,7 +74,7 @@ const parseObservation = observation => {
     const parse = JSON.parse(observation);
     return {
       result: `${parse.result} m`,
-      resultTime: moment(parse.resultTime).fromNow()
+      resultTime: distanceInWordsToNow(parse.resultTime, { addSuffix: true })
     };
   } else {
     return {
