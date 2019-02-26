@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { eventBus } from "../main";
+import { eventBus } from "@/main";
 export default {
   data () {
     return {
@@ -33,16 +33,30 @@ export default {
         '8 pm',
         '10 pm',
         '12 am'
-      ]
+      ],
+      interval: null
     }
   },
-
-  created() {
-    eventBus.$on("timelapse-pulse", () => { //on the timelapse pulse, advance the slider
-      if(this.sliderVal < 12) {
-        this.sliderVal++
+  methods: {
+    advanceTimelapse () {
+      if (this.sliderVal == 12) {
+        this.sliderVal = 0
       } else {
-        this.sliderVal = 0 //restart the timelapse after two seconds
+        this.sliderVal++
+      }
+    }
+  },
+  watch: {
+    sliderVal: function() {
+      eventBus.$emit("timelapse-pulse", this.sliderVal)
+    }
+  },
+  created() {
+    eventBus.$on("toggle-timelapse", (isPlaying) => {
+      if(isPlaying) {
+        this.interval = setInterval(this.advanceTimelapse, 1000)
+      } else {
+        clearInterval(this.interval)
       }
     })
   }

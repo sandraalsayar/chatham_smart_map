@@ -19,7 +19,7 @@
   </div>
 </template>
 <script>
-import { eventBus } from "../main";
+import { eventBus } from "@/main";
 export default {
   data () {
     return {
@@ -30,19 +30,10 @@ export default {
   methods: {
     toggle () {
       this.isPlaying = !this.isPlaying
-      isPlaying = this.isPlaying
+      eventBus.$emit("toggle-timelapse", this.isPlaying)
     }
-  },
-
-  created () {
-    setInterval(function(){
-      if(isPlaying) { //if the play button has been hit, emit the timelapse pulse every second
-        eventBus.$emit("timelapse-pulse")
-      }
-    }, 1000);
   }
 }
-var isPlaying = false
 </script>
 <style scoped>
 #button {
