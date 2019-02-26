@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { eventBus } from "../../main";
+import { eventBus } from "@/main";
 import ConsoleCard from "./ConsoleCard";
 
 export default {

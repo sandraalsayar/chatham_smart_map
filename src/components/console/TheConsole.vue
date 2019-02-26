@@ -14,7 +14,7 @@
 import ConsoleLayersList from "./ConsoleLayersList";
 import ConsoleLegend from "./ConsoleLegend";
 import ConsoleCard from "./ConsoleCard";
-import { eventBus } from "../../main";
+import { eventBus } from "@/main";
 
 export default {
   components: {
