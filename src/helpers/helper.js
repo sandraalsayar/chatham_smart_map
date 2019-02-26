@@ -2,6 +2,7 @@ import axios from "axios";
 import encodeUrl from "encodeurl";
 import stringSimilarity from "string-similarity";
 import { eventBus } from "../main";
+import { distanceInWordsToNow } from "date-fns";
 
 const addGeocoder = (map, accessToken) => {
   const geocoder = new MapboxGeocoder({ accessToken, trackProximity: true });
@@ -13,8 +14,7 @@ const addGeocoder = (map, accessToken) => {
 
   geocoder.on("result", ev => {
     marker.remove();
-    const temp = ev.result.place_name.toLowerCase();
-    const matches = temp.includes("sensor");
+    const matches = geocoderMatches(ev.result.place_name);
     if (!matches) {
       marker.setLngLat(ev.result.geometry.coordinates).addTo(map);
     } else {
@@ -30,20 +30,27 @@ const addGeocoder = (map, accessToken) => {
   return geocoder;
 };
 
-const sensorGeocoder = (query, sensorGeoJSON) => {
+const geocoderMatches = query => {
   const temp = query.toLowerCase();
-  const matches = temp.includes("sensor");
+  return temp
+    .split(" ")
+    .some(el => stringSimilarity.compareTwoStrings(el, "sensor") > 0.65);
+};
+
+const sensorGeocoder = (query, sensorGeoJSON) => {
+  const matches = geocoderMatches(query);
   if (!matches) {
     return null;
   }
   return sensorGeoJSON.sort(
     (el1, el2) =>
-      stringSimilarity.compareTwoStrings(temp, el2.properties.description) -
-      stringSimilarity.compareTwoStrings(temp, el1.properties.description)
+      stringSimilarity.compareTwoStrings(query, el2.properties.description) -
+      stringSimilarity.compareTwoStrings(query, el1.properties.description)
   );
 };
 
 const getPlaceName = name => `${name} Sensor, Chatham, GA`;
+
 // Follows Carmen GeoJSON format:
 const createGeoJSON = (id, coordinates, name, description, observation) => ({
   id,
@@ -62,6 +69,21 @@ const createGeoJSON = (id, coordinates, name, description, observation) => ({
   center: coordinates
 });
 
+const parseObservation = observation => {
+  if (observation) {
+    const parse = JSON.parse(observation);
+    return {
+      result: `${parse.result} m`,
+      resultTime: distanceInWordsToNow(parse.resultTime, { addSuffix: true })
+    };
+  } else {
+    return {
+      resultTime: "N/A",
+      result: "No reading"
+    };
+  }
+};
+
 const parseSensorData = responses =>
   responses.map(el => {
     const location = el.data.Locations[0];
@@ -74,10 +96,7 @@ const parseSensorData = responses =>
       location.location.coordinates,
       location.name,
       description,
-      observation || {
-        resultTime: "N/A",
-        result: "No reading"
-      }
+      observation
     );
   });
 
@@ -92,19 +111,17 @@ const onSensorInteraction = (map, geocoder) => {
     map.getCanvas().style.cursor = "pointer";
     const coordinates = e.features[0].geometry.coordinates.slice();
     const { name, observation } = e.features[0].properties;
-    const reading = JSON.parse(observation);
+    const reading = parseObservation(observation);
     // Ensure that if the map is zoomed out such that multiple copies of the feature are visible,
     // the popup appears over the copy being pointed to.
     while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
       coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
-
     const html = `
         <h4>${name} Sensor</h4>
-        <div>Reading: ${reading.result}</div>
-        <div>Time: ${reading.resultTime}</div>
+        <div>Sea Level: ${reading.result}</div>
+        <div>Last Measured: ${reading.resultTime}</div>
         `;
-
     // Populate the popup and set its coordinates.
     popup
       .setLngLat(coordinates)
@@ -117,7 +134,7 @@ const onSensorInteraction = (map, geocoder) => {
     popup.remove();
   });
 
-  map.on("click", "outer_point", function(e) {
+  map.on("click", "outer_point", e => {
     popup.remove();
     // Beware that this isn't the entire sensor GeoJSON but a simpler representation of it returned as part of the event object
     const sensor = e.features[0];
@@ -151,6 +168,9 @@ const selectSensor = (id, place_name, map, geocoder) => {
 const unselectSensor = (map, geocoder) => {
   const paintProperty = getPaintProperty();
   eventBus.$emit("sensor-clicked", false);
+  document.getElementsByClassName(
+    "geocoder-icon geocoder-icon-close"
+  )[0].style.display = "none";
   geocoder.setInput("");
   map.setPaintProperty("outer_point", "circle-color", paintProperty);
   map.setPaintProperty("inner_point", "circle-color", paintProperty);
@@ -214,7 +234,7 @@ const addSensorLayer = (map, sensorGeoJSON) => {
     }
   });
 
-  function animateMarker() {
+  const animateMarker = () => {
     setTimeout(() => {
       requestAnimationFrame(animateMarker);
       radius += (maxRadius - radius) / framesPerSecond;
@@ -226,8 +246,8 @@ const addSensorLayer = (map, sensorGeoJSON) => {
       map.setPaintProperty("outer_point", "circle-radius", radius);
       map.setPaintProperty("outer_point", "circle-opacity", opacity);
     }, 1000 / framesPerSecond);
-  }
-  animateMarker(0);
+  };
+  animateMarker();
 };
 
 export {

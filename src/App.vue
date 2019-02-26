@@ -68,6 +68,14 @@ export default {
   border: 0px;
 }
 
+/* Pushes the popup away from sensor */
+.mapboxgl-popup-anchor-bottom {
+  top: -12px;
+}
+.mapboxgl-popup-anchor-top {
+  top: 12px;
+}
+
 /* Override default CSS for search box */
 .mapboxgl-ctrl-top-left .mapboxgl-ctrl {
   margin: 20px 0 0 18px;
