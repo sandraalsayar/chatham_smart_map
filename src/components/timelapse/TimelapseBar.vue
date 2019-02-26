@@ -3,13 +3,17 @@
     <v-slider
       v-model="sliderVal"
       :tick-labels="ticksLabels"
-      :max="12"
+      :max="maxVal"
       step="1"
       ticks="always"
       tick-size="3"
       color='teal'
       always-dirty
-    ></v-slider>
+      :thumb-size="60"
+      thumb-label
+    >
+      <span slot="thumb-label" slot-scope="{value}">{{times[sliderVal]}}</span>
+    </v-slider>
   </div>
 </template>
 
@@ -19,21 +23,9 @@ export default {
   data () {
     return {
       sliderVal: 0,
-      ticksLabels: [
-        '12 am',
-        '2 am',
-        '4 am',
-        '6 am',
-        '8 am',
-        '10 am',
-        '12 pm',
-        '2 pm',
-        '4 pm',
-        '6 pm',
-        '8 pm',
-        '10 pm',
-        '12 am'
-      ],
+      times: [],
+      ticksLabels: [],
+      maxVal: 12,
       interval: null
     }
   },
@@ -44,6 +36,23 @@ export default {
       } else {
         this.sliderVal++
       }
+    },
+    hourString (hours) {
+      var pm = false
+      if (hours >= 12) {
+        pm = true
+        hours -= 12
+      }
+      var tailString = ""
+      if (pm) {
+        tailString = ":00 pm"
+      } else {
+        tailString = ":00 am"
+      }
+      if (hours == 0) {
+        hours = 12
+      }
+      return String(hours) + tailString 
     }
   },
   watch: {
@@ -59,6 +68,21 @@ export default {
         clearInterval(this.interval)
       }
     })
+    this.ticksLabels[0] = "24 hours ago"
+    this.ticksLabels[12] = "Present"
+    var today = new Date()
+    var hours = today.getHours()
+    if (today.getMinutes() >= 30) {
+      hours++
+    }
+    for (var i = 0; i < this.maxVal + 1; i++){
+      if (hours >= 24) {
+        hours -= 24
+      }
+      this.times[i] = this.hourString(hours)
+      hours += 2
+      console.log(this.hourString(hours))
+    }
   }
 }
 </script>
@@ -66,11 +90,11 @@ export default {
 <style scoped>
 #bar {
   position: fixed;
-  bottom: 10px;
-  right: 100px;
-  width: 1000px;
+  bottom: 84px;
+  right: 60px;
+  left: 310px;
+  height: 0px;
   margin: 10px;
-  padding: 8px 8px;
   border-radius: 3px;
   z-index: 0;
 }
