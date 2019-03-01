@@ -4,16 +4,13 @@
       color='teal'
       dark
       depressed
-      fab
       @click="toggle"
     >
       <v-icon 
         v-if="isPlaying"
-        large
       >pause</v-icon>
       <v-icon
         v-else
-        large
       >play_arrow</v-icon>
     </v-btn>
   </div>
@@ -36,12 +33,16 @@ export default {
 }
 </script>
 <style scoped>
+.v-btn {
+  min-width: 0; /*had to override some properties of v-btn to make it square*/
+  min-height: 50px;
+}
 #button {
   position: fixed;
-  bottom: 20px;
-  right: 1120px;
+  bottom: 11px;
+  left: 205px;
   margin: 10px;
-  padding: 8px 8px;
+  padding: 10px;
   border-radius: 3px;
   z-index: 0;
 }
