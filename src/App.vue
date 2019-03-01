@@ -7,20 +7,20 @@
       <TheMap />
       <TheConsole v-if="mapLoaded" />
       <DatePicker v-if="mapLoaded" />
-      <Timelapse v-if="mapLoaded" />
+      <TheTimelapse v-if="mapLoaded" />
     </v-app>
   </div>
 </template>
 
 <script>
 import { eventBus } from "./main";
-import TheConsole from "./components/TheConsole";
+import TheConsole from "./components/console/TheConsole";
 import TheErrorModal from "./components/TheErrorModal";
 import TheMap from "./components/TheMap";
 import TheProgressCircle from "./components/TheProgressCircle";
 import TheWarningAlert from "./components/TheWarningAlert";
 import DatePicker from "./components/DatePicker.vue";
-import Timelapse from "./components/Timelapse";
+import TheTimelapse from "./components/timelapse/TheTimelapse"
 
 export default {
   name: "app",
@@ -31,7 +31,7 @@ export default {
     TheProgressCircle,
     TheWarningAlert,
     DatePicker,
-    Timelapse
+    TheTimelapse
   },
   data() {
     return {

@@ -4,22 +4,19 @@
       color='teal'
       dark
       depressed
-      fab
       @click="toggle"
     >
       <v-icon
         v-if="isPlaying"
-        large
       >pause</v-icon>
       <v-icon
         v-else
-        large
       >play_arrow</v-icon>
     </v-btn>
   </div>
 </template>
 <script>
-import { eventBus } from "../main";
+import { eventBus } from "@/main";
 export default {
   data () {
     return {
@@ -30,27 +27,22 @@ export default {
   methods: {
     toggle () {
       this.isPlaying = !this.isPlaying
-      isPlaying = this.isPlaying
+      eventBus.$emit("toggle-timelapse", this.isPlaying)
     }
-  },
-
-  created () {
-    setInterval(function(){
-      if(isPlaying) { //if the play button has been hit, emit the timelapse pulse every second
-        eventBus.$emit("timelapse-pulse")
-      }
-    }, 1000);
   }
 }
-var isPlaying = false
 </script>
 <style scoped>
+.v-btn {
+  min-width: 0; /*had to override some properties of v-btn to make it square*/
+  min-height: 50px;
+}
 #button {
   position: fixed;
-  bottom: 20px;
-  right: 870px;
+  bottom: 11px;
+  left: 205px;
   margin: 10px;
-  padding: 8px 8px;
+  padding: 10px;
   border-radius: 3px;
   z-index: 0;
 }

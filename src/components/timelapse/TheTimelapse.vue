@@ -1,5 +1,5 @@
 <template>
-  <div id = "timelape">
+  <div id = "timelapse">
     <PlayButton v-if = "timelapseMode" />
     <TimelapseBar v-if = "timelapseMode" />
   </div>

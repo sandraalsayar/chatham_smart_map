@@ -14,7 +14,7 @@
 import ConsoleLayersList from "./ConsoleLayersList";
 import ConsoleLegend from "./ConsoleLegend";
 import ConsoleCard from "./ConsoleCard";
-import { eventBus } from "../main";
+import { eventBus } from "@/main";
 
 export default {
   components: {
@@ -28,8 +28,7 @@ export default {
     };
   },
   created() {
-    // use the passed in id here in the future
-    eventBus.$on("sensor-clicked", (selected) => {
+    eventBus.$on("sensor-clicked", (selected, _) => {
       this.infoCardVisible = selected;
     });
   }

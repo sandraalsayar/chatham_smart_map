@@ -14,6 +14,7 @@ const addGeocoder = (map, accessToken) => {
 
   geocoder.on("result", ev => {
     marker.remove();
+    unselectSensor(map); // if a sensor is already selected
     const matches = geocoderMatches(ev.result.place_name);
     if (!matches) {
       marker.setLngLat(ev.result.geometry.coordinates).addTo(map);
@@ -24,7 +25,7 @@ const addGeocoder = (map, accessToken) => {
   });
   geocoder.on("clear", () => {
     marker.remove();
-    unselectSensor(map, geocoder);
+    unselectSensor(map);
   });
   // return the geocoder object so that a localGeocoder can be added later:
   return geocoder;
@@ -142,9 +143,15 @@ const onSensorInteraction = (map, geocoder) => {
 
     if (select) {
       const place_name = getPlaceName(sensor.properties.name);
+      const marker = document.getElementsByClassName("mapboxgl-marker")[0];
+      if (marker) {
+        // if a marker exists on the map, remove it before selecting the sensor
+        marker.parentNode.removeChild(marker);
+      }
       selectSensor(sensor.id, place_name, map, geocoder);
     } else {
-      unselectSensor(map, geocoder);
+      unselectSensor(map);
+      clearGeocoder(geocoder);
     }
   });
 };
@@ -165,15 +172,18 @@ const selectSensor = (id, place_name, map, geocoder) => {
   map.setPaintProperty("inner_point", "circle-color", paintProperty);
 };
 
-const unselectSensor = (map, geocoder) => {
+const unselectSensor = map => {
   const paintProperty = getPaintProperty();
   eventBus.$emit("sensor-clicked", false);
+  map.setPaintProperty("outer_point", "circle-color", paintProperty);
+  map.setPaintProperty("inner_point", "circle-color", paintProperty);
+};
+
+const clearGeocoder = geocoder => {
   document.getElementsByClassName(
     "geocoder-icon geocoder-icon-close"
   )[0].style.display = "none";
   geocoder.setInput("");
-  map.setPaintProperty("outer_point", "circle-color", paintProperty);
-  map.setPaintProperty("inner_point", "circle-color", paintProperty);
 };
 
 const getSensorData = () => {
