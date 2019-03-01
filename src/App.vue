@@ -6,6 +6,7 @@
       <TheErrorModal :display="mapError" />
       <TheMap />
       <TheConsole v-if="mapLoaded" />
+      <DatePicker v-if="mapLoaded" />
       <TheTimelapse v-if="mapLoaded" />
     </v-app>
   </div>
@@ -18,6 +19,7 @@ import TheErrorModal from "./components/TheErrorModal";
 import TheMap from "./components/TheMap";
 import TheProgressCircle from "./components/TheProgressCircle";
 import TheWarningAlert from "./components/TheWarningAlert";
+import DatePicker from "./components/DatePicker.vue";
 import TheTimelapse from "./components/timelapse/TheTimelapse"
 
 export default {
@@ -28,6 +30,7 @@ export default {
     TheMap,
     TheProgressCircle,
     TheWarningAlert,
+    DatePicker,
     TheTimelapse
   },
   data() {
