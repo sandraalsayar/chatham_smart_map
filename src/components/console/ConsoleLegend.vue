@@ -21,16 +21,16 @@ export default {
         {
           id: 1,
           html: `<div class="label" id="sensor"></div>
-      <div class="label">Sea-level sensors</div>`,
+      <p class="label">Sea-level sensors</p>`,
           displayed: true
         },
         {
           id: 2,
           html: `<div class="colors"></div>
       <div style="overflow: hidden;">
-        <div class="label third">5ft</div>
-        <div class="label third">10ft</div>
-        <div class="label third">15ft</div>
+        <p class="label third">5ft</p>
+        <p class="label third">10ft</p>
+        <p class="label third">15ft</p>
       </div>`,
           displayed: false
         }
@@ -50,12 +50,13 @@ export default {
 <style scoped>
 .legend_row {
   margin: 5px;
+  margin-left: 0.7em;
+  margin-right: 0.7em;
 }
 
 .legend_row >>> .label {
   display: inline-block;
   text-align: center;
-  font-size: 14px;
 }
 
 .legend_row >>> .third {
