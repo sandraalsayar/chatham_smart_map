@@ -1,23 +1,33 @@
 <template>
-  <div id = "timelapse">
-    <PlayButton v-if = "timelapseMode" />
-    <TimelapseBar v-if = "timelapseMode" />
+  <div id="timelapse">
+    <DatePicker />
+    <PlayButton />
+    <TimelapseBar />
   </div>
 </template>
 
 <script>
-import TimelapseBar from "./TimelapseBar"
-import PlayButton from "./PlayButton"
+import DatePicker from "./DatePicker";
+import PlayButton from "./PlayButton";
+import TimelapseBar from "./TimelapseBar";
 
 export default {
-  data () {
-    return {
-      timelapseMode: true //whether or not the map is in timelapse mode
-    }
-  },
   components: {
-    TimelapseBar,
-    PlayButton
+    DatePicker,
+    PlayButton,
+    TimelapseBar
   }
-}
+};
 </script>
+
+<style scoped>
+#timelapse {
+  position: absolute;
+  bottom: 32px;
+  left: 85px;
+}
+
+#timelapse > * {
+  display: inline-block;
+}
+</style>
