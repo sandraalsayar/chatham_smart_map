@@ -23,7 +23,8 @@ export default {
 </script>
 <style scoped>
 .v-btn {
-  min-width: 0px;
-  height: 50px;
+  min-width: 0px; /* had to override some properties of v-btn to make it square */
+  min-height: 50px;
+  border-radius: 3px;
 }
 </style>
