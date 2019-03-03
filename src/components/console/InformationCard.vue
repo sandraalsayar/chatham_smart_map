@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import { parseObservation } from "@/helpers/helper";
 import ConsoleCard from "./ConsoleCard";
 
 export default {
