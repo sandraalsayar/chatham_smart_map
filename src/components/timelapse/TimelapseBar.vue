@@ -9,16 +9,29 @@
       tick-size="3"
       color='teal'
       always-dirty
-      :thumb-size="60"
+      :thumb-size="140"
       thumb-label
     >
-      <span slot="thumb-label" slot-scope="{value}">{{times[sliderVal]}}</span>
+      <template v-slot:thumb-label="props">
+        <span>
+          {{ getThumbLabel(sliderVal) }}
+        </span>
+      </template>
     </v-slider>
   </div>
 </template>
 
 <script>
 import { eventBus } from "@/main";
+import {
+  format,
+  addHours,
+  differenceInDays,
+  subDays,
+  isToday,
+  distanceInWordsToNow
+} from "date-fns";
+
 export default {
   data () {
     return {
@@ -26,7 +39,8 @@ export default {
       times: [],
       ticksLabels: [],
       maxVal: 12,
-      interval: null
+      interval: null,
+      displayYear: false
     }
   },
   methods: {
@@ -37,22 +51,59 @@ export default {
         this.sliderVal++
       }
     },
-    hourString (hours) {
-      var pm = false
-      if (hours >= 12) {
-        pm = true
-        hours -= 12
-      }
-      var tailString = ""
-      if (pm) {
-        tailString = ":00 pm"
+    getThumbLabel (val) {
+      const date = new Date(this.times[val])
+      const hourLine = format(date, 'h:00 aa')
+      let dateLine = ''
+      if (this.displayYear) {
+        dateLine = format(date, ' M/DD/YYYY')
       } else {
-        tailString = ":00 am"
+        dateLine = format(date, ' MMMM Do')
       }
-      if (hours == 0) {
-        hours = 12
+      return hourLine.concat(dateLine)
+    },
+    findTimes (earlyDate, lateDate) { //takes two dates and returns an array of ISO date strings
+      const daysDifference = differenceInDays(lateDate, earlyDate)
+      const viableDayFractions = [1, 2, 3, 4, 6, 12]
+      for (let i = 0; i < viableDayFractions.length; i++){ //splitting days into numbers of hours
+        let dayFraction = viableDayFractions[i]
+        for (let j = 12; j < 24; j++){ //slitting timelapse bar itself into fractions
+          if((daysDifference * dayFraction) % j == 0){
+            let workingDate = earlyDate
+            let timeArray = []
+            for (var k = 0; k <= j; k++) { //populate array of date strings
+              timeArray[k] = workingDate.toISOString()
+              workingDate = addHours(workingDate, daysDifference/j * 24)
+            }
+            return timeArray
+          }
+        }
       }
-      return String(hours) + tailString 
+    },
+    generateNewLabels (earlyDate, lateDate) {
+      let newLabels = []
+      if (isToday(lateDate)) {
+        newLabels[0] = distanceInWordsToNow(earlyDate, {addSuffix: true})
+        newLabels[this.maxVal] = "Present"
+      } else if (this.displayYear) {
+        newLabels[0] = format(earlyDate, 'MMMM Do, YYYY')
+        newLabels[this.maxVal] = format(lateDate, 'MMMM Do, YYYY')
+      } else {
+        newLabels[0] = format(earlyDate, 'MMMM Do')
+        newLabels[this.maxVal] = format(lateDate, 'MMMM Do')
+      }
+      return newLabels
+    },
+    handleNewDates (earlyDate, lateDate) { //whenever the timelapse date range changes, this is called
+      this.times = this.findTimes(earlyDate, lateDate) //grab array of dates for the timelapse
+      eventBus.$emit("new-timelapse", this.times) // emit the new timelapse intervals to other components
+      this.maxVal = this.times.length - 1 //set maxVal for the bar
+      if (earlyDate.getFullYear() != lateDate.getFullYear()) { //determine whether or not the year should be displayed
+        this.displayYear = true
+      } else {
+        this.displayYear = false
+      }
+      this.ticksLabels = this.generateNewLabels(earlyDate, lateDate) //create new beginning and end labels for the bar
     }
   },
   watch: {
@@ -60,7 +111,7 @@ export default {
       eventBus.$emit("timelapse-pulse", this.sliderVal)
     }
   },
-  created() {
+  created () {
     eventBus.$on("toggle-timelapse", (isPlaying) => {
       if(isPlaying) {
         this.interval = setInterval(this.advanceTimelapse, 1000)
@@ -68,21 +119,14 @@ export default {
         clearInterval(this.interval)
       }
     })
-    this.ticksLabels[0] = "24 hours ago"
-    this.ticksLabels[12] = "Present"
-    var today = new Date()
-    var hours = today.getHours()
-    if (today.getMinutes() >= 30) {
-      hours++
-    }
-    for (var i = 0; i < this.maxVal + 1; i++){
-      if (hours >= 24) {
-        hours -= 24
-      }
-      this.times[i] = this.hourString(hours)
-      hours += 2
-      console.log(this.hourString(hours))
-    }
+    eventBus.$on("dates-selected", (earlyDateString, lateDateString) => {
+      this.handleNewDates(new Date(earlyDateString), new Date(lateDateString))
+      clearInterval(this.interval) // stop pulse
+      this.sliderVal = 0 // reset slider
+    });
+    const today = new Date()
+    const yesterday = subDays(today, 1)
+    this.handleNewDates(yesterday, today)
   }
 }
 </script>
@@ -92,6 +136,6 @@ export default {
   position: fixed;
   right: 70px;
   left: 315px;
-  margin-left: 10px;
+  margin-left: 40px;
 }
 </style>

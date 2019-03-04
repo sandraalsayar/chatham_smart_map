@@ -18,8 +18,14 @@ export default {
       this.isPlaying = !this.isPlaying;
       eventBus.$emit("toggle-timelapse", this.isPlaying);
     }
+  },
+
+  created() {
+    eventBus.$on("dates-selected", () => {
+      this.isPlaying = false // pause the button (the bar has already been paused in TimeLapseBar)
+    });
   }
-};
+}
 </script>
 <style scoped>
 .v-btn {
