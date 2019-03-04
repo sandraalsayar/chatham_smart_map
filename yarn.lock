@@ -4372,6 +4372,11 @@ hex-color-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
   integrity sha512-l9sfDFsuqtOqKDsQdqrMRk0U85RZc0RtOR9yPI7mRVOa4FsR/BVnZ0shmQRM96Ji99kYZP/7hn1cedc1+ApsTQ==
 
+highcharts-vue@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/highcharts-vue/-/highcharts-vue-1.2.0.tgz#13ec436eae14fb1ec361033fce9ca66f0a9fbb12"
+  integrity sha512-S44yU56BcN6hOJk2PFXGokaG2HYeMS3fr/Gq8i+0Wf6tUY9Mak/c3WOkKvnQIEC8pO2HoU2gPZXPN2SMmWX9qA==
+
 hmac-drbg@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/hmac-drbg/-/hmac-drbg-1.0.1.tgz#d2745701025a6c775a6c545793ed502fc0c649a1"
@@ -9087,6 +9092,11 @@ uuid@^3.0.1, uuid@^3.3.2:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
 
+v-click-outside@^2.0.1:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/v-click-outside/-/v-click-outside-2.0.2.tgz#7312e80ef72b979ff5144a08f36ebab24b5a2f8b"
+  integrity sha512-4dDekJloLi7WbVUM6IC/Gdv8qYaE+a2LY3sLUkzJc2WBf92kL0VPHGCTxVkTzZjHLVdkcjX0haiLXofrhZfHXA==
+
 validate-npm-package-license@^3.0.1:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/validate-npm-package-license/-/validate-npm-package-license-3.0.4.tgz#fc91f6b9c7ba15c857f4cb2c5defeec39d4f410a"
@@ -9120,6 +9130,13 @@ vm-browserify@0.0.4:
   integrity sha1-XX6kW7755Kb/ZflUOOCofDV9WnM=
   dependencies:
     indexof "0.0.1"
+
+vue-airbnb-style-datepicker@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/vue-airbnb-style-datepicker/-/vue-airbnb-style-datepicker-2.4.1.tgz#56225af65d50e3af5bf422c20fc88b17251ce94f"
+  integrity sha512-nST6MVLfeqGTf4eAfdpFi4u3VjLb1zX2b8p6i9ekWY0mBUs1ZRlIEVwiMDIcLM8ELeegNecTuMQzUtghnCKlyQ==
+  dependencies:
+    v-click-outside "^2.0.1"
 
 vue-eslint-parser@^2.0.3:
   version "2.0.3"

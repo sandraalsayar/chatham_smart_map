@@ -6,19 +6,21 @@
       <TheErrorModal :display="mapError" />
       <TheMap />
       <TheConsole v-if="mapLoaded" />
+      <DatePicker v-if="mapLoaded" />
       <TheTimelapse v-if="mapLoaded" />
     </v-app>
   </div>
 </template>
 
 <script>
-import { eventBus } from "./main";
-import TheConsole from "./components/console/TheConsole";
-import TheErrorModal from "./components/TheErrorModal";
-import TheMap from "./components/TheMap";
-import TheProgressCircle from "./components/TheProgressCircle";
-import TheWarningAlert from "./components/TheWarningAlert";
-import TheTimelapse from "./components/timelapse/TheTimelapse"
+import { eventBus } from "@/main";
+import TheConsole from "@/components/console/TheConsole";
+import TheErrorModal from "@/components/TheErrorModal";
+import TheMap from "@/components/TheMap";
+import TheProgressCircle from "@/components/TheProgressCircle";
+import TheWarningAlert from "@/components/TheWarningAlert";
+import DatePicker from "@/components/timelapse/DatePicker.vue";
+import TheTimelapse from "@/components/timelapse/TheTimelapse";
 
 export default {
   name: "app",
@@ -28,6 +30,7 @@ export default {
     TheMap,
     TheProgressCircle,
     TheWarningAlert,
+    DatePicker,
     TheTimelapse
   },
   data() {
@@ -61,6 +64,11 @@ export default {
   font-family: Roboto, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Override this property set by Vuetify */
+p {
+  margin-bottom: 0px;
 }
 
 /* Card popup for sensors */

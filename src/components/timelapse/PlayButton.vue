@@ -6,7 +6,7 @@
       depressed
       @click="toggle"
     >
-      <v-icon 
+      <v-icon
         v-if="isPlaying"
       >pause</v-icon>
       <v-icon
