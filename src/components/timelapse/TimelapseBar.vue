@@ -12,12 +12,11 @@
       :thumb-size="140"
       thumb-label
     >
-      <span slot="thumb-label" slot-scope="help">{{getThumbLabel(sliderVal)}}</span>
-<!--       <template v-slot:thumb-label="props">
+      <template v-slot:thumb-label="props">
         <span>
-          {{ getThumbLabel(props.value) }}
+          {{ getThumbLabel(sliderVal) }}
         </span>
-      </template> -->
+      </template>
     </v-slider>
   </div>
 </template>
@@ -53,9 +52,9 @@ export default {
       }
     },
     getThumbLabel (val) {
-      var date = new Date(this.times[val])
-      var hourLine = format(date, 'h:00 aa')
-      var dateLine = ''
+      const date = new Date(this.times[val])
+      const hourLine = format(date, 'h:00 aa')
+      let dateLine = ''
       if (this.displayYear) {
         dateLine = format(date, ' M/DD/YYYY')
       } else {
@@ -64,14 +63,14 @@ export default {
       return hourLine.concat(dateLine)
     },
     findTimes (earlyDate, lateDate) { //takes two dates and returns an array of ISO date strings
-      var daysDifference = differenceInDays(lateDate, earlyDate)
-      var viableDayFractions = [1, 2, 3, 4, 6, 12]
-      for (var i = 0; i < viableDayFractions.length; i++){ //splitting days into numbers of hours
-        var dayFraction = viableDayFractions[i]
-        for (var j = 12; j < 24; j++){ //slitting timelapse bar itself into fractions
+      const daysDifference = differenceInDays(lateDate, earlyDate)
+      const viableDayFractions = [1, 2, 3, 4, 6, 12]
+      for (let i = 0; i < viableDayFractions.length; i++){ //splitting days into numbers of hours
+        let dayFraction = viableDayFractions[i]
+        for (let j = 12; j < 24; j++){ //slitting timelapse bar itself into fractions
           if((daysDifference * dayFraction) % j == 0){
-            var workingDate = earlyDate
-            var timeArray = []
+            let workingDate = earlyDate
+            let timeArray = []
             for (var k = 0; k <= j; k++) { //populate array of date strings
               timeArray[k] = workingDate.toISOString()
               workingDate = addHours(workingDate, daysDifference/j * 24)
@@ -80,6 +79,20 @@ export default {
           }
         }
       }
+    },
+    generateNewLabels (earlyDate, lateDate) {
+      let newLabels = []
+      if (isToday(lateDate)) {
+        newLabels[0] = distanceInWordsToNow(earlyDate, {addSuffix: true})
+        newLabels[this.maxVal] = "Present"
+      } else if (this.displayYear) {
+        newLabels[0] = format(earlyDate, 'MMMM Do, YYYY')
+        newLabels[this.maxVal] = format(lateDate, 'MMMM Do, YYYY')
+      } else {
+        newLabels[0] = format(earlyDate, 'MMMM Do')
+        newLabels[this.maxVal] = format(lateDate, 'MMMM Do')
+      }
+      return newLabels
     },
     handleNewDates (earlyDate, lateDate) { //whenever the timelapse date range changes, this is called
       this.times = this.findTimes(earlyDate, lateDate) //grab array of dates for the timelapse
@@ -92,18 +105,7 @@ export default {
       } else {
         this.displayYear = false
       }
-      var newLabels = [] //create new beginning and end labels for the bar
-      if (isToday(lateDate)) {
-        newLabels[0] = distanceInWordsToNow(earlyDate).concat(" ago")
-        newLabels[this.maxVal] = "Present"
-      } else if (this.displayYear) {
-        newLabels[0] = format(earlyDate, 'MMMM Do, YYYY')
-        newLabels[this.maxVal] = format(lateDate, 'MMMM Do, YYYY')
-      } else {
-        newLabels[0] = format(earlyDate, 'MMMM Do')
-        newLabels[this.maxVal] = format(lateDate, 'MMMM Do')
-      }
-      this.ticksLabels = newLabels
+      this.ticksLabels = this.generateNewLabels(earlyDate, lateDate) //create new beginning and end labels for the bar
     }
   },
   watch: {
@@ -129,8 +131,8 @@ export default {
     }
     see similar block in handleNewDates above and in created() in the PlayButton component
     */
-    var today = new Date()
-    var yesterday = subDays(today, 1)
+    const today = new Date()
+    const yesterday = subDays(today, 1)
     this.handleNewDates(yesterday, today)
   }
 }
