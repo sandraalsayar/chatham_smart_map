@@ -21,15 +21,11 @@ export default {
   },
 
   created() {
-    /*
-    create new listener here
-    ex:
-    eventBus.$on("newDatesForTimelapse", () => {
+    eventBus.$on("dates-selected", () => {
       this.isPlaying = false // pause the button (the bar has already been paused in TimeLapseBar)
-    }
-    */
+    });
   }
-};
+}
 </script>
 <style scoped>
 .v-btn {

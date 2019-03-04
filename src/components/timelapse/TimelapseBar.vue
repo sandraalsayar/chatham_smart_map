@@ -96,9 +96,7 @@ export default {
     },
     handleNewDates (earlyDate, lateDate) { //whenever the timelapse date range changes, this is called
       this.times = this.findTimes(earlyDate, lateDate) //grab array of dates for the timelapse
-      /*
-        add new eventBus emitter here to broadcast this.times
-      */
+      eventBus.$emit("new-timelapse", this.times) // emit the new timelapse intervals to other components
       this.maxVal = this.times.length - 1 //set maxVal for the bar
       if (earlyDate.getFullYear() != lateDate.getFullYear()) { //determine whether or not the year should be displayed
         this.displayYear = true
@@ -121,16 +119,11 @@ export default {
         clearInterval(this.interval)
       }
     })
-    /*
-    create new listener here
-    ex:
-    eventBus.$on("newDatesForTimelapse", (earlyDateString, lateDateString) => {
+    eventBus.$on("dates-selected", (earlyDateString, lateDateString) => {
       this.handleNewDates(new Date(earlyDateString), new Date(lateDateString))
       clearInterval(this.interval) // stop pulse
       this.sliderVal = 0 // reset slider
-    }
-    see similar block in handleNewDates above and in created() in the PlayButton component
-    */
+    });
     const today = new Date()
     const yesterday = subDays(today, 1)
     this.handleNewDates(yesterday, today)
@@ -143,6 +136,6 @@ export default {
   position: fixed;
   right: 70px;
   left: 315px;
-  margin-left: 10px;
+  margin-left: 40px;
 }
 </style>

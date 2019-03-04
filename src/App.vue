@@ -18,7 +18,6 @@ import TheErrorModal from "@/components/TheErrorModal";
 import TheMap from "@/components/TheMap";
 import TheProgressCircle from "@/components/TheProgressCircle";
 import TheWarningAlert from "@/components/TheWarningAlert";
-import DatePicker from "@/components/timelapse/DatePicker.vue";
 import TheTimelapse from "@/components/timelapse/TheTimelapse";
 
 export default {
