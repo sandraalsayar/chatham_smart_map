@@ -29,6 +29,16 @@ export default {
       this.isPlaying = !this.isPlaying
       eventBus.$emit("toggle-timelapse", this.isPlaying)
     }
+  },
+
+  created() {
+    /*
+    create new listener here
+    ex:
+    eventBus.$on("newDatesForTimelapse", () => {
+      this.isPlaying = false // pause the button (the bar has already been paused in TimeLapseBar)
+    }
+    */
   }
 }
 </script>
