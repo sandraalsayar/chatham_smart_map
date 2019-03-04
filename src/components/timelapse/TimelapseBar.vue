@@ -141,12 +141,8 @@ export default {
 <style scoped>
 #bar {
   position: fixed;
-  bottom: 84px;
-  right: 60px;
-  left: 310px;
-  height: 0px;
-  margin: 10px;
-  border-radius: 3px;
-  z-index: 0;
+  right: 70px;
+  left: 315px;
+  margin-left: 10px;
 }
 </style>
