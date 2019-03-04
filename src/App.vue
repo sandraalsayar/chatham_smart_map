@@ -6,7 +6,6 @@
       <TheErrorModal :display="mapError" />
       <TheMap />
       <TheConsole v-if="mapLoaded" />
-      <DatePicker v-if="mapLoaded" />
       <TheTimelapse v-if="mapLoaded" />
     </v-app>
   </div>
@@ -30,7 +29,6 @@ export default {
     TheMap,
     TheProgressCircle,
     TheWarningAlert,
-    DatePicker,
     TheTimelapse
   },
   data() {

@@ -6,7 +6,7 @@
         id="datepicker-trigger"
         placeholder="Select dates"
         :value="formatDates(dateOne, dateTwo)"
-      >
+      />
 
       <AirbnbStyleDatepicker
         :offset-y="-270"
@@ -15,43 +15,43 @@
         :fullscreen-mobile="true"
         :date-one="dateOne"
         :date-two="dateTwo"
-        @date-one-selected="val => { dateOne = val }"
-        @date-two-selected="val => { dateTwo = val }"
+        @date-one-selected="
+          val => {
+            dateOne = val;
+          }
+        "
+        @date-two-selected="
+          val => {
+            dateTwo = val;
+          }
+        "
       />
     </div>
   </div>
 </template>
 
 <script>
-import format from 'date-fns/format'
+import format from "date-fns/format";
 
 export default {
   data() {
     return {
-      dateFormat: 'D MMM',
-      dateOne: '',
-      dateTwo: ''
-    }
+      dateFormat: "D MMM",
+      dateOne: "",
+      dateTwo: ""
+    };
   },
   methods: {
     formatDates(dateOne, dateTwo) {
-      let formattedDates = ''
+      let formattedDates = "";
       if (dateOne) {
-        formattedDates = format(dateOne, this.dateFormat)
+        formattedDates = format(dateOne, this.dateFormat);
       }
       if (dateTwo) {
-        formattedDates += ' - ' + format(dateTwo, this.dateFormat)
+        formattedDates += " - " + format(dateTwo, this.dateFormat);
       }
-      return formattedDates
+      return formattedDates;
     }
   }
-}
+};
 </script>
-
-<style scoped>
- .datepicker-trigger {
-    position: fixed;
-    margin: 600px 0 0 90px;
-    z-index: 1;
- }
-</style>
