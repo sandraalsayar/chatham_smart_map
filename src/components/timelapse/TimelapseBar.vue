@@ -35,7 +35,7 @@ import {
 export default {
   data () {
     return {
-      sliderVal: 0,
+      sliderVal: 12,
       times: [],
       ticksLabels: [],
       maxVal: 12,
@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     advanceTimelapse () {
-      if (this.sliderVal == 12) {
+      if (this.sliderVal == this.maxVal) {
         this.sliderVal = 0
       } else {
         this.sliderVal++
@@ -119,8 +119,8 @@ export default {
         clearInterval(this.interval)
       }
     })
-    eventBus.$on("dates-selected", (earlyDateString, lateDateString) => {
-      this.handleNewDates(new Date(earlyDateString), new Date(lateDateString))
+    eventBus.$on("dates-selected", (earlyDate, lateDate) => {
+      this.handleNewDates(earlyDate, lateDate)
       clearInterval(this.interval) // stop pulse
       this.sliderVal = 0 // reset slider
     });

@@ -37,7 +37,8 @@ import {
   format,
   addMinutes,
   isToday,
-  differenceInMinutes
+  differenceInMinutes,
+  subDays
   } from "date-fns";
 
 export default {
@@ -69,8 +70,14 @@ export default {
         earlyDate = addMinutes(earlyDate, minutesOffset)
         lateDate = addMinutes(lateDate,minutesOffset)
       }
-      eventBus.$emit("dates-selected", earlyDate.toISOString(), lateDate.toISOString())
+      eventBus.$emit("dates-selected", earlyDate, lateDate)
     }
+  },
+  created() {
+    const today = new Date()
+    const yesterday = subDays(today, 1)
+    this.dateTwo = format(today, "YYYY-MM-DD")
+    this.dateOne = format(yesterday, "YYYY-MM-DD")
   }
 };
 </script>
