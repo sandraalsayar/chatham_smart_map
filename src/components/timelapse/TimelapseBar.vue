@@ -9,8 +9,7 @@
       tick-size="3"
       color='teal'
       always-dirty
-      :thumb-size="140"
-      thumb-label
+      :thumb-label="thumbLabel"
     >
       <template v-slot:thumb-label="props">
         <span>
@@ -40,7 +39,8 @@ export default {
       ticksLabels: [],
       maxVal: 12,
       interval: null,
-      displayYear: false
+      displayYear: false,
+      thumbLabel: true
     }
   },
   methods: {
@@ -51,23 +51,18 @@ export default {
         this.sliderVal++
       }
     },
-    getThumbLabel (val) {
-      const date = new Date(this.times[val])
-      const hourLine = format(date, 'h:00 aa')
-      let dateLine = ''
-      if (this.displayYear) {
-        dateLine = format(date, ' M/DD/YYYY')
-      } else {
-        dateLine = format(date, ' MMMM Do')
-      }
-      return hourLine.concat(dateLine)
+    getThumbLabel(val) {
+      const date = new Date(this.times[val]);
+      return format(
+        date,
+        this.displayYear ? "h:00 aa M/DD/YYYY" : "h:00 aa MMMM Do"
+      );
     },
     findTimes (earlyDate, lateDate) { //takes two dates and returns an array of ISO date strings
       const daysDifference = differenceInDays(lateDate, earlyDate)
       const viableDayFractions = [1, 2, 3, 4, 6, 12]
-      for (let i = 0; i < viableDayFractions.length; i++){ //splitting days into numbers of hours
-        let dayFraction = viableDayFractions[i]
-        for (let j = 12; j < 24; j++){ //slitting timelapse bar itself into fractions
+      for (let dayFraction of viableDayFractions){ //splitting days into numbers of hours
+        for (let j = 12; j < 24; j++){ //splitting timelapse bar itself into fractions
           if((daysDifference * dayFraction) % j == 0){
             let workingDate = earlyDate
             let timeArray = []
@@ -98,11 +93,7 @@ export default {
       this.times = this.findTimes(earlyDate, lateDate) //grab array of dates for the timelapse
       eventBus.$emit("new-timelapse", this.times) // emit the new timelapse intervals to other components
       this.maxVal = this.times.length - 1 //set maxVal for the bar
-      if (earlyDate.getFullYear() != lateDate.getFullYear()) { //determine whether or not the year should be displayed
-        this.displayYear = true
-      } else {
-        this.displayYear = false
-      }
+      this.displayYear = earlyDate.getFullYear() !== lateDate.getFullYear(); //determine whether or not the year should be displayed
       this.ticksLabels = this.generateNewLabels(earlyDate, lateDate) //create new beginning and end labels for the bar
     }
   },
@@ -115,27 +106,36 @@ export default {
     eventBus.$on("toggle-timelapse", (isPlaying) => {
       if(isPlaying) {
         this.interval = setInterval(this.advanceTimelapse, 1000)
+        this.thumbLabel = "always";
       } else {
         clearInterval(this.interval)
+        this.thumbLabel = true;
       }
     })
     eventBus.$on("dates-selected", (earlyDateString, lateDateString) => {
       this.handleNewDates(new Date(earlyDateString), new Date(lateDateString))
       clearInterval(this.interval) // stop pulse
+      this.thumbLabel = true;
       this.sliderVal = 0 // reset slider
     });
     const today = new Date()
     const yesterday = subDays(today, 1)
     this.handleNewDates(yesterday, today)
+  },
+  mounted: function() {
+    // Create an arrow below the v-slider thumb-label
+    const node = document.createElement("div");
+    node.className = "arrow-down";
+    document
+      .getElementsByClassName("v-slider__thumb-label__container")[0]
+      .appendChild(node);
   }
-}
+};
 </script>
 
 <style scoped>
 #bar {
-  position: fixed;
-  right: 70px;
-  left: 315px;
-  margin-left: 40px;
+  margin-left: 30px;
+  flex-grow: 1;
 }
 </style>
