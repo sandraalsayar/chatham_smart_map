@@ -30,11 +30,15 @@ import {
   isToday,
   distanceInWordsToNow
 } from "date-fns";
+import {
+  today,
+  startDate
+} from "@/helpers/constants"
 
 export default {
   data () {
     return {
-      sliderVal: 0,
+      sliderVal: 12,
       times: [],
       ticksLabels: [],
       maxVal: 12,
@@ -45,7 +49,7 @@ export default {
   },
   methods: {
     advanceTimelapse () {
-      if (this.sliderVal == 12) {
+      if (this.sliderVal === this.maxVal) {
         this.sliderVal = 0
       } else {
         this.sliderVal++
@@ -63,7 +67,7 @@ export default {
       const viableDayFractions = [1, 2, 3, 4, 6, 12]
       for (let dayFraction of viableDayFractions){ //splitting days into numbers of hours
         for (let j = 12; j < 24; j++){ //splitting timelapse bar itself into fractions
-          if((daysDifference * dayFraction) % j == 0){
+          if((daysDifference * dayFraction) % j === 0){
             let workingDate = earlyDate
             let timeArray = []
             for (var k = 0; k <= j; k++) { //populate array of date strings
@@ -112,15 +116,13 @@ export default {
         this.thumbLabel = true;
       }
     })
-    eventBus.$on("dates-selected", (earlyDateString, lateDateString) => {
-      this.handleNewDates(new Date(earlyDateString), new Date(lateDateString))
+    eventBus.$on("dates-selected", (earlyDate, lateDate) => {
+      this.handleNewDates(earlyDate, lateDate)
       clearInterval(this.interval) // stop pulse
       this.thumbLabel = true;
       this.sliderVal = 0 // reset slider
     });
-    const today = new Date()
-    const yesterday = subDays(today, 1)
-    this.handleNewDates(yesterday, today)
+    this.handleNewDates(startDate, today)
   },
   mounted: function() {
     // Create an arrow below the v-slider thumb-label
@@ -129,7 +131,7 @@ export default {
     document
       .getElementsByClassName("v-slider__thumb-label__container")[0]
       .appendChild(node);
-  }
+   }
 };
 </script>
 
