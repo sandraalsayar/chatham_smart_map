@@ -40,6 +40,10 @@ import {
   differenceInMinutes,
   subDays
   } from "date-fns";
+import {
+  today,
+  startDate
+} from "@/helpers/constants"
 
 export default {
   data() {
@@ -74,10 +78,8 @@ export default {
     }
   },
   created() {
-    const today = new Date()
-    const yesterday = subDays(today, 1)
     this.dateTwo = format(today, "YYYY-MM-DD")
-    this.dateOne = format(yesterday, "YYYY-MM-DD")
+    this.dateOne = format(startDate, "YYYY-MM-DD")
   }
 };
 </script>

@@ -31,6 +31,10 @@ import {
   isToday,
   distanceInWordsToNow
 } from "date-fns";
+import {
+  today,
+  startDate
+} from "@/helpers/constants"
 
 export default {
   data () {
@@ -124,9 +128,7 @@ export default {
       clearInterval(this.interval) // stop pulse
       this.sliderVal = 0 // reset slider
     });
-    const today = new Date()
-    const yesterday = subDays(today, 1)
-    this.handleNewDates(yesterday, today)
+    this.handleNewDates(startDate, today)
   }
 }
 </script>
