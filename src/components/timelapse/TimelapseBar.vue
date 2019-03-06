@@ -31,11 +31,15 @@ import {
   isToday,
   distanceInWordsToNow
 } from "date-fns";
+import {
+  today,
+  startDate
+} from "@/helpers/constants"
 
 export default {
   data () {
     return {
-      sliderVal: 0,
+      sliderVal: 12,
       times: [],
       ticksLabels: [],
       maxVal: 12,
@@ -45,7 +49,7 @@ export default {
   },
   methods: {
     advanceTimelapse () {
-      if (this.sliderVal == 12) {
+      if (this.sliderVal === this.maxVal) {
         this.sliderVal = 0
       } else {
         this.sliderVal++
@@ -68,7 +72,7 @@ export default {
       for (let i = 0; i < viableDayFractions.length; i++){ //splitting days into numbers of hours
         let dayFraction = viableDayFractions[i]
         for (let j = 12; j < 24; j++){ //slitting timelapse bar itself into fractions
-          if((daysDifference * dayFraction) % j == 0){
+          if((daysDifference * dayFraction) % j === 0){
             let workingDate = earlyDate
             let timeArray = []
             for (var k = 0; k <= j; k++) { //populate array of date strings
@@ -98,7 +102,7 @@ export default {
       this.times = this.findTimes(earlyDate, lateDate) //grab array of dates for the timelapse
       eventBus.$emit("new-timelapse", this.times) // emit the new timelapse intervals to other components
       this.maxVal = this.times.length - 1 //set maxVal for the bar
-      if (earlyDate.getFullYear() != lateDate.getFullYear()) { //determine whether or not the year should be displayed
+      if (earlyDate.getFullYear() !== lateDate.getFullYear()) { //determine whether or not the year should be displayed
         this.displayYear = true
       } else {
         this.displayYear = false
@@ -119,14 +123,12 @@ export default {
         clearInterval(this.interval)
       }
     })
-    eventBus.$on("dates-selected", (earlyDateString, lateDateString) => {
-      this.handleNewDates(new Date(earlyDateString), new Date(lateDateString))
+    eventBus.$on("dates-selected", (earlyDate, lateDate) => {
+      this.handleNewDates(earlyDate, lateDate)
       clearInterval(this.interval) // stop pulse
       this.sliderVal = 0 // reset slider
     });
-    const today = new Date()
-    const yesterday = subDays(today, 1)
-    this.handleNewDates(yesterday, today)
+    this.handleNewDates(startDate, today)
   }
 }
 </script>

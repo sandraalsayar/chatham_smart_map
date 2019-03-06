@@ -37,8 +37,13 @@ import {
   format,
   addMinutes,
   isToday,
-  differenceInMinutes
+  differenceInMinutes,
+  subDays
   } from "date-fns";
+import {
+  today,
+  startDate
+} from "@/helpers/constants"
 
 export default {
   data() {
@@ -69,8 +74,12 @@ export default {
         earlyDate = addMinutes(earlyDate, minutesOffset)
         lateDate = addMinutes(lateDate,minutesOffset)
       }
-      eventBus.$emit("dates-selected", earlyDate.toISOString(), lateDate.toISOString())
+      eventBus.$emit("dates-selected", earlyDate, lateDate)
     }
+  },
+  created() {
+    this.dateTwo = format(today, "YYYY-MM-DD")
+    this.dateOne = format(startDate, "YYYY-MM-DD")
   }
 };
 </script>
