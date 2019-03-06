@@ -33,17 +33,8 @@
 
 <script>
 import { eventBus } from "@/main";
-import { 
-  format,
-  addMinutes,
-  isToday,
-  differenceInMinutes,
-  subDays
-  } from "date-fns";
-import {
-  today,
-  startDate
-} from "@/helpers/constants"
+import { format, addMinutes, isToday, differenceInMinutes } from "date-fns";
+import { today, startDate } from "@/helpers/constants";
 
 export default {
   data() {
@@ -65,21 +56,22 @@ export default {
       return formattedDates;
     },
     onApply() {
-      let earlyDate = new Date(this.dateOne)
-      let lateDate = new Date(this.dateTwo)
-      earlyDate = addMinutes(earlyDate, earlyDate.getTimezoneOffset()) // adjust date to user timezone
-      lateDate = addMinutes(lateDate, lateDate.getTimezoneOffset())
-      if (isToday(lateDate)) { // if the latter date is today, make the time match current time
-        const minutesOffset = differenceInMinutes(new Date(), lateDate)
-        earlyDate = addMinutes(earlyDate, minutesOffset)
-        lateDate = addMinutes(lateDate,minutesOffset)
+      let earlyDate = new Date(this.dateOne);
+      let lateDate = new Date(this.dateTwo);
+      earlyDate = addMinutes(earlyDate, earlyDate.getTimezoneOffset()); // adjust date to user timezone
+      lateDate = addMinutes(lateDate, lateDate.getTimezoneOffset());
+      if (isToday(lateDate)) {
+        // if the latter date is today, make the time match current time
+        const minutesOffset = differenceInMinutes(new Date(), lateDate);
+        earlyDate = addMinutes(earlyDate, minutesOffset);
+        lateDate = addMinutes(lateDate, minutesOffset);
       }
-      eventBus.$emit("dates-selected", earlyDate, lateDate)
+      eventBus.$emit("dates-selected", earlyDate, lateDate);
     }
   },
   created() {
-    this.dateTwo = format(today, "YYYY-MM-DD")
-    this.dateOne = format(startDate, "YYYY-MM-DD")
+    this.dateTwo = format(today, "YYYY-MM-DD");
+    this.dateOne = format(startDate, "YYYY-MM-DD");
   }
 };
 </script>

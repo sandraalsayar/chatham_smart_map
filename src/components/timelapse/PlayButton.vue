@@ -22,10 +22,10 @@ export default {
 
   created() {
     eventBus.$on("dates-selected", () => {
-      this.isPlaying = false // pause the button (the bar has already been paused in TimeLapseBar)
+      this.isPlaying = false; // pause the button (the bar has already been paused in TimeLapseBar)
     });
   }
-}
+};
 </script>
 <style scoped>
 .v-btn {
