@@ -33,7 +33,7 @@
 
 <script>
 import { eventBus } from "@/main";
-import { 
+import {
   format,
   addMinutes,
   isToday,
@@ -74,3 +74,34 @@ export default {
   }
 };
 </script>
+
+<style>
+#event-icon {
+  display: inline-block;
+}
+input {
+    padding: 6px 10px;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+/*    -webkit-writing-mode: horizontal-tb !important;*/
+    text-rendering: auto;
+    color: initial;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    display: inline-block;
+    background: #fff;
+    font-style: normal;
+    font-variant-ligatures: normal;
+    font-variant-caps: normal;
+    font-variant-numeric: normal;
+    font-variant-east-asian: normal;
+    font-weight: 400;
+    font-stretch: normal;
+    font-size: 12px;
+    line-height: normal;
+    font-family: system-ui;
+}
+
+</style>
