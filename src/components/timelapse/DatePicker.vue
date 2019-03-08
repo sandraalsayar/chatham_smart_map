@@ -1,9 +1,11 @@
 <template>
   <div>
     <div class="datepicker-trigger">
+      <v-icon id="event-icon" large color="teal">event</v-icon>
       <input
         type="text"
         id="datepicker-trigger"
+        prepend-inner-icon="event"
         placeholder="Select dates"
         :value="formatDates(dateOne, dateTwo)"
       />
@@ -78,27 +80,19 @@ export default {
 <style>
 #event-icon {
   display: inline-block;
+
 }
 input {
-    padding: 6px 10px;
+    margin-right: 15px;
+    margin-left: 15px;
+    padding: 9px 8px;
     border: 1px solid rgba(0, 0, 0, 0.2);
-/*    -webkit-writing-mode: horizontal-tb !important;*/
     text-rendering: auto;
     color: initial;
-    letter-spacing: normal;
-    word-spacing: normal;
-    text-transform: none;
     text-indent: 0px;
-    text-shadow: none;
     display: inline-block;
     background: #fff;
-    font-style: normal;
-    font-variant-ligatures: normal;
-    font-variant-caps: normal;
-    font-variant-numeric: normal;
-    font-variant-east-asian: normal;
     font-weight: 400;
-    font-stretch: normal;
     font-size: 12px;
     line-height: normal;
     font-family: system-ui;

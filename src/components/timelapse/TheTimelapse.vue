@@ -24,7 +24,7 @@ export default {
 #timelapse {
   position: absolute;
   bottom: 32px;
-  left: 85px;
+  left: 50px;
 }
 
 #timelapse > * {
