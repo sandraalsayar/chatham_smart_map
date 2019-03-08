@@ -22,15 +22,17 @@ export default {
 
   created() {
     eventBus.$on("dates-selected", () => {
-      this.isPlaying = false // pause the button (the bar has already been paused in TimeLapseBar)
+      this.isPlaying = false; // pause the button (the bar has already been paused in TimeLapseBar)
     });
   }
-}
+};
 </script>
 <style scoped>
 .v-btn {
   min-width: 0px; /* had to override some properties of v-btn to make it square */
-  min-height: 50px;
+  height: 40px;
+  width: 40px;
   border-radius: 3px;
+  padding: 0px;
 }
 </style>

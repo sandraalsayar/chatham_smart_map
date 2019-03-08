@@ -23,8 +23,11 @@ export default {
 <style scoped>
 #timelapse {
   position: absolute;
-  bottom: 32px;
-  left: 50px;
+  display: flex;
+  bottom: 20px;
+  left: 85px;
+  right: 80px;
+  align-items: center;
 }
 
 #timelapse > * {

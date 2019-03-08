@@ -34,15 +34,17 @@ export default {
 }
 
 .scroll {
-  max-height: 265px;
+  max-height: 325px;
   overflow-y: scroll;
 }
 
 h2 {
-  margin: 5px;
-  margin-left: 0.7em;
+  /*margin: 5px;*/
+  margin-top: 10px;
+  margin-left: 15px;
   margin-right: 0.7em;
-  font-size: 14px;
-  line-height: 20px;
+  margin-bottom: 0px;
+  font-size: 16px;
+  line-height: 18px;
 }
 </style>

@@ -77,6 +77,7 @@ p {
 .mapboxgl-popup-anchor-bottom {
   top: -12px;
 }
+
 .mapboxgl-popup-anchor-top {
   top: 12px;
 }
@@ -84,6 +85,29 @@ p {
 /* Override default CSS for search box */
 .mapboxgl-ctrl-top-left .mapboxgl-ctrl {
   margin: 20px 0 0 18px;
-  width: 270px;
+  width: 309px;
+}
+
+/* Override default CSS for slider's thumb label */
+.v-slider__thumb-label {
+  transform: translate(-70px, -16px);
+  border-radius: 20px;
+  z-index: 2;
+  width: 145px !important;
+}
+
+/* Override default CSS for the span element containing the thumb label text */
+.v-slider__thumb-label > span {
+  transform: none;
+}
+
+/* CSS for the downward arrow located at the bottom of the thumb label */
+.arrow-down {
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  transform: translate(-5px, -16px);
+  border-top: 5px solid #009688;
 }
 </style>
