@@ -16,13 +16,16 @@ import { eventBus } from "../main";
 import Mapbox from "mapbox-gl-vue";
 
 import {
-  onSensorInteraction,
-  addGeocoder,
-  addSensorLayer,
   getSensorData,
   parseSensorData,
   sensorGeocoder
-} from "./../helpers/helper";
+} from "@/helpers/helper";
+
+import {
+  onSensorInteraction,
+  addGeocoder,
+  addSensorLayer
+} from "@/helpers/map-helper";
 
 export default {
   components: {

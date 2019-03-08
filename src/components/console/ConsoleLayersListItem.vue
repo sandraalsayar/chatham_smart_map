@@ -24,7 +24,7 @@ export default {
 
 <style scoped>
 li {
-  padding-bottom: 8px;
+  padding-bottom: 5px;
   cursor: pointer;
 }
 
@@ -38,14 +38,14 @@ li > div {
 }
 
 h2 {
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 16px;
+  line-height: 18px;
   margin: 1.4px;
 }
 
 small {
-  font-size: 12px;
-  line-height: 16px;
+  font-size: 14px;
+  line-height: 18px;
   color: #a9a9a9;
 }
 </style>
