@@ -21,7 +21,7 @@ export default {
         {
           id: 1,
           html: `<div class="label" id="sensor"></div>
-      <p class="label">Sea-level sensors</p>`,
+      <p class="label" style="font-size:16px">Sea-level sensors</p>`,
           displayed: true
         },
         {
@@ -50,7 +50,7 @@ export default {
 <style scoped>
 .legend_row {
   margin: 5px;
-  margin-left: 0.7em;
+  margin-left: 15px;
   margin-right: 0.7em;
 }
 

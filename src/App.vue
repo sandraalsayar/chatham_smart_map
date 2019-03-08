@@ -85,7 +85,7 @@ p {
 /* Override default CSS for search box */
 .mapboxgl-ctrl-top-left .mapboxgl-ctrl {
   margin: 20px 0 0 18px;
-  width: 270px;
+  width: 309px;
 }
 
 /* Override default CSS for slider's thumb label */

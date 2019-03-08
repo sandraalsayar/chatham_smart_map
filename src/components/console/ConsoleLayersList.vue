@@ -54,7 +54,7 @@ export default {
 <style scoped>
 ul {
   list-style: none;
-  padding-left: 5px;
+  padding-left: 15px;
   margin-top: 14px;
   margin-bottom: 14px;
 }
