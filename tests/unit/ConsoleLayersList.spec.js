@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
-import ConsoleLayersList from "@/components/ConsoleLayersList.vue";
-import ConsoleLayersListItem from "@/components/ConsoleLayersListItem.vue";
+import ConsoleLayersList from "@/components/console/ConsoleLayersList.vue";
+import ConsoleLayersListItem from "@/components/console/ConsoleLayersListItem.vue";
 
 describe("ConsoleLayersList.vue", () => {
   const wrapper = mount(ConsoleLayersList);

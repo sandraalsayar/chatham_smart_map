@@ -4,17 +4,34 @@
     <ConsoleLayersList />
     <div style="height: 6px;"></div>
     <ConsoleLegend />
+    <div style="height: 6px;"></div>
+    <InformationCard :sensor="infoCardSensor" v-if="infoCardVisible" />
   </div>
 </template>
 
 <script>
+import { eventBus } from "@/main";
 import ConsoleLayersList from "./ConsoleLayersList";
 import ConsoleLegend from "./ConsoleLegend";
+import InformationCard from "./InformationCard";
 
 export default {
   components: {
     ConsoleLayersList,
-    ConsoleLegend
+    ConsoleLegend,
+    InformationCard
+  },
+  data() {
+    return {
+      infoCardVisible: false,
+      infoCardSensor: undefined
+    };
+  },
+  created() {
+    eventBus.$on("sensor-clicked", (selected, sensor) => {
+      this.infoCardSensor = sensor;
+      this.infoCardVisible = selected;
+    });
   }
 };
 </script>
@@ -22,7 +39,7 @@ export default {
 <style scoped>
 #console {
   position: absolute;
-  width: 286px;
+  width: 325px;
   margin: 10px;
   padding: 8px 8px;
   background-color: rgb(225, 225, 225);

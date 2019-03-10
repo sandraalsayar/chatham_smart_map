@@ -1,117 +1,52 @@
 import axios from "axios";
 import encodeUrl from "encodeurl";
+import Sensor from "./sensor";
 import stringSimilarity from "string-similarity";
 
-const addGeocoder = (map, accessToken) => {
-  const geocoder = new MapboxGeocoder({ accessToken, trackProximity: true });
-  map.addControl(geocoder, "top-left");
+let sensors = new Map();
 
-  let marker;
-  geocoder.on("result", function(ev) {
-    if (marker) {
-      marker.remove();
-    }
-    marker = new mapboxgl.Marker({
-      color: "crimson"
-    })
-      .setLngLat(ev.result.geometry.coordinates)
-      .addTo(map);
-  });
-  geocoder.on("clear", () => {
-    if (marker) {
-      marker.remove();
-    }
-  });
+const geocoderMatches = query => {
+  const temp = query.toLowerCase();
+  return temp
+    .split(" ")
+    .some(el => stringSimilarity.compareTwoStrings(el, "sensor") > 0.65);
 };
 
 const sensorGeocoder = (query, sensorGeoJSON) => {
-  const temp = query.toLowerCase();
-  const matches = temp.includes("sensor");
+  const matches = geocoderMatches(query);
   if (!matches) {
     return null;
   }
   return sensorGeoJSON.sort(
     (el1, el2) =>
-      stringSimilarity.compareTwoStrings(temp, el2.properties.description) -
-      stringSimilarity.compareTwoStrings(temp, el1.properties.description)
+      stringSimilarity.compareTwoStrings(query, el2.properties.description) -
+      stringSimilarity.compareTwoStrings(query, el1.properties.description)
   );
 };
-
-// Follows Carmen GeoJSON format:
-const createGeoJSON = (location, description, readingData) => ({
-  type: "Feature",
-  geometry: {
-    type: "Point",
-    coordinates: location.location.coordinates
-  },
-  properties: {
-    locationName: location.name,
-    description,
-    reading: readingData[0].result,
-    readingTime: readingData[0].resultTime
-  },
-  place_name: `${location.name} Sensor, Chatham, GA`,
-  place_type: ["place"],
-  center: location.location.coordinates
-});
 
 const parseSensorData = responses =>
   responses.map(el => {
     const location = el.data.Locations[0];
-    let readingData = el.data.Datastreams[0].Observations;
+    const coordinates = location.location.coordinates;
+    const name = location.name;
 
-    if (readingData.length === 0) {
-      readingData = [{
-        resultTime: "N/A",
-        result: "No reading"
-      }];
-    }
-    
-    return createGeoJSON(
-      location,
-      el.data.description.toLowerCase(),
-      readingData
-    );
+    const description = el.data.description.toLowerCase();
+    const observation = el.data.Datastreams[0].Observations[0];
+    const id = el.data["@iot.id"];
+
+    const sensor = new Sensor(id, coordinates, name, description, observation);
+    sensors.set(id, sensor);
+
+    return sensor.geoJSON;
   });
 
-const popupHover = (map) => {
-// Create a popup, but don't add it to the map yet.
-  const popup = new mapboxgl.Popup({
-    closeButton: false,
-    closeOnClick: false
-  });
-
-      map.on('mouseenter', 'inner_point', function(e) {
-      // Change the cursor style as a UI indicator.
-        map.getCanvas().style.cursor = 'pointer';
-        const coordinates = e.features[0].geometry.coordinates.slice();
-        const sensorName = e.features[0].properties.locationName;
-        const sensorReading = e.features[0].properties.reading;
-        const sensorReadingTime = e.features[0].properties.readingTime;
-  
-        // Ensure that if the map is zoomed out such that multiple copies of the feature are visible,
-        // the popup appears over the copy being pointed to.
-        while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-          coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        }
-       
-        const html = `
-        <h3 class='no_margin_heading'>${sensorName} Sensor</h3>
-        <div>Reading: ${sensorReading}</div>
-        <div>Time: ${sensorReadingTime}</div>
-        `;
-
-        // Populate the popup and set its coordinates.
-        popup.setLngLat(coordinates)
-        .setHTML(html)
-        .addTo(map);
-      });
-
-        map.on('mouseleave', 'inner_point', function() {
-        map.getCanvas().style.cursor = '';
-        popup.remove();
-      });
-}
+// Assumes that no sensor has an id of -99
+const getPaintProperty = (id = -99) => [
+  "case",
+  ["==", ["id"], id],
+  "#008000",
+  "#007cbf"
+];
 
 const getSensorData = () => {
   // URL to get ids of all Things:
@@ -133,56 +68,11 @@ const getSensorData = () => {
   });
 };
 
-const addAndPulsatePoints = (map, sensorGeoJSON) => {
-  const framesPerSecond = 15;
-  const initialOpacity = 1
-  const initialRadius = 6;
-  const maxRadius = 15;
-  let radius = initialRadius;
-  let opacity = initialOpacity;
-  map.addSource("inner_point", {
-              type: "geojson",
-              data: {
-                type: "FeatureCollection",
-                features: sensorGeoJSON
-              }
-            });
-
-            map.addLayer({
-                id: 'inner_point',
-                source: 'inner_point',
-                type: 'circle',
-                paint: {
-                    'circle-radius': initialRadius,
-                    'circle-radius-transition': {duration: 0},
-                    'circle-opacity-transition': {duration: 0},
-                    'circle-color': '#007cbf'
-                }
-            });
-            map.addLayer({
-                id: 'outer_point',
-                source: 'inner_point',
-                type: 'circle',
-                paint: {
-                    'circle-radius': initialRadius,
-                    'circle-color': '#007cbf'
-                }
-            });
-  function animateMarker() {
-    setTimeout(function(){
-        requestAnimationFrame(animateMarker);
-        radius += (maxRadius - radius) / framesPerSecond;
-        opacity -= ( .9 / framesPerSecond );
-        if (opacity <= 0) {
-            radius = initialRadius;
-            opacity = initialOpacity;
-        }
-        map.setPaintProperty('inner_point', 'circle-radius', radius);
-        map.setPaintProperty('inner_point', 'circle-opacity', opacity);
-    }, 1000 / framesPerSecond);
-  }
-  animateMarker(0);
-
+export {
+  geocoderMatches,
+  getPaintProperty,
+  getSensorData,
+  parseSensorData,
+  sensorGeocoder,
+  sensors
 };
-
-export { addGeocoder, getSensorData, parseSensorData, sensorGeocoder, addAndPulsatePoints, popupHover };
