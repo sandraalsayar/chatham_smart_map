@@ -6,7 +6,9 @@ cache:
     - ~/.cache
 install:
   - yarn install --frozen-lockfile
+before_script:
+  - yarn start & yarn run wait-on http://localhost:3000
 script:
   - yarn test
-  - yarn serve & wait-on http://localhost:8080
-  - yarn run cypress run
+  - yarn run cypress run --record --key 71815344-d092-46ef-8290-e80eeab2ccff
+  - kill $(jobs -p) || true
