@@ -33,8 +33,9 @@ const parseSensorData = responses =>
     const description = el.data.description.toLowerCase();
     const observation = el.data.Datastreams[0].Observations[0];
     const id = el.data["@iot.id"];
+    const absoluteWaterLevel = properties.elevationNAVD88 + relativeWaterLevel;
 
-    const sensor = new Sensor(id, coordinates, name, description, observation);
+    const sensor = new Sensor(id, coordinates, name, description, observation, absoluteWaterLevel);
     sensors.set(id, sensor);
 
     return sensor.geoJSON;
