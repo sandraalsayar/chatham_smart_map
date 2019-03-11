@@ -1,15 +1,15 @@
 <template>
   <div>
     <div class="datepicker-trigger">
-      <v-icon id="event-icon" large color="teal">event</v-icon>
-      <input
-        type="text"
-        id="datepicker-trigger"
-        prepend-inner-icon="event"
-        placeholder="Select dates"
-        :value="formatDates(dateOne, dateTwo)"
-      />
-
+      <div>
+        <img src="../../../public/date_icon.png" id="input_img"/>
+        <input
+          type="text"
+          id="datepicker-trigger"
+          placeholder="Select dates"
+          :value="formatDates(dateOne, dateTwo)"
+        />
+      </div>
       <AirbnbStyleDatepicker
         :offset-y="-270"
         :trigger-element-id="'datepicker-trigger'"
@@ -17,6 +17,7 @@
         :fullscreen-mobile="true"
         :date-one="dateOne"
         :date-two="dateTwo"
+        :end-date="endDate"
         @date-one-selected="
           val => {
             dateOne = val;
@@ -43,7 +44,8 @@ export default {
     return {
       dateFormat: "D MMM",
       dateOne: "",
-      dateTwo: ""
+      dateTwo: "",
+      endDate: format(today, "YYYY-MM-DD")
     };
   },
   methods: {
@@ -74,6 +76,7 @@ export default {
   created() {
     this.dateTwo = format(today, "YYYY-MM-DD");
     this.dateOne = format(startDate, "YYYY-MM-DD");
+
   }
 };
 </script>
@@ -83,14 +86,22 @@ export default {
   display: inline-block;
 
 }
+#input_img {
+    position:absolute;
+    display: inline-block;
+/*    bottom:8px;*/
+    left:18px;
+    width:35px;
+    height:35px;
+}
 input {
     margin-right: 15px;
     margin-left: 15px;
-    padding: 9px 8px;
+    padding: 9px 15px;
     border: 1px solid rgba(0, 0, 0, 0.2);
     text-rendering: auto;
     color: initial;
-    text-indent: 0px;
+    text-indent: 25px;
     display: inline-block;
     background: #fff;
     font-weight: 400;
