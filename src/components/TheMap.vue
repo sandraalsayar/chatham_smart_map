@@ -54,6 +54,9 @@ export default {
   },
   methods: {
     mapLoaded(map) {
+      // Expose the map object to window so that Cypress can use it.
+      window.map = map;
+
       eventBus.$emit("show-console");
       const geocoder = addGeocoder(map, this.accessToken);
 

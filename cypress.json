@@ -4,7 +4,7 @@
 	"integrationFolder": "tests/integration",
 	"pluginsFile": false,
 	"screenshotsFolder": "tests/screenshots",
-	"supportFile": false,
+	"supportFile": "tests/support",
 	"videosFolder": "tests/videos",
 	"projectId": "s1hivv"
 }

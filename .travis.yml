@@ -10,5 +10,5 @@ before_script:
   - yarn start & yarn run wait-on http://localhost:3000
 script:
   - yarn test
-  - yarn run cypress run --record --key 71815344-d092-46ef-8290-e80eeab2ccff
+  - yarn run cypress run --record --key 71815344-d092-46ef-8290-e80eeab2ccff --browser chrome
   - kill $(jobs -p) || true
