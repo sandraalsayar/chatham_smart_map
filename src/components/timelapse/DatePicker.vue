@@ -27,6 +27,7 @@
             dateTwo = val;
           }
         "
+        @opened="onOpen"
         @apply="onApply"
       />
     </div>
@@ -69,6 +70,9 @@ export default {
         lateDate = addMinutes(lateDate, minutesOffset);
       }
       eventBus.$emit("dates-selected", earlyDate, lateDate);
+    },
+    onOpen() {
+      eventBus.$emit("remote-pause");
     }
   },
   created() {
