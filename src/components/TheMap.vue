@@ -66,6 +66,7 @@ export default {
           addSensorLayer(map, sensorGeoJSON);
           geocoder.options.localGeocoder = query =>
             sensorGeocoder(query, sensorGeoJSON);
+          onSensorInteraction(map, geocoder);
         })
         .catch(() => {
           // This will catch ALL errors
@@ -77,8 +78,6 @@ export default {
         .finally(() => {
           eventBus.$emit("stop-loading");
         });
-
-      onSensorInteraction(map, geocoder);
     },
     mapError() {
       eventBus.$emit("stop-loading");

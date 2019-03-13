@@ -28,7 +28,7 @@ export default {
       if (this.isPlaying) {
         this.toggle();
       }
-    })
+    });
   }
 };
 </script>
