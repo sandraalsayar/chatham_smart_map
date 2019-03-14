@@ -49,9 +49,10 @@ const getPaintProperty = (id = -99) => [
 ];
 
 const getSensorData = () => {
-  // URL to get ids of all Things:
-  const thingsUrl =
-    "https://api.sealevelsensors.org/v1.0/Things?$select=@iot.id";
+  // URL to get ids of all Things that measure water level
+  const thingsUrl = encodeUrl(
+    "https://api.sealevelsensors.org/v1.0/Things?$select=@iot.id&$filter=Datastreams/name eq 'Water Level'"
+  );
   // URL to get the 'Water Level' Datastream and Location data of a particular Thing; we expand the Datastream Observation to obtain the latest reading ('result') using certain query parameters.
   const liveDataUrl = id =>
     encodeUrl(
