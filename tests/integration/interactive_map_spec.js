@@ -115,10 +115,8 @@ describe("The web app", function() {
       // slider should stay at '1'
       expect($el.attr("value")).to.equal("1");
     });
-
-    cy.wait(2000);
     // Timelapse should reset when 'Apply' is clicked
-    cy.get("#datepicker-trigger").click();
+    cy.get("#datepicker-trigger").click({ force: true });
     cy.get("button")
       .contains("Apply")
       .click();

@@ -9,7 +9,7 @@ describe("When selecting a sensor via click", function() {
           win.map.queryRenderedFeatures({ layers: ["outer_point"] })[0].geometry
             .coordinates
         );
-      } catch {
+      } catch (error) {
         // empty
       }
     });
@@ -42,13 +42,13 @@ describe("When selecting a sensor via click", function() {
           win.map.queryRenderedFeatures({ layers: ["outer_point"] })[0].geometry
             .coordinates
         );
-      } catch {
+      } catch (error) {
         // empty
       } finally {
         cy.get('input[placeholder="Search"]')
           .invoke("val")
           .then(val => {
-            expect(val).to.be.empty;
+            expect(val).to.be.empty; /* jshint expr: true */
           });
         cy.get(".card.scroll").should("not.exist");
         cy.get("#basic_info").should("not.exist");

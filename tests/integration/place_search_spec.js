@@ -1,9 +1,12 @@
 describe("When searching for a place", function() {
   beforeEach(function() {
+    cy.server();
+    cy.route("GET", "https://api.mapbox.com/geocoding/**").as("getGeocoderResults");
+
     cy.get('input[placeholder="Search"]')
       .clear()
       .type("Savannah, Georgia");
-    cy.wait(2000);
+    cy.wait("@getGeocoderResults");
     cy.get("ul.suggestions li")
       .first()
       .click();
@@ -22,7 +25,7 @@ describe("When searching for a place", function() {
     cy.get('input[placeholder="Search"]')
       .clear()
       .type("sensor");
-    cy.wait(2000);
+    cy.wait("@getGeocoderResults");
     cy.get("ul.suggestions li")
       .first()
       .click();
@@ -35,7 +38,7 @@ describe("When searching for a place", function() {
     cy.window().then(win => {
       try {
         win.map.fire("click", "outer_point");
-      } catch {
+      } catch (error) {
         // empty
       } finally {
         cy.get(".mapboxgl-marker").should("not.exist");
