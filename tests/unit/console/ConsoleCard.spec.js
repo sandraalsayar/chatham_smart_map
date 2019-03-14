@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import ConsoleCard from "@/components/console/ConsoleCard.vue";
+import ConsoleCard from "@/components/console/ConsoleCard";
 
 describe("ConsoleCard.vue", () => {
   const wrapper = mount(ConsoleCard, {

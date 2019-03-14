@@ -33,15 +33,9 @@ describe("When searching for a place", function() {
   it("marker disappears when a sensor is clicked", function() {
     cy.window().should("have.property", "map");
     cy.window().then(win => {
-      const map = win.map;
       try {
-        // map.fire(
-        //   "click",
-        //   map.queryRenderedFeatures({ layers: ["outer_point"] })[0].geometry
-        //     .coordinates
-        // );
-        map.fire("click", "outer_point");
-      } catch (error) {
+        win.map.fire("click", "outer_point");
+      } catch {
         // empty
       } finally {
         cy.get(".mapboxgl-marker").should("not.exist");
