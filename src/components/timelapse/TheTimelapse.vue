@@ -25,7 +25,7 @@ export default {
   position: absolute;
   display: flex;
   bottom: 20px;
-  left: 85px;
+  left: 30px;
   right: 80px;
   align-items: center;
 }
