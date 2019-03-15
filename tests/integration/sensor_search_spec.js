@@ -1,9 +1,12 @@
 describe("When selecting a sensor via search", function() {
   beforeEach(function() {
+    cy.server();
+    cy.route("GET", "https://api.mapbox.com/geocoding/**").as("getGeocoderResults");
+
     cy.get('input[placeholder="Search"]')
       .clear()
       .type("sensor");
-    cy.wait(2000);
+    cy.wait("@getGeocoderResults");
     cy.get("ul.suggestions li")
       .first()
       .click();
@@ -37,7 +40,7 @@ describe("When selecting a sensor via search", function() {
     cy.get('input[placeholder="Search"]')
       .clear()
       .type("Savannah, Georgia");
-    cy.wait(2000);
+    cy.wait("@getGeocoderResults");
     cy.get("ul.suggestions li")
       .first()
       .click();

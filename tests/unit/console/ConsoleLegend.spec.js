@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { eventBus } from "@/main";
-import ConsoleLegend from "@/components/console/ConsoleLegend.vue";
+import ConsoleLegend from "@/components/console/ConsoleLegend";
 
 describe("ConsoleLegend.vue", () => {
   const wrapper = mount(ConsoleLegend);
