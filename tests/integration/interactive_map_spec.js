@@ -31,7 +31,7 @@ describe("The web app", function() {
 
   it("displays the timelapse components in their default states", function() {
     // Timelapse components and their initial states:
-    cy.get("#event-icon"); // calendar icon present
+    cy.get("#calender_icon"); // calendar icon present
     cy.get("#datepicker-trigger"); // datepicker input present
     cy.get("button").contains("play_arrow"); // button with play arrow icon
     cy.get("#bar").contains("Present");
