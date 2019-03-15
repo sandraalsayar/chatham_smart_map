@@ -11,7 +11,7 @@
         />
       </div>
       <AirbnbStyleDatepicker
-        :offset-y="-270"
+        :offset-y="-310"
         :trigger-element-id="'datepicker-trigger'"
         :mode="'range'"
         :fullscreen-mobile="true"
@@ -86,7 +86,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 #calender_icon {
     position:absolute;
     display: inline-block;
