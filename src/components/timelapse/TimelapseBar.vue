@@ -69,7 +69,7 @@ export default {
           if ((daysDifference * dayFraction) % j === 0) {
             let workingDate = earlyDate;
             let timeArray = [];
-            for (var k = 0; k <= j; k++) {
+            for (let k = 0; k <= j; k++) {
               //populate array of date strings
               timeArray[k] = workingDate.toISOString();
               workingDate = addHours(workingDate, (daysDifference / j) * 24);

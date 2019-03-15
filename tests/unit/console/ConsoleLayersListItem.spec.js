@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import ConsoleLayersListItem from "@/components/console/ConsoleLayersListItem.vue";
+import ConsoleLayersListItem from "@/components/console/ConsoleLayersListItem";
 
 describe("ConsoleLayersListItem.vue", () => {
   const wrapper = mount(ConsoleLayersListItem, {
