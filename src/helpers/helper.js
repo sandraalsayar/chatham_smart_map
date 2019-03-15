@@ -70,7 +70,6 @@ const getSensorData = () => {
 };
 
 export {
-  geocoderMatches,
   getPaintProperty,
   getSensorData,
   parseSensorData,

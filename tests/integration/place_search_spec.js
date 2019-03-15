@@ -1,9 +1,12 @@
 describe("When searching for a place", function() {
   beforeEach(function() {
+    cy.server();
+    cy.route("GET", "https://api.mapbox.com/geocoding/**").as("getGeocoderResults");
+
     cy.get('input[placeholder="Search"]')
       .clear()
       .type("Savannah, Georgia");
-    cy.wait(2000);
+    cy.wait("@getGeocoderResults");
     cy.get("ul.suggestions li")
       .first()
       .click();
@@ -22,7 +25,7 @@ describe("When searching for a place", function() {
     cy.get('input[placeholder="Search"]')
       .clear()
       .type("sensor");
-    cy.wait(2000);
+    cy.wait("@getGeocoderResults");
     cy.get("ul.suggestions li")
       .first()
       .click();
@@ -33,14 +36,8 @@ describe("When searching for a place", function() {
   it("marker disappears when a sensor is clicked", function() {
     cy.window().should("have.property", "map");
     cy.window().then(win => {
-      const map = win.map;
       try {
-        // map.fire(
-        //   "click",
-        //   map.queryRenderedFeatures({ layers: ["outer_point"] })[0].geometry
-        //     .coordinates
-        // );
-        map.fire("click", "outer_point");
+        win.map.fire("click", "outer_point");
       } catch (error) {
         // empty
       } finally {

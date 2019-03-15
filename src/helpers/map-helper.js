@@ -1,5 +1,5 @@
 import { eventBus } from "@/main";
-import { geocoderMatches, getPaintProperty, sensors } from "./helper";
+import { getPaintProperty, sensors } from "./helper";
 
 const addGeocoder = (map, accessToken) => {
   const geocoder = new MapboxGeocoder({ accessToken, trackProximity: true });
@@ -12,12 +12,11 @@ const addGeocoder = (map, accessToken) => {
   geocoder.on("result", ev => {
     marker.remove();
     unselectSensor(map); // if a sensor is already selected
-    const matches = geocoderMatches(ev.result.place_name);
-    if (!matches) {
-      marker.setLngLat(ev.result.geometry.coordinates).addTo(map);
-    } else {
+    if (sensors.has(ev.result.id)) {
       // ev.result is the entire GeoJSON for the selected sensor
       selectSensor(ev.result.id, map, geocoder);
+    } else {
+      marker.setLngLat(ev.result.geometry.coordinates).addTo(map);
     }
   });
   geocoder.on("clear", () => {
@@ -87,6 +86,10 @@ const onSensorInteraction = (map, geocoder) => {
 };
 
 const selectSensor = (id, map, geocoder) => {
+  // Since this method can be called even when getting sensor data fails, check if the layers were added.
+  if (!map.getLayer("outer_point") || !map.getLayer("inner_point")) {
+    return;
+  }
   const paintProperty = getPaintProperty(id);
   const sensor = sensors.get(id);
   eventBus.$emit("sensor-clicked", true, sensor);
@@ -96,8 +99,11 @@ const selectSensor = (id, map, geocoder) => {
 };
 
 const unselectSensor = map => {
+  // Since this method can be called even when getting sensor data fails, check if the layers were added.
+  if (!map.getLayer("outer_point") || !map.getLayer("inner_point")) {
+    return;
+  }
   const paintProperty = getPaintProperty();
-
   eventBus.$emit("sensor-clicked", false);
   map.setPaintProperty("outer_point", "circle-color", paintProperty);
   map.setPaintProperty("inner_point", "circle-color", paintProperty);
