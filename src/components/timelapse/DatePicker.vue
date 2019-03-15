@@ -2,7 +2,7 @@
   <div>
     <div class="datepicker-trigger">
       <div>
-        <img src="../../../public/date_icon.png" id="input_img"/>
+        <i class="material-icons" id="calender_icon">calendar_today</i>
         <input
           type="text"
           id="datepicker-trigger"
@@ -46,7 +46,7 @@ export default {
       dateFormat: "D MMM",
       dateOne: "",
       dateTwo: "",
-      endDate: format(today, "YYYY-MM-DD")
+      endDate: ""
     };
   },
   methods: {
@@ -80,21 +80,18 @@ export default {
   created() {
     this.dateTwo = format(today, "YYYY-MM-DD");
     this.dateOne = format(startDate, "YYYY-MM-DD");
+    this.endDate = this.dateTwo;
 
   }
 };
 </script>
 
 <style>
-#event-icon {
-  display: inline-block;
-
-}
-#input_img {
+#calender_icon {
     position:absolute;
     display: inline-block;
-/*    bottom:8px;*/
-    left:18px;
+    bottom:-5px;
+    left:23px;
     width:35px;
     height:35px;
 }
