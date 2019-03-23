@@ -6,6 +6,7 @@ cache:
     - ~/.cache
 install:
   - yarn install --frozen-lockfile
+  - yarn build
 before_script:
   - yarn start & yarn run wait-on http://localhost:3000
 script:
