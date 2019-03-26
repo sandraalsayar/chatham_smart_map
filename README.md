@@ -20,7 +20,7 @@ yarn run build
 
 ### Run your tests
 
-#### Run unit tests with suppressed warning
+#### Run unit tests with suppressed warnings
 
 ```
 yarn run test

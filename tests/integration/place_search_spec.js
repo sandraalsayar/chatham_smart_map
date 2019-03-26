@@ -1,7 +1,9 @@
 describe("When searching for a place", function() {
   beforeEach(function() {
     cy.server();
-    cy.route("GET", "https://api.mapbox.com/geocoding/**").as("getGeocoderResults");
+    cy.route("GET", "https://api.mapbox.com/geocoding/**").as(
+      "getGeocoderResults"
+    );
 
     cy.get('input[placeholder="Search"]')
       .clear()

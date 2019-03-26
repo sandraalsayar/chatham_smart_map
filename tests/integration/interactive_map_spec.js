@@ -4,16 +4,16 @@ describe("The web app", function() {
   it("has a basic map with interactive controls", function() {
     cy.get("#app");
     cy.get("#map"); // map element
-    cy.get('[aria-label="Geolocate"]'); // geolocate
-    cy.get('[aria-label="Zoom in"]').click(); // zoom in button
-    cy.get('[aria-label="Zoom out"]').click(); // zoom out button
-    cy.get('[aria-label="Reset bearing to north"]').click(); // bearing button
+    cy.get('button[aria-label="Geolocate"]'); // geolocate
+    cy.get('button[aria-label="Zoom in"]').click(); // zoom in button
+    cy.get('button[aria-label="Zoom out"]').click(); // zoom out button
+    cy.get('button[aria-label="Reset bearing to north"]').click(); // bearing button
     cy.get('input[placeholder="Search"]'); // search bar
   });
 
   it("displays the console components in their default state", function() {
     // Map layers card should have sensors layer selected
-    cy.get(".card").contains("MAP LAYERS");
+    cy.contains("MAP LAYERS");
     cy.contains("Sensors")
       .closest("li")
       .should("not.have.css", "color", "rgb(0, 0, 0)");
@@ -22,8 +22,8 @@ describe("The web app", function() {
       .should("have.css", "color", "rgb(0, 0, 0)");
 
     // Map legend card should display legend for sensors only
-    cy.get(".card").contains("MAP LEGEND");
-    cy.get(".legend_row").contains("Sea-level sensors");
+    cy.contains("MAP LEGEND");
+    cy.contains("Sea level sensors");
     cy.get(".colors")
       .parent()
       .should("have.css", "display", "none");
@@ -31,22 +31,22 @@ describe("The web app", function() {
 
   it("displays the timelapse components in their default states", function() {
     // Timelapse components and their initial states:
-    cy.get("#calender_icon"); // calendar icon present
+    cy.get("i").contains("calendar_today"); // calendar icon present
     cy.get("#datepicker-trigger"); // datepicker input present
     cy.get("[id^=airbnb-style-datepicker-wrapper]").should(
       "have.css",
       "display",
       "none"
     );
-    cy.get("#timelapse > button").contains("play_arrow"); // button with play arrow icon
-    cy.get("#bar").contains("Present");
-    cy.get("#bar").contains("1 day ago");
+    cy.get("button").contains("play_arrow"); // button with play arrow icon
+    cy.contains("Present");
+    cy.contains("1 day ago");
     cy.get(".v-slider__thumb-label__container").should(
       "have.css",
       "display",
       "none"
     ); // thumblabel should be hidden
-    cy.get(".v-slider > input").should($el => {
+    cy.get('input[role="slider"]').should($el => {
       expect($el.attr("value")).to.equal($el.attr("aria-valuemax")); // slider is at max value on start
     });
 
@@ -85,8 +85,10 @@ describe("The web app", function() {
   it("supports interactions between timelapse components", function() {
     cy.clock();
     // Start the timelapse
-    cy.get("#timelapse > button").click();
-    cy.get("#timelapse > button").contains("pause");
+    cy.get("button")
+      .contains("play_arrow")
+      .click();
+    cy.get("button").contains("pause");
 
     cy.get(".v-slider__thumb-label__container").should(
       "not.have.css",
@@ -95,7 +97,7 @@ describe("The web app", function() {
     );
 
     cy.tick(1000);
-    cy.get(".v-slider > input").should($el => {
+    cy.get('input[role="slider"]').should($el => {
       expect($el.attr("value")).to.equal("0"); // slider is at '0' after 1 second
     });
     // move slider once more so that it is at '1'
@@ -107,11 +109,11 @@ describe("The web app", function() {
       "display",
       "none"
     );
-    cy.get("#timelapse > button").contains("play_arrow");
+    cy.get("button").contains("play_arrow");
     cy.get("button")
       .contains("Cancel")
       .click(); // slider value shouldn't reset when 'Cancel' is clicked
-    cy.get(".v-slider > input").should($el => {
+    cy.get('input[role="slider"]').should($el => {
       // slider should stay at '1'
       expect($el.attr("value")).to.equal("1");
     });
@@ -120,8 +122,8 @@ describe("The web app", function() {
     cy.get("button")
       .contains("Apply")
       .click();
-    cy.get("#timelapse > button").contains("play_arrow");
-    cy.get(".v-slider > input").should($el => {
+    cy.get("button").contains("play_arrow");
+    cy.get('input[role="slider"]').should($el => {
       // slider should stay at '1'
       expect($el.attr("value")).to.equal("0");
     });

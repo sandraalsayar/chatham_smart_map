@@ -1,7 +1,9 @@
 describe("When selecting a sensor via search", function() {
   beforeEach(function() {
     cy.server();
-    cy.route("GET", "https://api.mapbox.com/geocoding/**").as("getGeocoderResults");
+    cy.route("GET", "https://api.mapbox.com/geocoding/**").as(
+      "getGeocoderResults"
+    );
 
     cy.get('input[placeholder="Search"]')
       .clear()

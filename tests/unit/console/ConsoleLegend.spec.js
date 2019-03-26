@@ -1,9 +1,9 @@
-import { mount } from "@vue/test-utils";
+import { shallowMount } from "@vue/test-utils";
 import { eventBus } from "@/main";
 import ConsoleLegend from "@/components/console/ConsoleLegend";
 
-describe("ConsoleLegend.vue", () => {
-  const wrapper = mount(ConsoleLegend);
+describe("ConsoleLegend", () => {
+  const wrapper = shallowMount(ConsoleLegend);
 
   it("renders div elements for each legend", () => {
     const legends = [{}];

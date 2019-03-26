@@ -81,34 +81,33 @@ export default {
     this.dateTwo = format(today, "YYYY-MM-DD");
     this.dateOne = format(startDate, "YYYY-MM-DD");
     this.endDate = this.dateTwo;
-
   }
 };
 </script>
 
 <style scoped>
 #calender_icon {
-    position:absolute;
-    display: inline-block;
-    bottom:-5px;
-    left:23px;
-    width:35px;
-    height:35px;
-}
-input {
-    margin-right: 15px;
-    margin-left: 15px;
-    padding: 9px 15px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    text-rendering: auto;
-    color: initial;
-    text-indent: 25px;
-    display: inline-block;
-    background: #fff;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: normal;
-    font-family: system-ui;
+  position: absolute;
+  /*    display: inline-block;*/
+  bottom: 6px;
+  left: 23px;
+  /*    width:35px;
+    height:35px;*/
 }
 
+input {
+  margin-right: 15px;
+  margin-left: 15px;
+  padding: 9px 15px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  /*    text-rendering: auto;*/
+  /*    color: initial;*/
+  text-indent: 25px;
+  /*    display: inline-block;*/
+  background: #fff;
+  /*    font-weight: 400;*/
+  font-size: 12px;
+  line-height: normal;
+  font-family: system-ui;
+}
 </style>
