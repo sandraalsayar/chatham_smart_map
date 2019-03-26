@@ -5,17 +5,11 @@ import DatePicker from "@/components/timelapse/DatePicker";
 import TimelapseBar from "@/components/timelapse/TimelapseBar";
 
 describe("TheTimelapse", () => {
-  const wrapper = shallowMount(TheTimelapse, {
-    propsData: {
-      text: "Test"
-    }
-  });
+  const wrapper = shallowMount(TheTimelapse);
 
-  it("has a v-alert", () => {
-    expect(wrapper.contains("v-alert")).toBe(true);
-  });
-
-  it("renders the correct text", () => {
-    expect(wrapper.text()).toMatch("Test");
+  it("has PlayButton, DatePicker and TimelapseBar", () => {
+    expect(wrapper.contains(PlayButton)).toBe(true);
+    expect(wrapper.contains(DatePicker)).toBe(true);
+    expect(wrapper.contains(TimelapseBar)).toBe(true);
   });
 });
