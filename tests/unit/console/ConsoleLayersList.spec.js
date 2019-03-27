@@ -2,7 +2,7 @@ import { mount } from "@vue/test-utils";
 import ConsoleLayersList from "@/components/console/ConsoleLayersList";
 import ConsoleLayersListItem from "@/components/console/ConsoleLayersListItem";
 
-describe("ConsoleLayersList.vue", () => {
+describe("ConsoleLayersList", () => {
   const wrapper = mount(ConsoleLayersList);
 
   it("has a ul", () => {
