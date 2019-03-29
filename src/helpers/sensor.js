@@ -1,12 +1,13 @@
 import { distanceInWordsToNow } from "date-fns";
 
 export default class Sensor {
-  constructor(id, coordinates, name, description, observation) {
+  constructor(id, coordinates, name, description, observation, elevation) {
     this.id = id;
     this.coordinates = coordinates;
     this.name = `${name} Sensor`;
     this.description = description;
     this.observation = observation;
+    this.elevation = elevation;
   }
 
   get placeName() {
@@ -15,8 +16,9 @@ export default class Sensor {
 
   get reading() {
     if (this.observation) {
+
       return {
-        result: `${this.observation.result} m`,
+        result: `${this.elevation + this.observation.result} m`,
         resultTime: distanceInWordsToNow(this.observation.resultTime, {
           addSuffix: true
         })
