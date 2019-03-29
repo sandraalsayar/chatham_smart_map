@@ -21,7 +21,7 @@ export default {
         {
           id: 1,
           html: `<div class="label" id="sensor"></div>
-      <p class="label" style="font-size:16px">Sea level sensors</p>`,
+      <p class="label" style="font-size:16px">Water level sensors</p>`,
           displayed: true
         },
         {
