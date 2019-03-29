@@ -18,7 +18,7 @@ export default class Sensor {
     if (this.observation) {
 
       return {
-        result: `${this.elevation + this.observation.result} m`,
+        result: `${(this.elevation + this.observation.result).toFixed(3)} m`,
         resultTime: distanceInWordsToNow(this.observation.resultTime, {
           addSuffix: true
         })
