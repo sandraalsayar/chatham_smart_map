@@ -16,7 +16,7 @@ export default class Sensor {
 
   get reading() {
     if (this.observation) {
-      debugger;
+
       return {
         result: `${this.elevation + this.observation.result} m`,
         resultTime: distanceInWordsToNow(this.observation.resultTime, {
