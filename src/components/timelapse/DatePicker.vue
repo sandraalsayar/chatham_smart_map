@@ -17,7 +17,7 @@
         :fullscreen-mobile="true"
         :date-one="dateOne"
         :date-two="dateTwo"
-        :endDate="endDate"
+        :end-date="endDate"
         @date-one-selected="
           val => {
             setDateOne({ val });

@@ -62,7 +62,7 @@ const getters = {
   displayYear({ startDate, endDate }) {
     startDate.getFullYear() !== endDate.getFullYear();
   },
-  ticksLabels({ startDate, endDate }, { maxVal, displayYear }) {
+  tickLabels({ startDate, endDate }, { maxVal, displayYear }) {
     let newLabels = [];
     if (isToday(endDate)) {
       newLabels[0] = distanceInWordsToNow(startDate, { addSuffix: true });

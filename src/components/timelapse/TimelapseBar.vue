@@ -2,7 +2,7 @@
   <div id="bar">
     <v-slider
       v-model="sliderVal"
-      :tick-labels="ticksLabels"
+      :tick-labels="tickLabels"
       :max="maxVal"
       step="1"
       ticks="always"
@@ -53,7 +53,7 @@ export default {
       }
     },
     ...mapState("timelapse", ["thumbLabel"]),
-    ...mapGetters("timelapse", ["ticksLabels", "maxVal"])
+    ...mapGetters("timelapse", ["tickLabels", "maxVal"])
   },
   created() {
     this.$store.watch(

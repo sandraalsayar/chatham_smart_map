@@ -33,10 +33,7 @@ const parseSensorData = responses =>
     const description = el.data.description.toLowerCase();
     const observation = el.data.Datastreams[0].Observations[0];
     const id = el.data["@iot.id"];
-
-    // debugger;
     const elevation = Number(el.data.properties.elevationNAVD88);
-    // const elevation = properties.elevationNAVD88 + relativeWaterLevel;
 
     const sensor = new Sensor(
       id,
