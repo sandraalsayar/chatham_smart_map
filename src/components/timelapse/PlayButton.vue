@@ -1,5 +1,5 @@
 <template>
-  <v-btn color="teal" dark depressed @click="toggle">
+  <v-btn color="white" dark floating @click="toggle">
     <v-icon v-if="isPlaying">pause</v-icon>
     <v-icon v-else>play_arrow</v-icon>
   </v-btn>
@@ -37,7 +37,10 @@ export default {
   min-width: 0px; /* had to override some properties of v-btn to make it square */
   height: 40px;
   width: 40px;
-  border-radius: 3px;
+  border-radius: 5px;
+  /*border: 1px solid rgba(0, 0, 0, 0.2);*/
   padding: 0px;
+  color: black;
+  margin-bottom: 20px;
 }
 </style>

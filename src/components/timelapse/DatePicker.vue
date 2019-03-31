@@ -90,12 +90,14 @@ i {
   position: absolute;
   bottom: 6px;
   left: 23px;
+  margin-bottom: 15px;
 }
 
 input {
   margin-right: 15px;
   margin-left: 15px;
-  padding: 9px 15px;
+  margin-bottom: 15px;
+  padding: 11px 15px;
   border: 1px solid rgba(0, 0, 0, 0.2);
   text-indent: 25px;
   background: #fff;

@@ -7,7 +7,7 @@
       step="1"
       ticks="always"
       tick-size="3"
-      color="teal"
+      color="grey"
       always-dirty
       :thumb-label="thumbLabel"
     >
@@ -138,7 +138,10 @@ export default {
 
 <style scoped>
 #bar {
-  margin-left: 30px;
+  margin-left: 10px;
   flex-grow: 1;
+}
+#slider {
+  color: white;
 }
 </style>
