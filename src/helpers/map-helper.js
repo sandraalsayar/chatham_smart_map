@@ -1,4 +1,4 @@
-import { eventBus } from "@/main";
+import store from "@/store";
 import { getPaintProperty, sensors } from "./helper";
 
 const addGeocoder = (map, accessToken) => {
@@ -92,7 +92,7 @@ const selectSensor = (id, map, geocoder) => {
   }
   const paintProperty = getPaintProperty(id);
   const sensor = sensors.get(id);
-  eventBus.$emit("sensor-clicked", true, sensor);
+  store.commit("cons/setSensor", { sensor });
   geocoder.setInput(sensor.placeName);
   map.setPaintProperty("outer_point", "circle-color", paintProperty);
   map.setPaintProperty("inner_point", "circle-color", paintProperty);
@@ -104,7 +104,7 @@ const unselectSensor = map => {
     return;
   }
   const paintProperty = getPaintProperty();
-  eventBus.$emit("sensor-clicked", false);
+  store.commit("cons/setSensor", { undefined });
   map.setPaintProperty("outer_point", "circle-color", paintProperty);
   map.setPaintProperty("inner_point", "circle-color", paintProperty);
 };

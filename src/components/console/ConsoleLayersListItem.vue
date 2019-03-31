@@ -1,7 +1,7 @@
 <template>
   <li
     :style="{ color: layer.selected ? layer.color : 'black' }"
-    @click="$emit('update-console', layer.id)"
+    @click="$emit('toggleLayers')"
   >
     <i class="material-icons">{{ layer.icon }}</i>
     <div>

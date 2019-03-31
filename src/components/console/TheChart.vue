@@ -10,10 +10,10 @@
 
 <script>
 import ConsoleCard from "./ConsoleCard";
-import {Chart} from 'highcharts-vue';
+import { Chart } from "highcharts-vue";
 
 export default {
-  components: { 
+  components: {
     ConsoleCard,
     highcharts: Chart
   },
@@ -26,11 +26,13 @@ export default {
   data() {
     return {
       chartOptions: {
-        series: [{
-          data: [1,2,3] // sample data
-        }]
+        series: [
+          {
+            data: [1, 2, 3] // sample data
+          }
+        ]
       }
-    }
+    };
   }
 };
 </script>

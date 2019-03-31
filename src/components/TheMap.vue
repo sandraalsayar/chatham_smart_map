@@ -12,7 +12,6 @@
 </template>
 
 <script>
-import { eventBus } from "../main";
 import Mapbox from "mapbox-gl-vue";
 
 import {
@@ -56,8 +55,8 @@ export default {
     mapLoaded(map) {
       // Expose the map object to window so that Cypress can use it.
       window.map = map;
+      this.$store.commit("app/showConsole");
 
-      eventBus.$emit("show-console");
       const geocoder = addGeocoder(map, this.accessToken);
 
       getSensorData()
@@ -70,21 +69,23 @@ export default {
         })
         .catch(() => {
           // This will catch ALL errors
-          eventBus.$emit(
-            "warning-alert",
-            "We encountered an error while fetching sensor data. You may still use the map."
-          );
+          this.$store.commit("app/showWarning", {
+            warningText:
+              "We encountered an error while fetching sensor data. You may still use the map."
+          });
         })
         .finally(() => {
-          eventBus.$emit("stop-loading");
+          this.$store.commit("app/stopLoading");
         });
     },
     mapError() {
-      eventBus.$emit("stop-loading");
-      eventBus.$emit("map-error");
+      this.$store.commit("app/stopLoading");
+      this.$store.commit("app/mapError");
     },
     geolocateError() {
-      eventBus.$emit("warning-alert", "We can't seem to locate you right now.");
+      this.$store.commit("app/showWarning", {
+        warningText: "We can't seem to locate you right now."
+      });
     }
   }
 };

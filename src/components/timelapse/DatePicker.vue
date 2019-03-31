@@ -7,7 +7,7 @@
           type="text"
           id="datepicker-trigger"
           placeholder="Select dates"
-          :value="formatDates(dateOne, dateTwo)"
+          :value="formatDates"
         />
       </div>
       <AirbnbStyleDatepicker
@@ -20,12 +20,12 @@
         :end-date="endDate"
         @date-one-selected="
           val => {
-            dateOne = val;
+            setDateOne({ val });
           }
         "
         @date-two-selected="
           val => {
-            dateTwo = val;
+            setDateTwo({ val });
           }
         "
         @opened="onOpen"
@@ -36,51 +36,33 @@
 </template>
 
 <script>
-import { eventBus } from "@/main";
-import { format, addMinutes, isToday, differenceInMinutes } from "date-fns";
-import { today, startDate } from "@/helpers/constants";
+import { mapState, mapGetters, mapMutations } from "vuex";
+import { parse, addMinutes, isToday, differenceInMinutes } from "date-fns";
 
 export default {
-  data() {
-    return {
-      dateFormat: "D MMM",
-      dateOne: "",
-      dateTwo: "",
-      endDate: ""
-    };
-  },
   methods: {
-    formatDates(dateOne, dateTwo) {
-      let formattedDates = "";
-      if (dateOne) {
-        formattedDates = format(dateOne, this.dateFormat);
-      }
-      if (dateTwo) {
-        formattedDates += " - " + format(dateTwo, this.dateFormat);
-      }
-      return formattedDates;
-    },
     onApply() {
-      let earlyDate = new Date(this.dateOne);
-      let lateDate = new Date(this.dateTwo);
-      earlyDate = addMinutes(earlyDate, earlyDate.getTimezoneOffset()); // adjust date to user timezone
-      lateDate = addMinutes(lateDate, lateDate.getTimezoneOffset());
-      if (isToday(lateDate)) {
+      let startDate = parse(this.dateOne);
+      let endDate = parse(this.dateTwo); // not to be confused with this.endDate!
+      if (isToday(endDate)) {
         // if the latter date is today, make the time match current time
-        const minutesOffset = differenceInMinutes(new Date(), lateDate);
-        earlyDate = addMinutes(earlyDate, minutesOffset);
-        lateDate = addMinutes(lateDate, minutesOffset);
+        const minutesOffset = differenceInMinutes(new Date(), endDate);
+        startDate = addMinutes(startDate, minutesOffset);
+        endDate = addMinutes(endDate, minutesOffset);
       }
-      eventBus.$emit("dates-selected", earlyDate, lateDate);
+
+      this.$store.commit("timelapse/setIsPlaying", { isPlaying: false });
+      this.$store.commit("timelapse/setSliderVal", { sliderVal: 0 });
+      this.$store.commit("timelapse/setDates", { startDate, endDate });
     },
     onOpen() {
-      eventBus.$emit("remote-pause");
-    }
+      this.$store.commit("timelapse/setIsPlaying", { isPlaying: false });
+    },
+    ...mapMutations("picker", ["setDateOne", "setDateTwo"])
   },
-  created() {
-    this.dateTwo = format(today, "YYYY-MM-DD");
-    this.dateOne = format(startDate, "YYYY-MM-DD");
-    this.endDate = this.dateTwo;
+  computed: {
+    ...mapGetters("picker", ["formatDates"]),
+    ...mapState("picker", ["dateOne", "dateTwo", "endDate"])
   }
 };
 </script>
