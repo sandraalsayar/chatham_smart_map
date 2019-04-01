@@ -37,7 +37,13 @@
 
 <script>
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { parse, addMinutes, isToday, differenceInMinutes, startOfDay } from "date-fns";
+import {
+  parse,
+  addMinutes,
+  isToday,
+  differenceInMinutes,
+  startOfDay
+} from "date-fns";
 
 export default {
   methods: {
@@ -48,8 +54,9 @@ export default {
         // if the latter date is today, make the time match current time
         const minutesOffset = differenceInMinutes(new Date(), endDate);
         endDate = addMinutes(endDate, minutesOffset);
-        if (isToday(startDate)) { // if today is selected twice
-          startDate = startOfDay(startDate)
+        if (isToday(startDate)) {
+          // if today is selected twice
+          startDate = startOfDay(startDate);
         } else {
           startDate = addMinutes(startDate, minutesOffset);
         }
