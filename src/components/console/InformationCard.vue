@@ -1,7 +1,7 @@
 <template>
   <console-card scrollable :heading="sensor.name.toUpperCase()">
     <div id="basic_info">
-      <p>Sea Level: {{ sensor.reading.result }}</p>
+      <p>Water Level: {{ sensor.reading.result }}</p>
       <p>Last Measured: {{ sensor.reading.resultTime }}</p>
     </div>
     <div id="water_level_chart">
@@ -32,7 +32,7 @@ export default {
       },
       chartOptions: {
         title: {
-          text: "Sea Level Data"
+          text: "Water Level Data"
         },
         xAxis: {
           categories: ["1", "2", "3", "4", "5", "6"],
@@ -48,7 +48,7 @@ export default {
         },
         yAxis: {
           title: {
-            text: "Sea Level"
+            text: "Water Level"
           },
           //tickInterval: 0.5,
           tickPixelInterval: 30 // you can also write your own tick interval algo

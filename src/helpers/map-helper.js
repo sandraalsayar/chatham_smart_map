@@ -49,7 +49,7 @@ const onSensorInteraction = (map, geocoder) => {
     }
     const html = `
         <h4>${name}</h4>
-        <p>Sea Level: ${reading.result}</p>
+        <p>Water Level: ${reading.result}</p>
         <p>Last Measured: ${reading.resultTime}</p>
         `;
     // Populate the popup and set its coordinates.

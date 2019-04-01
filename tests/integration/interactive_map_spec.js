@@ -23,7 +23,7 @@ describe("The web app", function() {
 
     // Map legend card should display legend for sensors only
     cy.contains("MAP LEGEND");
-    cy.contains("Sea level sensors");
+    cy.contains("Water level sensors");
     cy.get(".colors")
       .parent()
       .should("have.css", "display", "none");
