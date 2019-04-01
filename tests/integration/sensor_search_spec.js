@@ -16,7 +16,7 @@ describe("When selecting a sensor via search", function() {
 
   it("information card appears", function() {
     cy.get(".card.scroll");
-    cy.get("#basic_info").contains("Sea Level");
+    cy.get("#basic_info").contains("Water Level");
     cy.get("#basic_info").contains("Last Measured");
 
     cy.get('input[placeholder="Search"]')
