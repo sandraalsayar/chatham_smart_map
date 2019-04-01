@@ -43,7 +43,7 @@ const getters = {
     //takes two dates and returns an array of ISO date strings
     const daysDifference = differenceInDays(endDate, startDate);
     let timeArray = [];
-    if (daysDifference === 0 || !daysDifference) {
+    if (!daysDifference) {
       //if the same day is selected twice
       let minutesDifference = 60 * 24; //minutes in a day
       if (isToday(startDate) || isToday(endDate)) {
@@ -65,8 +65,8 @@ const getters = {
             if (isToday(endDate)) {
               timeArray.push(endDate.toISOString()); //add exact present time at the end
             }
+            return timeArray;
           }
-          return timeArray;
         }
       }
     } else {
@@ -86,8 +86,8 @@ const getters = {
             if (isToday(endDate)) {
               timeArray.push(workingDate.toISOString()); //add exact present time at the end
             }
+            return timeArray;
           }
-          return timeArray;
         }
       }
     }

@@ -50,16 +50,16 @@ export default {
     onApply() {
       let startDate = parse(this.dateOne);
       let endDate = parse(this.dateTwo); // not to be confused with this.endDate!
-      if (isToday(endDate)) {
+      const minutesOffset = differenceInMinutes(new Date(), endDate);
+      if (isToday(startDate)) {
+        startDate = startOfDay(startDate);
+        endDate = new Date();
+      } else if (isToday(endDate)) {
         // if the latter date is today, make the time match current time
-        const minutesOffset = differenceInMinutes(new Date(), endDate);
         endDate = addMinutes(endDate, minutesOffset);
-        if (isToday(startDate)) {
-          // if today is selected twice
-          startDate = startOfDay(startDate);
-        } else {
-          startDate = addMinutes(startDate, minutesOffset);
-        }
+        startDate = addMinutes(startDate, minutesOffset);
+      } else if (!minutesOffset) {
+        endDate = startDate;
       }
       this.$store.commit("timelapse/setIsPlaying", { isPlaying: false });
       this.$store.commit("timelapse/setSliderVal", { sliderVal: 0 });
