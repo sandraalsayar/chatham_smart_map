@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { eventBus } from "@/main";
+import { mapState } from "vuex";
 import TheConsole from "@/components/console/TheConsole";
 import TheErrorModal from "@/components/TheErrorModal";
 import TheMap from "@/components/TheMap";
@@ -30,32 +30,18 @@ export default {
     TheWarningAlert,
     TheTimelapse
   },
-  data() {
-    return {
-      loadingData: true,
-      mapError: false,
-      mapLoaded: false,
-      showWarning: false,
-      warningText: ""
-    };
-  },
-  created() {
-    eventBus.$on("map-error", () => {
-      this.mapError = true;
-    });
-    eventBus.$on("show-console", () => {
-      this.mapLoaded = true;
-    });
-    eventBus.$on("stop-loading", () => {
-      this.loadingData = false;
-    });
-    eventBus.$on("warning-alert", warningText => {
-      this.warningText = warningText;
-      this.showWarning = true;
-    });
+  computed: {
+    ...mapState("app", [
+      "loadingData",
+      "mapError",
+      "mapLoaded",
+      "showWarning",
+      "warningText"
+    ])
   }
 };
 </script>
+
 <style>
 #app {
   font-family: Roboto, Arial, sans-serif;
