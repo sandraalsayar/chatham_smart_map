@@ -1,7 +1,7 @@
 <template>
   <console-card scrollable :heading="sensor.name.toUpperCase()">
     <div id="basic_info">
-      <p>Sea Level: {{ sensor.reading.result }}</p>
+      <p>Water Level: {{ sensor.reading.result }}</p>
       <p>Last Measured: {{ sensor.reading.resultTime }}</p>
     </div>
     <highcharts :options="chartOptions"></highcharts>

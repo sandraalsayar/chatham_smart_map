@@ -7,7 +7,7 @@ const state = {
       icon: "bubble_chart",
       selected: true,
       legend_html: `<div class="label" id="sensor"></div>
-      <p class="label" style="font-size:16px">Sea level sensors</p>`,
+      <p class="label" style="font-size:16px">Water level sensors</p>`,
       legend_displayed: true
     },
     {
