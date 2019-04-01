@@ -37,7 +37,7 @@
 
 <script>
 import { mapState, mapGetters, mapMutations } from "vuex";
-import { parse, addMinutes, isToday, differenceInMinutes } from "date-fns";
+import { parse, addMinutes, isToday, differenceInMinutes, startOfDay } from "date-fns";
 
 export default {
   methods: {
@@ -47,10 +47,13 @@ export default {
       if (isToday(endDate)) {
         // if the latter date is today, make the time match current time
         const minutesOffset = differenceInMinutes(new Date(), endDate);
-        startDate = addMinutes(startDate, minutesOffset);
         endDate = addMinutes(endDate, minutesOffset);
+        if (isToday(startDate)) { // if today is selected twice
+          startDate = startOfDay(startDate)
+        } else {
+          startDate = addMinutes(startDate, minutesOffset);
+        }
       }
-
       this.$store.commit("timelapse/setIsPlaying", { isPlaying: false });
       this.$store.commit("timelapse/setSliderVal", { sliderVal: 0 });
       this.$store.commit("timelapse/setDates", { startDate, endDate });
