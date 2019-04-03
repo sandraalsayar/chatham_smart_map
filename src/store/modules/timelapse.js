@@ -4,14 +4,18 @@ import {
   format,
   isToday,
   differenceInDays,
-  distanceInWordsToNow
+  distanceInWordsToNow,
+  startOfHour,
+  differenceInMinutes,
+  addMinutes,
+  startOfDay
 } from "date-fns";
 
 const state = {
   startDate: yesterday,
   endDate: today,
   isPlaying: false,
-  sliderVal: 12,
+  sliderVal: 13,
   thumbLabel: true
 };
 
@@ -38,20 +42,52 @@ const getters = {
   times({ startDate, endDate }) {
     //takes two dates and returns an array of ISO date strings
     const daysDifference = differenceInDays(endDate, startDate);
-    const viableDayFractions = [1, 2, 3, 4, 6, 12];
-    for (let dayFraction of viableDayFractions) {
-      //splitting days into numbers of hours
-      for (let j = 12; j < 24; j++) {
-        //splitting timelapse bar itself into fractions
-        if ((daysDifference * dayFraction) % j === 0) {
-          let workingDate = startDate;
-          let timeArray = [];
-          for (let k = 0; k <= j; k++) {
-            //populate array of date strings
-            timeArray[k] = workingDate.toISOString();
-            workingDate = addHours(workingDate, (daysDifference / j) * 24);
+    let timeArray = [];
+    if (!daysDifference) {
+      //if the same day is selected twice
+      let minutesDifference = 60 * 24; //minutes in a day
+      if (isToday(startDate) || isToday(endDate)) {
+        minutesDifference = differenceInMinutes(
+          new Date(),
+          startOfDay(startDate)
+        ); //split into minutes instead of days
+      }
+      const viableMinuteSplits = [1, 5, 10, 15, 20, 30, 60];
+      for (let minuteSplit of viableMinuteSplits) {
+        for (let j = 1; j < 25; j++) {
+          if (j * minuteSplit >= minutesDifference) {
+            let midnightStartDay = startOfDay(startDate);
+            let workingTime = midnightStartDay;
+            for (let k = 0; k < j; k++) {
+              workingTime = addMinutes(midnightStartDay, minuteSplit * k);
+              timeArray[k] = workingTime.toISOString();
+            }
+            if (isToday(endDate)) {
+              timeArray.push(endDate.toISOString()); //add exact present time at the end
+            }
+            return timeArray;
           }
-          return timeArray;
+        }
+      }
+    } else {
+      const viableDayFractions = [1, 2, 3, 4, 6, 12];
+      for (let dayFraction of viableDayFractions) {
+        //splitting days into numbers of hours
+        for (let j = 12; j < 24; j++) {
+          //splitting timelapse bar itself into fractions
+          if ((daysDifference * dayFraction) % j === 0) {
+            let workingDate = startDate;
+            for (let k = 0; k <= j; k++) {
+              //populate array of date strings
+              workingDate = addHours(startDate, (daysDifference / j) * 24 * k);
+              let roundedWorkingDate = startOfHour(workingDate);
+              timeArray[k] = roundedWorkingDate.toISOString();
+            }
+            if (isToday(endDate)) {
+              timeArray.push(workingDate.toISOString()); //add exact present time at the end
+            }
+            return timeArray;
+          }
         }
       }
     }
@@ -82,7 +118,7 @@ const getters = {
   getThumbLabel: (state, { times, displayYear }) => val => {
     return format(
       times[val],
-      displayYear ? "h:00 aa M/DD/YYYY" : "h:00 aa MMMM Do"
+      displayYear ? "h:mm aa M/DD/YYYY" : "h:mm aa MMMM Do"
     );
   }
 };
