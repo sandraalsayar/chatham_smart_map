@@ -87,7 +87,5 @@ export default {
   margin-left: 10px;
   flex-grow: 1;
 }
-#slider {
-  color: white;
-}
+
 </style>

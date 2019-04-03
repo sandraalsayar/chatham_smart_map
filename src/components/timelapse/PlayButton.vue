@@ -1,5 +1,5 @@
 <template>
-  <v-btn color="white" dark floating @click="toggleIsPlaying">
+  <v-btn color="white" @click="toggleIsPlaying">
     <v-icon v-if="isPlaying">pause</v-icon>
     <v-icon v-else>play_arrow</v-icon>
   </v-btn>

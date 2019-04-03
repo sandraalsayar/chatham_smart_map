@@ -94,6 +94,6 @@ p {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   transform: translate(-5px, -16px);
-  border-top: 5px solid #009688;
+  border-top: 5px solid #9e9e9e;
 }
 </style>
