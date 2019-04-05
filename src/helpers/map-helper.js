@@ -1,5 +1,7 @@
 import store from "@/store";
+import Vue from "vue";
 import { getPaintProperty, sensors } from "./helper";
+import PopupContent from "@/components/PopupContent";
 
 const addGeocoder = (map, accessToken) => {
   const geocoder = new MapboxGeocoder({ accessToken, trackProximity: true });
@@ -27,7 +29,7 @@ const addGeocoder = (map, accessToken) => {
   return geocoder;
 };
 
-const onSensorInteraction = (map, geocoder) => {
+const addSensorInteractions = (map, geocoder) => {
   // Create a popup, but don't add it to the map yet.
   const popup = new mapboxgl.Popup({
     closeButton: false,
@@ -41,22 +43,25 @@ const onSensorInteraction = (map, geocoder) => {
     const sensor = sensors.get(id);
     const coordinates = sensor.coordinates;
     const name = sensor.name;
-    const reading = sensor.reading;
     // Ensure that if the map is zoomed out such that multiple copies of the feature are visible,
     // the popup appears over the copy being pointed to.
     while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
       coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
     }
+
     const html = `
         <h4>${name}</h4>
-        <p>Water Level: ${reading.result}</p>
-        <p>Last Measured: ${reading.resultTime}</p>
+        <div id="vue-popup-content"></div>
         `;
     // Populate the popup and set its coordinates.
     popup
       .setLngLat(coordinates)
       .setHTML(html)
       .addTo(map);
+
+    new Vue({
+      render: h => h(PopupContent, { props: { sensor } })
+    }).$mount("#vue-popup-content");
   });
 
   map.on("mouseleave", "outer_point", () => {
@@ -170,4 +175,4 @@ const addSensorLayer = (map, sensorGeoJSON) => {
   animateMarker();
 };
 
-export { addGeocoder, addSensorLayer, onSensorInteraction };
+export { addGeocoder, addSensorLayer, addSensorInteractions };

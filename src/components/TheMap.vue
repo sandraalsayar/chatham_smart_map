@@ -15,13 +15,14 @@
 import Mapbox from "mapbox-gl-vue";
 
 import {
+  getSensorInformation,
   getSensorData,
-  parseSensorData,
+  parseSensorInformation,
   sensorGeocoder
 } from "@/helpers/helper";
 
 import {
-  onSensorInteraction,
+  addSensorInteractions,
   addGeocoder,
   addSensorLayer
 } from "@/helpers/map-helper";
@@ -59,13 +60,16 @@ export default {
 
       const geocoder = addGeocoder(map, this.accessToken);
 
-      getSensorData()
+      getSensorInformation()
         .then(responses => {
-          const sensorGeoJSON = parseSensorData(responses);
+          const sensorGeoJSON = parseSensorInformation(responses.data.value);
           addSensorLayer(map, sensorGeoJSON);
-          geocoder.options.localGeocoder = query =>
-            sensorGeocoder(query, sensorGeoJSON);
-          onSensorInteraction(map, geocoder);
+
+          getSensorData().then(() => {
+            geocoder.options.localGeocoder = query =>
+              sensorGeocoder(query, sensorGeoJSON);
+            addSensorInteractions(map, geocoder);
+          });
         })
         .catch(() => {
           // This will catch ALL errors

@@ -1,8 +1,7 @@
 <template>
   <console-card scrollable :heading="sensor.name.toUpperCase()">
     <div id="basic_info">
-      <p>Water Level: {{ sensor.reading.result }}</p>
-      <p>Last Measured: {{ sensor.reading.resultTime }}</p>
+      <PopupContent :sensor="sensor" />
     </div>
     <div id="water_level_chart">
       <highcharts :options="chartOptions"></highcharts>
@@ -12,11 +11,13 @@
 
 <script>
 import ConsoleCard from "./ConsoleCard";
+import PopupContent from "@/components/PopupContent";
 import { Chart } from "highcharts-vue";
 
 export default {
   components: {
     ConsoleCard,
+    PopupContent,
     highcharts: Chart
   },
   props: {
