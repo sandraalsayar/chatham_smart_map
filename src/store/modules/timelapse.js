@@ -120,6 +120,9 @@ const getters = {
       times[val],
       displayYear ? "h:mm aa M/DD/YYYY" : "h:mm aa MMMM Do"
     );
+  },
+  present({ sliderVal, endDate }, { maxVal }) {
+    return sliderVal === maxVal && isToday(endDate);
   }
 };
 

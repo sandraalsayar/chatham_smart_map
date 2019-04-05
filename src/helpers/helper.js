@@ -1,7 +1,10 @@
 import axios from "axios";
 import encodeUrl from "encodeurl";
 import Sensor from "./sensor";
+import Datastream from "./datastream";
 import stringSimilarity from "string-similarity";
+import store from "@/store";
+import { compareAsc, closestIndexTo } from "date-fns";
 
 let sensors = new Map();
 
@@ -24,24 +27,29 @@ const sensorGeocoder = (query, sensorGeoJSON) => {
   );
 };
 
-const parseSensorData = responses =>
+const parseSensorInformation = responses =>
   responses.map(el => {
-    const location = el.data.Locations[0];
+    const location = el.Locations[0];
     const coordinates = location.location.coordinates;
     const name = location.name;
-
-    const description = el.data.description.toLowerCase();
-    const observation = el.data.Datastreams[0].Observations[0];
-    const id = el.data["@iot.id"];
-    const elevation = Number(el.data.properties.elevationNAVD88);
+    const id = el["@iot.id"];
+    const description = el.description.toLowerCase();
+    const elevation = Number(el.properties.elevationNAVD88);
+    // const observation = el.Datastreams[0].Observations[0];
+    const datastreams = el.Datastreams.map(datastream => {
+      const id = datastream["@iot.id"];
+      const name = datastream.name;
+      const unitSymbol = datastream.unitOfMeasurement.symbol;
+      return new Datastream(id, name, unitSymbol);
+    });
 
     const sensor = new Sensor(
       id,
       coordinates,
       name,
       description,
-      observation,
-      elevation
+      elevation,
+      datastreams
     );
     sensors.set(id, sensor);
 
@@ -56,31 +64,128 @@ const getPaintProperty = (id = -99) => [
   "#007cbf"
 ];
 
-const getSensorData = () => {
-  // URL to get ids of all Things that measure water level
-  const thingsUrl = encodeUrl(
-    "https://api.sealevelsensors.org/v1.0/Things?$select=@iot.id&$filter=Datastreams/name eq 'Water Level'"
-  );
-  // URL to get the 'Water Level' Datastream and Location data of a particular Thing; we expand the Datastream Observation to obtain the latest reading ('result') using certain query parameters.
-  const liveDataUrl = id =>
-    encodeUrl(
-      `https://api.sealevelsensors.org/v1.0/Things(${id})?
-  $expand=Datastreams($filter=name eq 'Water Level';
-  $expand=Observations($select=resultTime,result;$orderBy=resultTime desc;$top=1)),
-  Locations($select=name,location)`
-    );
+const getSensorInformation = () => {
+  // URL so that we can get relevant information about sensors that have a water level datastream.
+  // The information we are looking for involved, sensor ids, locations, names and ids of datastreams they report, elevation etc.
+  const url = encodeUrl(`https://api.sealevelsensors.org/v1.0/Things?$select=@iot.id,description,properties&$filter=Datastreams/name eq 'Water Level'&$expand=Datastreams($select=unitOfMeasurement,name,@iot.id),
+Locations($select=name,location)`);
+  return axios.get(url);
+};
 
-  return axios.get(thingsUrl).then(response => {
-    const urlArr = response.data.value.map(el => liveDataUrl(el["@iot.id"]));
-    const axiosArr = urlArr.map(el => axios.get(el));
-    return axios.all(axiosArr);
+const parseSensorData = (
+  observations,
+  nextLink,
+  datastream,
+  index,
+  times,
+  curLink = undefined
+) => {
+  if (!observations) {
+    return;
+  }
+
+  let i = 0;
+  while (index >= 0 && i < observations.length - 1) {
+    const leftComp = compareAsc(times[index], observations[i].resultTime);
+    const rightComp = compareAsc(times[index], observations[i + 1].resultTime);
+    let matchingIndex = undefined;
+
+    if (!leftComp || (leftComp > 0 && rightComp > 0)) {
+      // equals i, or is greater than both
+      matchingIndex = i;
+    } else if (!rightComp) {
+      // equals right, but is less than i
+      matchingIndex = i + 1;
+    } else if (rightComp > 0) {
+      // less than i, greater than right
+      matchingIndex =
+        i +
+        closestIndexTo(times[index], [
+          observations[i].resultTime,
+          observations[i + 1].resultTime
+        ]);
+    }
+
+    if (matchingIndex !== undefined) {
+      const { result, resultTime } = observations[matchingIndex];
+      datastream.observations.push({ result, resultTime });
+      datastream.addToCache(resultTime, curLink);
+      index--;
+    } else {
+      i++; // less than both
+    }
+  }
+
+  if (index >= 0) {
+    if (nextLink) {
+      axios.get(nextLink).then(res => {
+        parseSensorData(
+          res.data.value,
+          res.data["@iot.nextLink"],
+          datastream,
+          index,
+          times,
+          nextLink
+        );
+      });
+    } else {
+      while (index >= 0) {
+        const { result, resultTime } = observations[i];
+        datastream.observations.push({ result, resultTime });
+        datastream.addToCache(resultTime, curLink);
+        index--;
+      }
+    }
+  }
+};
+
+const getSensorData = () => {
+  const times = store.getters["timelapse/times"];
+  const axiosArr = [];
+  const datastreamArr = [];
+  for (let sensor of sensors.values()) {
+    axiosArr.push(
+      ...sensor.datastreams.map(datastream => {
+        datastreamArr.push(datastream);
+        const url = datastream.firstURL(times[times.length - 1]);
+        return axios.get(encodeUrl(url));
+      })
+    );
+  }
+
+  return axios.all(axiosArr).then(responses => {
+    responses.forEach((res, i) => {
+      const index = times.length - 1;
+      parseSensorData(
+        res.data.value,
+        res.data["@iot.nextLink"],
+        datastreamArr[i],
+        index,
+        times
+      );
+    });
   });
 };
 
+store.watch(
+  (state, getters) => getters["timelapse/times"],
+  // eslint-disable-next-line no-unused-vars
+  _ => {
+    getSensorData().catch(() => {
+      // This will catch ALL errors
+      store.commit("app/showWarning", {
+        warningText:
+          "We encountered an error while fetching sensor data. You may still use the map."
+      });
+    });
+  }
+);
+
 export {
   getPaintProperty,
+  getSensorInformation,
   getSensorData,
-  parseSensorData,
+  parseSensorInformation,
   sensorGeocoder,
   sensors
 };

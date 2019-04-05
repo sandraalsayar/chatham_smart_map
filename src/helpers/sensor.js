@@ -1,26 +1,45 @@
-import { distanceInWordsToNow } from "date-fns";
+import { distanceInWordsToNow, format } from "date-fns";
+import store from "@/store";
 
 export default class Sensor {
-  constructor(id, coordinates, name, description, observation, elevation) {
+  constructor(id, coordinates, name, description, elevation, datastreams) {
     this.id = id;
     this.coordinates = coordinates;
     this.name = `${name} Sensor`;
     this.description = description;
-    this.observation = observation;
     this.elevation = elevation;
+    this.datastreams = datastreams;
   }
 
   get placeName() {
     return `${this.name}, Chatham, GA`;
   }
 
-  get reading() {
-    if (this.observation) {
+  get waterLevelReading() {
+    const datastream = this.datastreams.find(
+      datastream => datastream.name === "Water Level"
+    );
+    // Array is reversed
+    const { observations, unitSymbol } = datastream;
+    const observation =
+      observations[observations.length - 1 - store.state.timelapse.sliderVal];
+    if (observation) {
+      const result = `${(this.elevation + observation.result).toFixed(
+        3
+      )} ${unitSymbol}`;
+      const resultTime = store.getters["timelapse/present"]
+        ? distanceInWordsToNow(observation.resultTime, {
+            addSuffix: true
+          })
+        : format(
+            observation.resultTime,
+            store.getters["timelapse/displayYear"]
+              ? "h:mm aa M/DD/YYYY"
+              : "h:mm aa MMMM Do"
+          );
       return {
-        result: `${(this.elevation + this.observation.result).toFixed(3)} m`,
-        resultTime: distanceInWordsToNow(this.observation.resultTime, {
-          addSuffix: true
-        })
+        result,
+        resultTime
       };
     } else {
       return {
