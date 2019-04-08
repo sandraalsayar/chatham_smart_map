@@ -1,3 +1,4 @@
+import store from "@/store";
 const state = {
   layers: [
     {
@@ -34,11 +35,10 @@ const mutations = {
       layer.selected = i === index;
       layer.legend_displayed = i === index || i === 0; // always display the first legend
     });
-    this.$store.commit("timelapse/displayTimelapse");
+    store.commit("timelapse/displayTimelapse");
   },
   setSensor(state, { sensor }) {
     state.sensor = sensor;
-    this.$store.commit("timelapse/displayTimelapse");
   }
 };
 
