@@ -118,7 +118,7 @@ const getters = {
   getThumbLabel: (state, { times, displayYear }) => val => {
     return format(
       times[val],
-      displayYear ? "h:mm aa M/DD/YYYY" : "h:mm aa MMMM Do"
+      displayYear ? "M/DD/YYYY h:mm aa" : "MMMM Do h:mm aa"
     );
   },
   present({ sliderVal, endDate }, { maxVal }) {
