@@ -40,17 +40,17 @@ const mutations = {
 
 const getters = {
   times({ startDate, endDate }) {
-    //takes two dates and returns an array of ISO date strings
+    // takes two dates and returns an array of ISO date strings
     const daysDifference = differenceInDays(endDate, startDate);
     let timeArray = [];
     if (!daysDifference) {
-      //if the same day is selected twice
+      // if the same day is selected twice
       let minutesDifference = 60 * 24; //minutes in a day
       if (isToday(startDate) || isToday(endDate)) {
         minutesDifference = differenceInMinutes(
           new Date(),
           startOfDay(startDate)
-        ); //split into minutes instead of days
+        ); // split into minutes instead of days
       }
       const viableMinuteSplits = [1, 5, 10, 15, 20, 30, 60];
       for (let minuteSplit of viableMinuteSplits) {
@@ -63,7 +63,7 @@ const getters = {
               timeArray[k] = workingTime.toISOString();
             }
             if (isToday(endDate)) {
-              timeArray.push(endDate.toISOString()); //add exact present time at the end
+              timeArray.push(endDate.toISOString()); // add exact present time at the end
             }
             return timeArray;
           }
@@ -72,19 +72,19 @@ const getters = {
     } else {
       const viableDayFractions = [1, 2, 3, 4, 6, 12];
       for (let dayFraction of viableDayFractions) {
-        //splitting days into numbers of hours
+        // splitting days into numbers of hours
         for (let j = 12; j < 24; j++) {
-          //splitting timelapse bar itself into fractions
+          // splitting timelapse bar itself into fractions
           if ((daysDifference * dayFraction) % j === 0) {
             let workingDate = startDate;
             for (let k = 0; k <= j; k++) {
-              //populate array of date strings
+              // populate array of date strings
               workingDate = addHours(startDate, (daysDifference / j) * 24 * k);
               let roundedWorkingDate = startOfHour(workingDate);
               timeArray[k] = roundedWorkingDate.toISOString();
             }
             if (isToday(endDate)) {
-              timeArray.push(workingDate.toISOString()); //add exact present time at the end
+              timeArray.push(workingDate.toISOString()); // add exact present time at the end
             }
             return timeArray;
           }
@@ -123,6 +123,11 @@ const getters = {
   },
   present({ sliderVal, endDate }, { maxVal }) {
     return sliderVal === maxVal && isToday(endDate);
+  },
+  threshold(state, getters) {
+    return Math.round(
+      0.1 * differenceInMinutes(getters.times[1] - getters.times[0])
+    );
   }
 };
 

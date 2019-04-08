@@ -4,7 +4,7 @@ import Sensor from "./sensor";
 import Datastream from "./datastream";
 import stringSimilarity from "string-similarity";
 import store from "@/store";
-import { compareAsc, closestIndexTo } from "date-fns";
+import { compareAsc, closestIndexTo, differenceInMinutes } from "date-fns";
 
 let sensors = new Map();
 
@@ -65,8 +65,9 @@ const getPaintProperty = (id = -99) => [
 ];
 
 const getSensorInformation = () => {
-  // URL so that we can get relevant information about sensors that have a water level datastream.
-  // The information we are looking for involved, sensor ids, locations, names and ids of datastreams they report, elevation etc.
+  // Get relevant information about all sensors that report a water level datastream.
+  // The information we are looking for involves, sensor ids, locations, names and ids of datastreams they report, elevation etc. See parseSensorInformation() for details.
+  // While this information is enough to set-up our Sensor and Datastream objects, and to plot the sensors on the map, we don't actually fetch their observations yet.
   const url = encodeUrl(`https://api.sealevelsensors.org/v1.0/Things?$select=@iot.id,description,properties&$filter=Datastreams/name eq 'Water Level'&$expand=Datastreams($select=unitOfMeasurement,name,@iot.id),
 Locations($select=name,location)`);
   return axios.get(url);
@@ -78,7 +79,7 @@ const parseSensorData = (
   datastream,
   index,
   times,
-  curLink = undefined
+  curLink
 ) => {
   if (!observations) {
     return;
@@ -91,13 +92,13 @@ const parseSensorData = (
     let matchingIndex = undefined;
 
     if (!leftComp || (leftComp > 0 && rightComp > 0)) {
-      // equals i, or is greater than both
+      // times[index] equals observations[i].resultTime, or is greater than both observations[i].resultTime and observations[i + 1].resultTime
       matchingIndex = i;
     } else if (!rightComp) {
-      // equals right, but is less than i
+      // times[index] equals observations[i + 1].resultTime but is less than observations[i].resultTime
       matchingIndex = i + 1;
     } else if (rightComp > 0) {
-      // less than i, greater than right
+      // observations[i + 1].resultTime < times[index] < observations[i].resultTime
       matchingIndex =
         i +
         closestIndexTo(times[index], [
@@ -105,37 +106,66 @@ const parseSensorData = (
           observations[i + 1].resultTime
         ]);
     }
-
+    // matchingIndex may be zero, so don't do !matchingIndex
     if (matchingIndex !== undefined) {
-      const { result, resultTime } = observations[matchingIndex];
-      datastream.observations.push({ result, resultTime });
-      datastream.addToCache(resultTime, curLink);
+      pushToDatastream(
+        datastream,
+        times[index],
+        curLink,
+        observations[matchingIndex]
+      );
       index--;
     } else {
-      i++; // less than both
+      i++; // times[index] is less than both
     }
   }
 
   if (index >= 0) {
     if (nextLink) {
-      axios.get(nextLink).then(res => {
+      // if there is a next link to get more observations
+      const url = datastream.closestUrlFromCache(times[index], nextLink);
+
+      axios.get(url).then(res => {
         parseSensorData(
           res.data.value,
           res.data["@iot.nextLink"],
           datastream,
           index,
           times,
-          nextLink
+          url
         );
       });
     } else {
+      // No more observations, match all the remaining time intervals with the last observation
       while (index >= 0) {
-        const { result, resultTime } = observations[i];
-        datastream.observations.push({ result, resultTime });
-        datastream.addToCache(resultTime, curLink);
+        if (
+          !pushToDatastream(datastream, times[index], curLink, observations[i])
+        ) {
+          // Since times[index] was not in threshold, remaining entries in times won't be as well, so
+          // fill datastream with undefined observations and break.
+          datastream.observations.push(...Array(index).fill(undefined));
+          break;
+        }
         index--;
       }
     }
+  }
+};
+
+const pushToDatastream = (
+  datastream,
+  time,
+  curLink,
+  { result, resultTime }
+) => {
+  const diff = Math.abs(differenceInMinutes(time, resultTime));
+  if (diff <= store.getters["timelapse/threshold"]) {
+    datastream.observations.push({ result, resultTime });
+    datastream.addToCache(resultTime, curLink); // curLink represents the URL of the page where this observation was obtained
+    return true; // the observation was pushed
+  } else {
+    datastream.observations.push(undefined);
+    return false; // couldn't push the observation
   }
 };
 
@@ -144,15 +174,17 @@ const getSensorData = () => {
   const axiosArr = [];
   const datastreamArr = [];
   for (let sensor of sensors.values()) {
+    // For each datastream of a sensor, get a URL to start off parsing observations from.
     axiosArr.push(
       ...sensor.datastreams.map(datastream => {
-        datastreamArr.push(datastream);
-        const url = datastream.firstURL(times[times.length - 1]);
+        datastreamArr.push(datastream); // will help us keep track of which URL corresponds to which datastream object when the axios request completes.
+        // Check if the cache has a URL corresponding to a date <= the last date in the time intervals array
+        const url = datastream.closestUrlFromCache(times[times.length - 1]);
         return axios.get(encodeUrl(url));
       })
     );
   }
-
+  // Use axios.all to perform requests in parallel
   return axios.all(axiosArr).then(responses => {
     responses.forEach((res, i) => {
       const index = times.length - 1;
@@ -161,7 +193,8 @@ const getSensorData = () => {
         res.data["@iot.nextLink"],
         datastreamArr[i],
         index,
-        times
+        times,
+        res.config.url
       );
     });
   });
