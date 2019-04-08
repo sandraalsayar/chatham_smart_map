@@ -126,7 +126,7 @@ const getters = {
   },
   threshold(state, getters) {
     return Math.round(
-      0.1 * differenceInMinutes(getters.times[1] - getters.times[0])
+      0.1 * differenceInMinutes(getters.times[1], getters.times[0])
     );
   }
 };

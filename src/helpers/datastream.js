@@ -19,7 +19,7 @@ export default class Datastream {
   closestUrlFromCache(endDate, fallback = this.observationsNavLink) {
     // Look in the cache for a URL corresponding to a date >= endDate. If no entry satisfies this requirement,
     // return the fallback URL.
-    let link = fallback;
+    let link = undefined;
     let minDiff = Infinity;
     for (let [resultTime, curLink] of this.cache.entries()) {
       const diff = differenceInMilliseconds(resultTime, endDate);
@@ -28,7 +28,20 @@ export default class Datastream {
         link = curLink;
       }
     }
-    return link;
+    // If link is undefined or does not contain $skip, no point using it
+    if (!link) {
+      return fallback;
+    }
+    const skipLink = link.match(/(?:\$skip=)(\d+)/);
+    if (!skipLink) {
+      return fallback; // use link if fallback has no $skip query param
+    }
+    const skipFallback = fallback.match(/(?:\$skip=)(\d+)/); // Check if fallback contains the $skip query param
+    if (!skipFallback) {
+      return link; // use link if fallback has no $skip query param
+    }
+    // otherwise use whichever link has highest numeric value for the $skip query param
+    return +skipLink[1] > +skipFallback[1] ? link : fallback;
   }
 
   addToCache(resultTime, curLink) {
