@@ -16,11 +16,13 @@ export default class Sensor {
   }
 
   get waterLevelReading() {
+    // Find the water level datastream
     const datastream = this.datastreams.find(
       datastream => datastream.name === "Water Level"
     );
-    // Array is reversed
     const { observations, unitSymbol } = datastream;
+    // observations array is reversed - observations are present in descending order of resultTime,
+    // take this into account when we index into it.
     const observation =
       observations[observations.length - 1 - store.state.timelapse.sliderVal];
     if (observation) {
