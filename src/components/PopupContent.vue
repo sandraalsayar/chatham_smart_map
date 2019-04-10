@@ -1,7 +1,7 @@
 <template>
   <div>
-    <p>Water Level: {{ sensor.waterLevelReading.result }}</p>
-    <p>Last Measured: {{ sensor.waterLevelReading.resultTime }}</p>
+    <p>Water Level: {{ waterLevelReading.result }}</p>
+    <p>Last Measured: {{ waterLevelReading.resultTime }}</p>
   </div>
 </template>
 
@@ -11,6 +11,11 @@ export default {
     sensor: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    waterLevelReading() {
+      return this.sensor.waterLevelReading;
     }
   }
 };

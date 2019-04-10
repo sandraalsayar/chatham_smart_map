@@ -35,6 +35,8 @@ const addSensorInteractions = (map, geocoder) => {
     closeButton: false,
     closeOnClick: false
   });
+  let vuePopup;
+
   map.on("mouseenter", "outer_point", e => {
     // Change the cursor style as a UI indicator.
     map.getCanvas().style.cursor = "pointer";
@@ -59,7 +61,7 @@ const addSensorInteractions = (map, geocoder) => {
       .setHTML(html)
       .addTo(map);
 
-    new Vue({
+    vuePopup = new Vue({
       render: h => h(PopupContent, { props: { sensor } })
     }).$mount("#vue-popup-content");
   });
@@ -67,6 +69,7 @@ const addSensorInteractions = (map, geocoder) => {
   map.on("mouseleave", "outer_point", () => {
     map.getCanvas().style.cursor = "";
     popup.remove();
+    vuePopup.$destroy();
   });
 
   map.on("click", "outer_point", e => {

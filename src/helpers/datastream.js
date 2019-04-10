@@ -34,7 +34,7 @@ export default class Datastream {
     }
     const skipLink = link.match(/(?:\$skip=)(\d+)/);
     if (!skipLink) {
-      return fallback; // use link if fallback has no $skip query param
+      return fallback;
     }
     const skipFallback = fallback.match(/(?:\$skip=)(\d+)/); // Check if fallback contains the $skip query param
     if (!skipFallback) {

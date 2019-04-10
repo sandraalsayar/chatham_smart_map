@@ -124,19 +124,20 @@ const parseSensorData = (
     if (nextLink) {
       // if there is a next link to get more observations
       const url = datastream.closestUrlFromCache(times[index], nextLink);
-
-      axios.get(url).then(res => {
-        parseSensorData(
-          res.data.value,
-          res.data["@iot.nextLink"],
-          datastream,
-          index,
-          times,
-          url
+      return axios
+        .get(url)
+        .then(res =>
+          parseSensorData(
+            res.data.value,
+            res.data["@iot.nextLink"],
+            datastream,
+            index,
+            times,
+            url
+          )
         );
-      });
     } else {
-      // No more observations, match all the remaining time intervals with the last observation
+      // No more observations, try to match all the remaining time intervals with the last observation
       while (index >= 0) {
         if (
           !pushToDatastream(datastream, times[index], curLink, observations[i])
@@ -149,6 +150,7 @@ const parseSensorData = (
         index--;
       }
     }
+    return Promise.resolve();
   }
 };
 
@@ -171,6 +173,7 @@ const pushToDatastream = (
 
 const getSensorData = () => {
   const times = store.getters["timelapse/times"];
+  const index = times.length - 1;
   const axiosArr = [];
   const datastreamArr = [];
   for (let sensor of sensors.values()) {
@@ -185,32 +188,46 @@ const getSensorData = () => {
     );
   }
   // Use axios.all to perform requests in parallel
-  return axios.all(axiosArr).then(responses => {
-    responses.forEach((res, i) => {
-      const index = times.length - 1;
-      parseSensorData(
-        res.data.value,
-        res.data["@iot.nextLink"],
-        datastreamArr[i],
-        index,
-        times,
-        res.config.url
-      );
-    });
-  });
+  return axios
+    .all(axiosArr)
+    .then(responses =>
+      axios.all(
+        responses.map((res, i) =>
+          parseSensorData(
+            res.data.value,
+            res.data["@iot.nextLink"],
+            datastreamArr[i],
+            index,
+            times,
+            res.config.url
+          )
+        )
+      )
+    );
 };
 
 store.watch(
   (state, getters) => getters["timelapse/times"],
   // eslint-disable-next-line no-unused-vars
   _ => {
-    getSensorData().catch(() => {
-      // This will catch ALL errors
-      store.commit("app/showWarning", {
-        warningText:
-          "We encountered an error while fetching sensor data. You may still use the map."
-      });
+    store.commit("app/updatingData", {
+      updatingData: true
     });
+    store.commit("app/startLoading");
+    getSensorData()
+      .catch(() => {
+        // This will catch ALL errors
+        store.commit("app/showWarning", {
+          warningText:
+            "We encountered an error while fetching sensor data. You may still use the map."
+        });
+      })
+      .finally(() => {
+        store.commit("app/updatingData", {
+          updatingData: false
+        });
+        store.commit("app/stopLoading");
+      });
   }
 );
 

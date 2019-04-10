@@ -16,6 +16,9 @@ export default class Sensor {
   }
 
   get waterLevelReading() {
+    if (store.state.app.updatingData) {
+      return { result: "Loading...", resultTime: "Loading..." };
+    }
     // Find the water level datastream
     const datastream = this.datastreams.find(
       datastream => datastream.name === "Water Level"
