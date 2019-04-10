@@ -8,6 +8,7 @@
           id="datepicker-trigger"
           placeholder="Select dates"
           :value="formatDates"
+          :disabled="updatingData ? true : false"
         />
       </div>
       <AirbnbStyleDatepicker
@@ -86,7 +87,8 @@ export default {
   },
   computed: {
     ...mapGetters("picker", ["formatDates"]),
-    ...mapState("picker", ["dateOne", "dateTwo", "endDate"])
+    ...mapState("picker", ["dateOne", "dateTwo", "endDate"]),
+    ...mapState("app", ["updatingData"])
   }
 };
 </script>
@@ -110,5 +112,9 @@ input {
   font-size: 12px;
   line-height: normal;
   font-family: system-ui;
+}
+
+input:disabled {
+  background: #ccc;
 }
 </style>

@@ -12,7 +12,7 @@ const state = {
     },
     {
       name: "Inundation",
-      color: "dodgerblue",
+      color: "steelblue",
       description: "Display altitude-adjusted water levels.",
       icon: "waves",
       selected: false,
