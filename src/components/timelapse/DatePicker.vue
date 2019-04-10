@@ -67,12 +67,10 @@ export default {
       this.$store.commit("timelapse/setIsPlaying", { isPlaying: false });
       this.$store.commit("timelapse/setSliderVal", { sliderVal: 0 });
       this.$store.commit("timelapse/setDates", { startDate, endDate });
-      console.log("Applied");
       applied = true;
     },
     onClosed() {
       if (!applied) {
-        console.log("Closed!");
         this.onApply();
       }
     },
