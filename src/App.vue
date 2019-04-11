@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <v-app>
-      <TheProgressCircle v-if="loadingData" />
+      <TheProgressCircle v-if="loading" />
       <TheWarningAlert :text="warningText" v-if="showWarning" />
       <TheErrorModal :display="mapError" />
       <TheMap />
@@ -32,7 +32,7 @@ export default {
   },
   computed: {
     ...mapState("app", [
-      "loadingData",
+      "loading",
       "mapError",
       "mapLoaded",
       "showWarning",
@@ -72,6 +72,11 @@ p {
 .mapboxgl-ctrl-top-left .mapboxgl-ctrl {
   margin: 20px 0 0 18px;
   width: 309px;
+}
+
+/* Override default CSS for popup */
+.mapboxgl-popup {
+  z-index: 1;
 }
 
 /* Override default CSS for slider's thumb label */

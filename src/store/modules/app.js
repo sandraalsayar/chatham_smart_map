@@ -1,9 +1,10 @@
 const state = {
-  loadingData: true,
+  loading: true,
   mapError: false,
   mapLoaded: false,
   showWarning: false,
-  warningText: ""
+  warningText: "",
+  updatingData: true
 };
 
 const mutations = {
@@ -15,13 +16,21 @@ const mutations = {
     state.mapLoaded = true;
   },
 
+  startLoading(state) {
+    state.loading = true;
+  },
+
   stopLoading(state) {
-    state.loadingData = false;
+    state.loading = false;
   },
 
   showWarning(state, { warningText }) {
     state.showWarning = true;
     state.warningText = warningText;
+  },
+
+  updatingData(state, { updatingData }) {
+    state.updatingData = updatingData;
   }
 };
 

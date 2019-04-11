@@ -8,6 +8,7 @@
           id="datepicker-trigger"
           placeholder="Select dates"
           :value="formatDates"
+          :disabled="updatingData ? true : false"
         />
       </div>
       <AirbnbStyleDatepicker
@@ -30,6 +31,8 @@
         "
         @opened="onOpen"
         @apply="onApply"
+        @closed="onClosed"
+        @cancelled="onCancelled"
       />
     </div>
   </div>
@@ -44,6 +47,7 @@ import {
   differenceInMinutes,
   startOfDay
 } from "date-fns";
+let applied = false;
 
 export default {
   methods: {
@@ -64,15 +68,27 @@ export default {
       this.$store.commit("timelapse/setIsPlaying", { isPlaying: false });
       this.$store.commit("timelapse/setSliderVal", { sliderVal: 0 });
       this.$store.commit("timelapse/setDates", { startDate, endDate });
+      applied = true;
+    },
+    onClosed() {
+      if (!applied) {
+        this.onApply();
+      }
+    },
+    onCancelled() {
+      //Makes sure that when hitting cancel, the dates DON'T get applied
+      applied = true;
     },
     onOpen() {
+      applied = false;
       this.$store.commit("timelapse/setIsPlaying", { isPlaying: false });
     },
     ...mapMutations("picker", ["setDateOne", "setDateTwo"])
   },
   computed: {
     ...mapGetters("picker", ["formatDates"]),
-    ...mapState("picker", ["dateOne", "dateTwo", "endDate"])
+    ...mapState("picker", ["dateOne", "dateTwo", "endDate"]),
+    ...mapState("app", ["updatingData"])
   }
 };
 </script>
@@ -96,5 +112,9 @@ input {
   font-size: 12px;
   line-height: normal;
   font-family: system-ui;
+}
+
+input:disabled {
+  background: #ccc;
 }
 </style>
