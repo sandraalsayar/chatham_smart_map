@@ -34,7 +34,7 @@ export default {
 }
 
 .scroll {
-  max-height: 330px;
+  flex-grow: 1;
   overflow-y: scroll;
 }
 

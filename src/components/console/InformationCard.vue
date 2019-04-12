@@ -6,15 +6,12 @@
     <div id="water_level_chart">
       <highcharts
         :options="chartOptions"
-        :constructor-type="stockChart"
       ></highcharts>
       <highcharts
         :options="chartOptions"
-        :constructor-type="stockChart"
       ></highcharts>
       <highcharts
         :options="chartOptions"
-        :constructor-type="stockChart"
       ></highcharts>
     </div>
   </console-card>
