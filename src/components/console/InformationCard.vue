@@ -4,7 +4,15 @@
       <PopupContent :sensor="sensor" />
     </div>
     <div id="water_level_chart">
-      <highcharts :options="chartOptions"></highcharts>
+      <highcharts
+        :options="chartOptions"
+      ></highcharts>
+      <highcharts
+        :options="chartOptions"
+      ></highcharts>
+      <highcharts
+        :options="chartOptions"
+      ></highcharts>
     </div>
   </console-card>
 </template>
@@ -28,35 +36,30 @@ export default {
   },
   data() {
     return {
-      chart: {
-        height: "50%" // doesn't work rn
-      },
       chartOptions: {
         title: {
-          text: "Water Level Data"
+          text: "Sea Level Data"
         },
         xAxis: {
-          categories: ["1", "2", "3", "4", "5", "6"],
-          //tickmarkPlacement: "on",
-          crosshair: true,
-          plotLines: [
-            {
-              //color: 'red', // Color value
-              value: 3 // Value of where the line will appear
-              //width: 2 // Width of the line
-            }
-          ]
+          categories: ["1", "2", "3", "4"],
+          crosshair: true
         },
         yAxis: {
           title: {
-            text: "Water Level"
+            text: "Sea Level"
           },
-          //tickInterval: 0.5,
+          plotLines: [
+            {
+              color: "#FF0000", // Color value
+              value: 2, // Value of where the line will appear
+              width: 2 // Width of the line
+            }
+          ],
           tickPixelInterval: 30 // you can also write your own tick interval algo
         },
         series: [
           {
-            data: [2, 3, 4, 3.5, 4, 4] // sample data
+            data: [1.36, 2.07, 1.55, 0.78] // sample data
           }
         ],
         plotOptions: {
