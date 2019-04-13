@@ -4,15 +4,9 @@
       <PopupContent :sensor="sensor" />
     </div>
     <div id="water_level_chart">
-      <highcharts
-        :options="chartOptions"
-      ></highcharts>
-      <highcharts
-        :options="chartOptions"
-      ></highcharts>
-      <highcharts
-        :options="chartOptions"
-      ></highcharts>
+      <highcharts :options="chartOptions"></highcharts>
+      <highcharts :options="chartOptions"></highcharts>
+      <highcharts :options="chartOptions"></highcharts>
     </div>
   </console-card>
 </template>
