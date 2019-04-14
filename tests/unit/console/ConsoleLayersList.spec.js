@@ -1,6 +1,6 @@
 import Vuex from "vuex";
 import cons from "@/store/modules/console";
-import { shallowMount, createLocalVue } from "@vue/test-utils";
+import { mount, createLocalVue } from "@vue/test-utils";
 import ConsoleLayersList from "@/components/console/ConsoleLayersList";
 import ConsoleLayersListItem from "@/components/console/ConsoleLayersListItem";
 
@@ -14,7 +14,7 @@ const store = new Vuex.Store({
 });
 
 describe("ConsoleLayersList", () => {
-  const wrapper = shallowMount(ConsoleLayersList, { store, localVue });
+  const wrapper = mount(ConsoleLayersList, { store, localVue });
 
   it("has a ul", () => {
     expect(wrapper.contains("ul")).toBe(true);

@@ -26,10 +26,6 @@ describe("ConsoleLegend", () => {
     expect(get_display(one)).toBe("block");
     expect(get_display(two)).toBe("none");
 
-    store.commit("cons/toggleLayers", { inde: 0 });
-    expect(get_display(one)).toBe("block");
-    expect(get_display(two)).toBe("none");
-
     store.commit("cons/toggleLayers", { index: 1 });
     expect(get_display(one)).toBe("block"); // always display the first legend
     expect(get_display(two)).toBe("block");
