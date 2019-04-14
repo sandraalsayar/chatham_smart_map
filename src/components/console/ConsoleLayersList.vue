@@ -5,14 +5,14 @@
         v-for="(layer, index) in layers"
         :key="index"
         :layer="layer"
-        @toggleLayers="toggleLayers({ index })"
+        @toggleLayers="toggleLayers(index)"
       />
     </ul>
   </console-card>
 </template>
 
 <script>
-import { mapMutations, mapState } from "vuex";
+import { mapState } from "vuex";
 import ConsoleCard from "./ConsoleCard";
 import ConsoleLayersListItem from "./ConsoleLayersListItem";
 
@@ -22,7 +22,10 @@ export default {
     ...mapState("cons", ["layers"])
   },
   methods: {
-    ...mapMutations("cons", ["toggleLayers"])
+    toggleLayers(index) {
+      this.$store.commit("cons/toggleLayers", { index });
+      this.$store.dispatch("app/selectLayer", { layerSelected: index });
+    }
   }
 };
 </script>

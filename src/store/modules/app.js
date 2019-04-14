@@ -5,8 +5,8 @@ const state = {
   mapError: false,
   mapLoaded: false,
   showWarning: false,
-  selectedLayer: 0,
-  selectedSensor: undefined,
+  layerSelected: 0,
+  sensorIsSelected: false,
   timelapseMode: false,
   warningText: "",
   updatingData: true
@@ -34,25 +34,18 @@ const mutations = {
     state.warningText = warningText;
   },
 
-  selectLayer(state, { index }) {
-    state.selectedLayer = index;
-    mutations.displayTimelapse(state);
+  layerSelected(state, { layerSelected }) {
+    state.layerSelected = layerSelected;
   },
 
-  selectSensor(state, { sensor }) {
-    state.selectedSensor = sensor;
-    mutations.displayTimelapse(state);
+  sensorSelected(state, { sensorIsSelected }) {
+    state.sensorIsSelected = sensorIsSelected;
   },
 
   displayTimelapse(state) {
-    if (state.selectedLayer !== 0 || state.selectedSensor !== undefined) {
+    if (state.layerSelected !== 0 || state.sensorIsSelected) {
       state.timelapseMode = true;
     } else {
-      const startDate = yesterday;
-      const endDate = today;
-      store.commit("timelapse/setIsPlaying", { isPlaying: false });
-      store.commit("timelapse/setSliderVal", { sliderVal: 13 });
-      store.commit("timelapse/setDates", { startDate, endDate });
       state.timelapseMode = false;
     }
   },
@@ -62,8 +55,37 @@ const mutations = {
   }
 };
 
+const actions = {
+  selectSensor(context, { sensorIsSelected }) {
+    context.commit("sensorSelected", { sensorIsSelected });
+    context.commit("displayTimelapse");
+    let layerSelected = context.state.layerSelected;
+    if (!sensorIsSelected && layerSelected === 0) {
+      context.dispatch("resetTimelapse");
+    }
+  },
+
+  selectLayer(context, { layerSelected }) {
+    context.commit("layerSelected", { layerSelected });
+    context.commit("displayTimelapse");
+    let sensorIsSelected = context.state.sensorIsSelected;
+    if (!sensorIsSelected && layerSelected === 0) {
+      context.dispatch("resetTimelapse");
+    }
+  },
+
+  resetTimelapse() {
+    const startDate = yesterday;
+    const endDate = today;
+    context.commit("timelapse/setIsPlaying", { isPlaying: false });
+    context.commit("timelapse/setSliderVal", { sliderVal: 13 });
+    context.commit("timelapse/setDates", { startDate, endDate });
+  }
+};
+
 export default {
   namespaced: true,
   state,
-  mutations
+  mutations,
+  actions
 };
