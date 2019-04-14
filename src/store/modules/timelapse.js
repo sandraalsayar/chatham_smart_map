@@ -96,7 +96,7 @@ const getters = {
     return getters.times.length - 1;
   },
   displayYear({ startDate, endDate }) {
-    startDate.getFullYear() !== endDate.getFullYear();
+    return startDate.getFullYear() !== endDate.getFullYear();
   },
   tickLabels({ startDate, endDate }, { maxVal, displayYear }) {
     let newLabels = [];
