@@ -39,6 +39,6 @@ export default {
   z-index: 0;
   display: flex;
   flex-direction: column;
-  max-height: 82%;
+  max-height: calc(100% - 110px);
 }
 </style>

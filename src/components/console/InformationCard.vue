@@ -71,13 +71,6 @@ export default {
 
 <style scoped>
 #basic_info {
-  font-size: 16px;
-  margin: 5px;
-  margin-left: 15px;
-  margin-right: 0.7em;
+  margin: 0.7em;
 }
-
-/*#water_level_chart {
-  height: 150px;
-}*/
 </style>

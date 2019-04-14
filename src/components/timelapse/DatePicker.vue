@@ -1,52 +1,50 @@
 <template>
-  <div>
-    <div class="datepicker-trigger">
-      <div>
-        <i class="material-icons">calendar_today</i>
-        <input
-          type="text"
-          id="datepicker-trigger"
-          placeholder="Select dates"
-          :value="formatDates"
-          :disabled="updatingData ? true : false"
-        />
-      </div>
-      <AirbnbStyleDatepicker
-        :offset-y="-310"
-        :trigger-element-id="'datepicker-trigger'"
-        :mode="'range'"
-        :fullscreen-mobile="true"
-        :date-one="dateOne"
-        :date-two="dateTwo"
-        :end-date="endDate"
-        @date-one-selected="
-          val => {
-            setDateOne({ val });
-          }
-        "
-        @date-two-selected="
-          val => {
-            setDateTwo({ val });
-          }
-        "
-        @opened="onOpen"
-        @apply="onApply"
-        @closed="onClosed"
-        @cancelled="onCancelled"
-      />
-    </div>
+  <div
+    class="datepicker-trigger"
+    id="datepicker-trigger"
+    :class="{ disabled: updatingData }"
+  >
+    <i class="material-icons">calendar_today</i>
+    <div class="first">{{ formattedDate(dateOne) }}</div>
+    <div class="vertical-line"></div>
+    <div class="second">{{ formattedDate(dateTwo) }}</div>
+    <AirbnbStyleDatepicker
+      :trigger-element-id="'datepicker-trigger'"
+      :mode="'range'"
+      :fullscreen-mobile="true"
+      :date-one="dateOne"
+      :date-two="dateTwo"
+      :end-date="endDate"
+      @date-one-selected="
+        val => {
+          setDateOne({ val });
+        }
+      "
+      @date-two-selected="
+        val => {
+          setDateTwo({ val });
+        }
+      "
+      @opened="onOpen"
+      @apply="onApply"
+      @closed="onClosed"
+      @cancelled="onCancelled"
+    />
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import {
   parse,
   addMinutes,
   isToday,
   differenceInMinutes,
-  startOfDay
+  startOfDay,
+  format
 } from "date-fns";
+// We want onApply changes to occur if a user closes the date picker by clicking outside, so use
+// this variable to track if picker was closed by clicking outside.
 let applied = false;
 
 export default {
@@ -76,17 +74,19 @@ export default {
       }
     },
     onCancelled() {
-      //Makes sure that when hitting cancel, the dates DON'T get applied
+      // Makes sure that when hitting cancel, the dates DON'T get applied
       applied = true;
     },
     onOpen() {
       applied = false;
       this.$store.commit("timelapse/setIsPlaying", { isPlaying: false });
     },
+    formattedDate(date) {
+      return date ? format(date, "ddd, D MMM") : "";
+    },
     ...mapMutations("picker", ["setDateOne", "setDateTwo"])
   },
   computed: {
-    ...mapGetters("picker", ["formatDates"]),
     ...mapState("picker", ["dateOne", "dateTwo", "endDate"]),
     ...mapState("app", ["updatingData"])
   }
@@ -94,27 +94,48 @@ export default {
 </script>
 
 <style scoped>
+div.datepicker-trigger {
+  background-color: white;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  padding: 5px;
+  height: 40px;
+  width: 260px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+
+.first {
+  margin-left: 23px;
+  pointer-events: none;
+}
+
 i {
-  position: absolute;
-  bottom: 6px;
-  left: 23px;
-  margin-bottom: 15px;
+  margin-left: 5px;
+  pointer-events: none;
 }
 
-input {
-  margin-right: 15px;
-  margin-left: 15px;
-  margin-bottom: 15px;
-  padding: 11px 15px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  text-indent: 25px;
-  background: #fff;
-  font-size: 12px;
-  line-height: normal;
-  font-family: system-ui;
+.second {
+  pointer-events: none;
 }
 
-input:disabled {
-  background: #ccc;
+div.vertical-line {
+  margin-left: 12px;
+  margin-right: 12px;
+  width: 1px;
+  background-color: lightgrey;
+  height: 80%;
+}
+
+div.disabled {
+  background-color: #ccc;
+  pointer-events: none;
+}
+
+div[id^="airbnb-style-datepicker-wrapper"] {
+  bottom: 40px !important;
+  top: auto !important;
 }
 </style>
