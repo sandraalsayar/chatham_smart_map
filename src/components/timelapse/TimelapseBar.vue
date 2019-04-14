@@ -81,9 +81,6 @@ export default {
 </script>
 
 <style scoped>
-#bar {
-}
-
 .v-input--slider {
   margin-top: 25px;
   margin-left: 10px;

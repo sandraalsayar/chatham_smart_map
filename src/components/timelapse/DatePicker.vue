@@ -5,9 +5,9 @@
     :class="{ disabled: updatingData }"
   >
     <i class="material-icons">calendar_today</i>
-    <div class="first">{{ formattedDate(dateOne) }}</div>
+    <p class="first">{{ formattedDate(dateOne) }}</p>
     <div class="vertical-line"></div>
-    <div class="second">{{ formattedDate(dateTwo) }}</div>
+    <p class="second">{{ formattedDate(dateTwo) }}</p>
     <AirbnbStyleDatepicker
       :trigger-element-id="'datepicker-trigger'"
       :mode="'range'"

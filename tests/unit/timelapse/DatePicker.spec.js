@@ -19,9 +19,9 @@ describe("DatePicker", () => {
 
   it("has the expected elements", () => {
     expect(wrapper.find("div.datepicker-trigger").exists()).toBe(true);
-    expect(wrapper.contains("div.first")).toBe(true);
+    expect(wrapper.contains(".first")).toBe(true);
     expect(wrapper.contains("div.vertical-line")).toBe(true);
-    expect(wrapper.contains("div.second")).toBe(true);
+    expect(wrapper.contains(".second")).toBe(true);
     expect(wrapper.find("i").text()).toEqual("calendar_today");
     expect(wrapper.contains("airbnbstyledatepicker")).toBe(true);
   });
