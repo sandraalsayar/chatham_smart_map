@@ -64,11 +64,14 @@ export default {
         .then(responses => {
           const sensorGeoJSON = parseSensorInformation(responses.data.value);
           addSensorLayer(map, sensorGeoJSON);
+          geocoder.options.localGeocoder = query =>
+            sensorGeocoder(query, sensorGeoJSON);
+          addSensorInteractions(map, geocoder);
 
-          getSensorData().then(() => {
-            geocoder.options.localGeocoder = query =>
-              sensorGeocoder(query, sensorGeoJSON);
-            addSensorInteractions(map, geocoder);
+          return getSensorData().finally(() => {
+            this.$store.commit("app/updatingData", {
+              updatingData: false
+            });
           });
         })
         .catch(() => {

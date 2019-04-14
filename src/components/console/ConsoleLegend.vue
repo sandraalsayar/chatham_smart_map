@@ -23,9 +23,7 @@ export default {
 
 <style scoped>
 .legend_row {
-  margin: 5px;
-  margin-left: 15px;
-  margin-right: 0.7em;
+  margin: 0.7em;
 }
 
 .legend_row >>> .label {

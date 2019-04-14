@@ -22,10 +22,8 @@ export default {
   min-width: 0px; /* had to override some properties of v-btn to make it square */
   height: 40px;
   width: 40px;
-  border-radius: 5px;
-  /*border: 1px solid rgba(0, 0, 0, 0.2);*/
+  border-radius: 3px;
   padding: 0px;
-  color: black;
-  margin-bottom: 20px;
+  margin-left: 25px;
 }
 </style>
