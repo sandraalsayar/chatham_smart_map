@@ -1,14 +1,15 @@
 import store from "@/store";
 import { yesterday, today } from "@/helpers/constants";
 const state = {
-  loadingData: true,
+  loading: true,
   mapError: false,
   mapLoaded: false,
   showWarning: false,
   selectedLayer: 0,
   selectedSensor: undefined,
   timelapseMode: false,
-  warningText: ""
+  warningText: "",
+  updatingData: true
 };
 
 const mutations = {
@@ -20,8 +21,12 @@ const mutations = {
     state.mapLoaded = true;
   },
 
+  startLoading(state) {
+    state.loading = true;
+  },
+
   stopLoading(state) {
-    state.loadingData = false;
+    state.loading = false;
   },
 
   showWarning(state, { warningText }) {
@@ -29,6 +34,7 @@ const mutations = {
     state.warningText = warningText;
   },
 
+<<<<<<< HEAD
   selectLayer(state, { index }) {
     state.selectedLayer = index;
     mutations.displayTimelapse(state);
@@ -50,6 +56,10 @@ const mutations = {
       store.commit("timelapse/setDates", { startDate, endDate });
       state.timelapseMode = false;
     }
+=======
+  updatingData(state, { updatingData }) {
+    state.updatingData = updatingData;
+>>>>>>> 650a7acb46f70afff8272c363529d8621e6f42f7
   }
 };
 

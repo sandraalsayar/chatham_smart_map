@@ -4,16 +4,16 @@ const state = {
     {
       name: "Sensors",
       color: "steelblue",
-      description: "Display water sensors on map.",
+      description: "Display water level sensors on map.",
       icon: "bubble_chart",
       selected: true,
       legend_html: `<div class="label" id="sensor"></div>
-      <p class="label" style="font-size:16px">Water level sensors</p>`,
+      <p class="label">Water level sensors</p>`,
       legend_displayed: true
     },
     {
       name: "Inundation",
-      color: "dodgerblue",
+      color: "steelblue",
       description: "Display altitude-adjusted water levels.",
       icon: "waves",
       selected: false,

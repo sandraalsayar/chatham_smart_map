@@ -59,6 +59,7 @@ describe("The web app", function() {
     const startDate = subDays(today, 1);
 
     // initial dates:
+<<<<<<< HEAD
     cy.get("#datepicker-trigger")
       .invoke("val")
       .then(val => {
@@ -70,6 +71,10 @@ describe("The web app", function() {
     cy.contains("Sensors")
     .closest("li")
     .click();
+=======
+    cy.contains(format(startDate, "ddd, D MMM"));
+    cy.contains(format(today, "ddd, D MMM"));
+>>>>>>> 650a7acb46f70afff8272c363529d8621e6f42f7
   });
 
   it("updates map legend when another layer is selected", function() {
