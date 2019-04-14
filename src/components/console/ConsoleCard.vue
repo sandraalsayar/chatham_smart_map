@@ -39,12 +39,8 @@ export default {
 }
 
 h2 {
-  /*margin: 5px;*/
-  margin-top: 10px;
-  margin-left: 15px;
-  margin-right: 0.7em;
-  margin-bottom: 0px;
-  font-size: 16px;
-  line-height: 18px;
+  margin: 0.7em;
+  font-size: 15px;
+  line-height: 10px;
 }
 </style>

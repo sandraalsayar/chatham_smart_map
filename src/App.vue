@@ -52,6 +52,7 @@ export default {
 /* Override this property set by Vuetify */
 p {
   margin-bottom: 0px;
+  font-size: 14px;
 }
 
 /* Card popup for sensors */
@@ -74,6 +75,12 @@ p {
   width: 309px;
 }
 
+/* Override default CSS for text in search box */
+.mapboxgl-ctrl-geocoder input[type="text"] {
+  font-size: 13px;
+  padding-left: 35px;
+}
+
 /* Override default CSS for popup */
 .mapboxgl-popup {
   z-index: 1;
@@ -81,7 +88,7 @@ p {
 
 /* Override default CSS for slider's thumb label */
 .v-slider__thumb-label {
-  transform: translate(-70px, -16px);
+  transform: translate(-70px, -18px);
   border-radius: 20px;
   z-index: 2;
   width: 145px !important;
@@ -98,7 +105,15 @@ p {
   height: 0;
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
-  transform: translate(-5px, -16px);
+  transform: translate(-5px, -18px);
   border-top: 5px solid #9e9e9e;
+}
+
+.v-slider {
+  cursor: pointer;
+}
+
+.v-slider input {
+  cursor: pointer;
 }
 </style>

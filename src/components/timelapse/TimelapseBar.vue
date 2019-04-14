@@ -1,23 +1,21 @@
 <template>
-  <div id="bar">
-    <v-slider
-      v-model="sliderVal"
-      :tick-labels="tickLabels"
-      :max="maxVal"
-      step="1"
-      ticks="always"
-      tick-size="3"
-      color="grey"
-      always-dirty
-      :thumb-label="thumbLabel"
-    >
-      <template v-slot:thumb-label="props">
-        <span>
-          {{ getThumbLabel(sliderVal) }}
-        </span>
-      </template>
-    </v-slider>
-  </div>
+  <v-slider
+    v-model="sliderVal"
+    :tick-labels="tickLabels"
+    :max="maxVal"
+    step="1"
+    ticks="always"
+    tick-size="3"
+    color="grey"
+    always-dirty
+    :thumb-label="thumbLabel"
+  >
+    <template v-slot:thumb-label="props">
+      <span>
+        {{ getThumbLabel(sliderVal) }}
+      </span>
+    </template>
+  </v-slider>
 </template>
 
 <script>
@@ -83,7 +81,8 @@ export default {
 </script>
 
 <style scoped>
-#bar {
+.v-input--slider {
+  margin-top: 25px;
   margin-left: 10px;
   flex-grow: 1;
 }

@@ -16,23 +16,8 @@ const mutations = {
   }
 };
 
-const getters = {
-  // Formatting for dates that appear in the input text box
-  formatDates(state) {
-    let formattedDates = "";
-    if (state.dateOne) {
-      formattedDates = format(state.dateOne, "D MMM");
-    }
-    if (state.dateTwo) {
-      formattedDates += " - " + format(state.dateTwo, "D MMM");
-    }
-    return formattedDates;
-  }
-};
-
 export default {
   namespaced: true,
   state,
-  getters,
   mutations
 };
