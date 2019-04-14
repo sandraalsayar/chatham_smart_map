@@ -35,12 +35,17 @@ const mutations = {
       layer.selected = i === index;
       layer.legend_displayed = i === index || i === 0; // always display the first legend
     });
-    store.commit("timelapse/displayTimelapse");
+    store.commit("app/selectLayer", { index }); //tell app a layer was changed
   },
   setSensor(state, { sensor }) {
     state.sensor = sensor;
+    store.commit("app/selectSensor", { sensor }); //tell app the sensor was changed
   }
 };
+
+// const getters = {
+
+// }
 
 export default {
   namespaced: true,

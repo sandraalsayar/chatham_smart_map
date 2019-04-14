@@ -6,7 +6,7 @@
       <TheErrorModal :display="mapError" />
       <TheMap />
       <TheConsole v-if="mapLoaded" />
-      <TheTimelapse v-if="mapLoaded" />
+      <TheTimelapse v-if="mapLoaded" v-show="timelapseMode" />
     </v-app>
   </div>
 </template>
@@ -36,6 +36,7 @@ export default {
       "mapError",
       "mapLoaded",
       "showWarning",
+      "timelapseMode",
       "warningText"
     ])
   }

@@ -98,7 +98,6 @@ const selectSensor = (id, map, geocoder) => {
   const paintProperty = getPaintProperty(id);
   const sensor = sensors.get(id);
   store.commit("cons/setSensor", { sensor });
-  store.commit("timelapse/displayTimelapse");
   geocoder.setInput(sensor.placeName);
   map.setPaintProperty("outer_point", "circle-color", paintProperty);
   map.setPaintProperty("inner_point", "circle-color", paintProperty);

@@ -29,26 +29,12 @@ describe("The web app", function() {
       .should("have.css", "display", "none");
   });
 
-  it("updates map legend when another layer is selected", function() {
-    // Map layers card should have sensors layer selected
-    cy.contains("Inundation")
-      .closest("li")
-      .click();
-
-    cy.contains("Sensors")
-      .closest("li")
-      .should("have.css", "color", "rgb(0, 0, 0)");
-
-    cy.contains("Inundation")
-      .closest("li")
-      .should("not.have.css", "color", "rgb(0, 0, 0)");
-
-    cy.get(".colors")
-      .parent()
-      .should("have.css", "display", "block");
-  });
-
   it("displays the timelapse components after a layer is selected", function() {
+    //should have sensor layer selected
+    cy.contains("Inundation")
+    .closest("li")
+    .click();
+
     // Timelapse components and their initial states:
     cy.get("i").contains("calendar_today"); // calendar icon present
     cy.get("#datepicker-trigger"); // datepicker input present
@@ -80,6 +66,29 @@ describe("The web app", function() {
           `${format(startDate, "D MMM")} - ${format(today, "D MMM")}`
         ).to.equal(val);
       });
+
+    cy.contains("Sensors")
+    .closest("li")
+    .click();
+  });
+
+  it("updates map legend when another layer is selected", function() {
+    // Map layers card should have sensors layer selected
+    cy.contains("Inundation")
+      .closest("li")
+      .click();
+
+    cy.contains("Sensors")
+      .closest("li")
+      .should("have.css", "color", "rgb(0, 0, 0)");
+
+    cy.contains("Inundation")
+      .closest("li")
+      .should("not.have.css", "color", "rgb(0, 0, 0)");
+
+    cy.get(".colors")
+      .parent()
+      .should("have.css", "display", "block");
   });
 
   it("supports interactions between timelapse components", function() {

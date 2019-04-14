@@ -16,8 +16,7 @@ const state = {
   endDate: today,
   isPlaying: false,
   sliderVal: 13,
-  thumbLabel: true,
-  timeLapseMode: false
+  thumbLabel: true
 };
 
 const mutations = {
@@ -36,9 +35,6 @@ const mutations = {
   },
   setThumbLabel(state, { thumbLabel }) {
     state.thumbLabel = thumbLabel;
-  },
-  displayTimelapse(state) {
-    state.timeLapseMode = true;
   }
 };
 
