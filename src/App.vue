@@ -75,6 +75,7 @@ p {
   width: 309px;
 }
 
+/* Override default CSS for text in search box */
 .mapboxgl-ctrl-geocoder input[type="text"] {
   font-size: 13px;
   padding-left: 35px;
@@ -106,5 +107,13 @@ p {
   border-right: 5px solid transparent;
   transform: translate(-5px, -18px);
   border-top: 5px solid #9e9e9e;
+}
+
+.v-slider {
+  cursor: pointer;
+}
+
+.v-slider input {
+  cursor: pointer;
 }
 </style>

@@ -86,8 +86,4 @@ export default {
   margin-left: 10px;
   flex-grow: 1;
 }
-
-.v-slider {
-  cursor: pointer;
-}
 </style>

@@ -69,7 +69,18 @@ export default {
       applied = true;
     },
     onClosed() {
-      if (!applied) {
+      const oldDateOne = format(
+        this.$store.state.timelapse.startDate,
+        "YYYY-MM-DD"
+      );
+      const oldDateTwo = format(
+        this.$store.state.timelapse.endDate,
+        "YYYY-MM-DD"
+      );
+      if (
+        !applied &&
+        (oldDateOne !== this.dateOne || oldDateTwo !== this.dateTwo)
+      ) {
         this.onApply();
       }
     },
