@@ -34,7 +34,6 @@ const mutations = {
     state.warningText = warningText;
   },
 
-<<<<<<< HEAD
   selectLayer(state, { index }) {
     state.selectedLayer = index;
     mutations.displayTimelapse(state);
@@ -56,10 +55,10 @@ const mutations = {
       store.commit("timelapse/setDates", { startDate, endDate });
       state.timelapseMode = false;
     }
-=======
+  },
+
   updatingData(state, { updatingData }) {
     state.updatingData = updatingData;
->>>>>>> 650a7acb46f70afff8272c363529d8621e6f42f7
   }
 };
 
