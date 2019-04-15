@@ -16,8 +16,8 @@ describe("When selecting a sensor via search", function() {
 
   it("information card appears", function() {
     cy.get(".card.scroll");
-    cy.get("#basic_info").contains("Water Level");
-    cy.get("#basic_info").contains("Last Measured");
+    cy.get(".card.scroll").contains("Water Level");
+    cy.get(".card.scroll").contains("Last Measured");
 
     cy.get('input[placeholder="Search"]')
       .invoke("val")
@@ -35,7 +35,6 @@ describe("When selecting a sensor via search", function() {
   it("information card disappears when close icon is clicked", function() {
     cy.get(".geocoder-icon.geocoder-icon-close").click();
     cy.get(".card.scroll").should("not.exist");
-    cy.get("#basic_info").should("not.exist");
   });
 
   it("information card disappears when another place is searched for", function() {
@@ -49,6 +48,5 @@ describe("When selecting a sensor via search", function() {
 
     cy.get(".mapboxgl-marker");
     cy.get(".card.scroll").should("not.exist");
-    cy.get("#basic_info").should("not.exist");
   });
 });
