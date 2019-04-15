@@ -39,8 +39,8 @@ export default class Sensor {
         : format(
             observation.resultTime,
             store.getters["timelapse/displayYear"]
-              ? "h:mm aa M/DD/YYYY"
-              : "h:mm aa MMMM Do"
+              ? "M/DD/YYYY h:mm aa"
+              : "MMMM Do h:mm aa"
           );
       return {
         result,
