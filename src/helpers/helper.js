@@ -231,6 +231,16 @@ store.watch(
   }
 );
 
+store.watch(
+  (state, getters) => getters["app/reset"],
+  reset => {
+    if (reset) {
+      store.commit("timelapse/resetState");
+      store.commit("picker/resetState");
+    }
+  }
+);
+
 export {
   getPaintProperty,
   getSensorInformation,

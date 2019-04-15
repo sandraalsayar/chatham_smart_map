@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import TheConsole from "@/components/console/TheConsole";
 import TheErrorModal from "@/components/TheErrorModal";
 import TheMap from "@/components/TheMap";
@@ -38,7 +38,8 @@ export default {
       "showWarning",
       "timelapseMode",
       "warningText"
-    ])
+    ]),
+    ...mapGetters("app", ["timelapseMode"])
   }
 };
 </script>

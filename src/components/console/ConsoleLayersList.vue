@@ -24,7 +24,7 @@ export default {
   methods: {
     toggleLayers(index) {
       this.$store.commit("cons/toggleLayers", { index });
-      this.$store.dispatch("app/selectLayer", { layerSelected: index });
+      this.$store.commit("app/layerSelected", { layerSelected: index });
     }
   }
 };
@@ -33,8 +33,6 @@ export default {
 <style scoped>
 ul {
   list-style: none;
-  padding-left: 0.7em;
-  margin-top: 14px;
-  margin-bottom: 14px;
+  padding-left: 0px;
 }
 </style>

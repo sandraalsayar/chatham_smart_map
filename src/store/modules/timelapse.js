@@ -11,13 +11,15 @@ import {
   startOfDay
 } from "date-fns";
 
-const state = {
+const getDefaultState = () => ({
   startDate: yesterday,
   endDate: today,
   isPlaying: false,
   sliderVal: 13,
   thumbLabel: true
-};
+});
+
+const state = getDefaultState();
 
 const mutations = {
   setDates(state, { startDate, endDate }) {
@@ -35,6 +37,9 @@ const mutations = {
   },
   setThumbLabel(state, { thumbLabel }) {
     state.thumbLabel = thumbLabel;
+  },
+  resetState(state) {
+    Object.assign(state, getDefaultState());
   }
 };
 

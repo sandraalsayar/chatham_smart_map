@@ -15,6 +15,30 @@ export default class Sensor {
     return `${this.name}, Chatham, GA`;
   }
 
+  get chartDatastreams() {
+    if (store.state.app.updatingData) {
+      return this.datastreams.map(datastream => {
+        const { name, color } = datastream;
+        return { name, color };
+      });
+    }
+
+    return this.datastreams.map(datastream => {
+      const { name, color, observations } = datastream;
+      const data = observations.reduce((filtered, observation) => {
+        if (observation) {
+          const x = new Date(observation.resultTime).getTime();
+          const y = observation.result;
+          filtered.push({ x, y });
+        }
+        return filtered;
+      }, []);
+      data.reverse();
+
+      return { name, color, data };
+    });
+  }
+
   get waterLevelReading() {
     if (store.state.app.updatingData) {
       return { result: "Loading...", resultTime: "Loading..." };

@@ -101,7 +101,7 @@ const selectSensor = (id, map, geocoder) => {
   const paintProperty = getPaintProperty(id);
   const sensor = sensors.get(id);
   store.commit("cons/setSensor", { sensor });
-  store.dispatch("app/selectSensor", { sensorIsSelected: true });
+  store.commit("app/sensorSelected", { sensorIsSelected: true });
   geocoder.setInput(sensor.placeName);
   map.setPaintProperty("outer_point", "circle-color", paintProperty);
   map.setPaintProperty("inner_point", "circle-color", paintProperty);
@@ -114,7 +114,7 @@ const unselectSensor = map => {
   }
   const paintProperty = getPaintProperty();
   store.commit("cons/setSensor", { undefined });
-  store.dispatch("app/selectSensor", { sensorIsSelected: false });
+  store.commit("app/sensorSelected", { sensorIsSelected: false });
   map.setPaintProperty("outer_point", "circle-color", paintProperty);
   map.setPaintProperty("inner_point", "circle-color", paintProperty);
 };

@@ -22,10 +22,6 @@ export default {
 </script>
 
 <style scoped>
-.legend_row {
-  margin: 0.7em;
-}
-
 .legend_row >>> .label {
   display: inline-block;
   text-align: center;
