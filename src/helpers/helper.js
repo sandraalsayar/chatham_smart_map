@@ -180,6 +180,7 @@ const getSensorData = () => {
     // For each datastream of a sensor, get a URL to start off parsing observations from.
     axiosArr.push(
       ...sensor.datastreams.map(datastream => {
+        datastream.observations = [];
         datastreamArr.push(datastream); // will help us keep track of which URL corresponds to which datastream object when the axios request completes.
         // Check if the cache has a URL corresponding to a date >= the last date in the time intervals array
         const url = datastream.closestUrlFromCache(times[times.length - 1]);
