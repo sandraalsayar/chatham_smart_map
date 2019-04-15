@@ -30,8 +30,6 @@ export default {
 <style scoped>
 ul {
   list-style: none;
-  padding-left: 0.7em;
-  margin-top: 14px;
-  margin-bottom: 14px;
+  padding-left: 0px;
 }
 </style>

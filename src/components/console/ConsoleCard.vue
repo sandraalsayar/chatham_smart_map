@@ -33,14 +33,17 @@ export default {
   box-shadow: 0 10px 18px 0 rgba(0, 0, 0, 0.2);
 }
 
+.card > * {
+  margin: 0.7em;
+}
+
 .scroll {
   flex-grow: 1;
   overflow-y: scroll;
 }
 
 h2 {
-  margin: 0.7em;
   font-size: 15px;
-  line-height: 10px;
+  line-height: 14px;
 }
 </style>
