@@ -32,8 +32,8 @@ describe("The web app", function() {
   it("displays the timelapse components after a layer is selected", function() {
     //should have sensor layer selected
     cy.contains("Inundation")
-    .closest("li")
-    .click();
+      .closest("li")
+      .click();
 
     // Timelapse components and their initial states:
     cy.get("i").contains("calendar_today"); // calendar icon present
@@ -59,19 +59,8 @@ describe("The web app", function() {
     const startDate = subDays(today, 1);
 
     // initial dates:
-    cy.get("#datepicker-trigger")
-      .invoke("val")
-      .then(val => {
-        expect(
-          `${format(startDate, "D MMM")} - ${format(today, "D MMM")}`
-        ).to.equal(val);
-      });
     cy.contains(format(startDate, "ddd, D MMM"));
     cy.contains(format(today, "ddd, D MMM"));
-
-    cy.contains("Sensors")
-    .closest("li")
-    .click();
   });
 
   it("updates map legend when another layer is selected", function() {

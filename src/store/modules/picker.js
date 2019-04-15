@@ -1,11 +1,13 @@
 import { yesterday, today } from "@/helpers/constants";
 import { format } from "date-fns";
 
-const state = {
+const getDefaultState = () => ({
   dateOne: format(yesterday, "YYYY-MM-DD"),
   dateTwo: format(today, "YYYY-MM-DD"),
   endDate: format(today, "YYYY-MM-DD")
-};
+});
+
+const state = getDefaultState();
 
 const mutations = {
   setDateOne(state, { val }) {
@@ -13,6 +15,9 @@ const mutations = {
   },
   setDateTwo(state, { val }) {
     state.dateTwo = val;
+  },
+  resetState(state) {
+    Object.assign(state, getDefaultState());
   }
 };
 

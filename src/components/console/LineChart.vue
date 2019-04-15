@@ -20,7 +20,8 @@ export default {
     },
     data: {
       type: Array,
-      required: true
+      required: false,
+      default: () => []
     }
   },
   computed: {
@@ -42,7 +43,6 @@ export default {
         },
         series: [
           {
-            name: "USD to EUR",
             data: this.data,
             color: this.color
           }

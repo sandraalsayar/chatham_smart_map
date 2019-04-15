@@ -24,7 +24,7 @@ export default {
   methods: {
     toggleLayers(index) {
       this.$store.commit("cons/toggleLayers", { index });
-      this.$store.dispatch("app/selectLayer", { layerSelected: index });
+      this.$store.commit("app/layerSelected", { layerSelected: index });
     }
   }
 };
