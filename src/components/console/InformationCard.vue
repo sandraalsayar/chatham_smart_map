@@ -2,11 +2,11 @@
   <console-card scrollable :heading="sensor.name.toUpperCase()">
     <PopupContent :sensor="sensor" />
     <LineChart
-      v-for="(datastream, index) in chartDatastreams"
+      v-for="({ title, series, unitHtml }, index) in chartDatastreams"
       :key="index"
-      :title="datastream.name"
-      :color="datastream.color"
-      :data="datastream.data"
+      :title="title"
+      :unitHtml="unitHtml"
+      :series="series"
     />
   </console-card>
 </template>
@@ -30,13 +30,7 @@ export default {
   },
   computed: {
     chartDatastreams() {
-      const datastreams = this.sensor.chartDatastreams;
-      const waterlevelIndex = datastreams.findIndex(
-        datastream => datastream.name === "Water Level"
-      );
-      const el = datastreams.splice(waterlevelIndex, 1);
-      datastreams.unshift(el[0]); // ensure that water level is the first graph
-      return datastreams;
+      return this.sensor.chartDatastreams;
     }
   }
 };

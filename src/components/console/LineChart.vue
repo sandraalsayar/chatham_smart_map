@@ -4,6 +4,7 @@
 
 <script>
 import { Chart } from "highcharts-vue";
+import { format } from "date-fns";
 
 export default {
   components: {
@@ -14,11 +15,12 @@ export default {
       type: String,
       required: true
     },
-    color: {
+    unitHtml: {
       type: String,
-      required: true
+      required: false,
+      default: ""
     },
-    data: {
+    series: {
       type: Array,
       required: false,
       default: () => []
@@ -28,27 +30,54 @@ export default {
     chartOptions() {
       return {
         title: {
-          text: `${this.title} Data`
+          text: this.title,
+          style: { fontSize: "14px" }
         },
         xAxis: {
-          type: "datetime"
+          type: "datetime",
+          labels: {
+            formatter: function() {
+              if (this.isFirst || this.isLast) {
+                return format(this.value, "MMM D h:mm a");
+              }
+            }
+          }
         },
         yAxis: {
           title: {
-            text: this.title
+            text: null
+          },
+          labels: {
+            align: "left",
+            x: 0,
+            y: -2,
+            format: `{value}${this.unitHtml}`,
+            useHTML: true
           }
+        },
+        tooltip: {
+          crosshairs: true
         },
         legend: {
           enabled: false
         },
-        series: [
-          {
-            data: this.data,
-            color: this.color
+        series: this.series,
+        plotOptions: {
+          series: {
+            marker: {
+              enabledThreshold: 5,
+              symbol: "circle"
+            }
           }
-        ]
+        }
       };
     }
   }
 };
 </script>
+
+<style scoped>
+div[data-highcharts-chart] {
+  margin-left: 0px;
+}
+</style>
