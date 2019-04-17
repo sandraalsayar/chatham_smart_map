@@ -2,12 +2,11 @@ import { distanceInWordsToNow, format } from "date-fns";
 import store from "@/store";
 
 export default class Sensor {
-  constructor(id, coordinates, name, description, elevation, datastreams) {
+  constructor(id, coordinates, name, description, datastreams) {
     this.id = id;
     this.coordinates = coordinates;
     this.name = `${name} Sensor`;
     this.description = description;
-    this.elevation = elevation;
     this.datastreams = datastreams;
   }
 
@@ -17,25 +16,33 @@ export default class Sensor {
 
   get chartDatastreams() {
     if (store.state.app.updatingData) {
-      return this.datastreams.map(datastream => {
-        const { name, color } = datastream;
-        return { name, color };
-      });
+      return [{ title: "Loading chart data..." }];
     }
 
     return this.datastreams.map(datastream => {
-      const { name, color, observations } = datastream;
-      const data = observations.reduce((filtered, observation) => {
+      const { name, color, observations, unitHtml } = datastream;
+      let series = [];
+      let data = [];
+      observations.forEach(observation => {
         if (observation) {
           const x = new Date(observation.resultTime).getTime();
           const y = observation.result;
-          filtered.push({ x, y });
+          data.push({ x, y });
+        } else if (data.length) {
+          data.reverse();
+          series.push({ data, color, name });
+          data = [];
         }
-        return filtered;
-      }, []);
-      data.reverse();
+      });
+      if (data.length) {
+        data.reverse();
+        series.push({ data, color, name });
+      }
+      const title = series.length
+        ? `${name} Data`
+        : `No ${name} data available in selected time interval`;
 
-      return { name, color, data };
+      return { title, series, unitHtml };
     });
   }
 
@@ -43,19 +50,14 @@ export default class Sensor {
     if (store.state.app.updatingData) {
       return { result: "Loading...", resultTime: "Loading..." };
     }
-    // Find the water level datastream
-    const datastream = this.datastreams.find(
-      datastream => datastream.name === "Water Level"
-    );
-    const { observations, unitSymbol } = datastream;
+    // We made sure that water level was the first datastream:
+    const { observations, unitSymbol } = this.datastreams[0];
     // observations array is reversed - observations are present in descending order of resultTime,
     // take this into account when we index into it.
     const observation =
       observations[observations.length - 1 - store.state.timelapse.sliderVal];
     if (observation) {
-      const result = `${(this.elevation + observation.result).toFixed(
-        3
-      )} ${unitSymbol}`;
+      const result = `${observation.result} ${unitSymbol}`;
       const resultTime = store.getters["timelapse/present"]
         ? distanceInWordsToNow(observation.resultTime, {
             addSuffix: true

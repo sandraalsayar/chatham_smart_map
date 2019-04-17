@@ -35,22 +35,23 @@ const parseSensorInformation = responses =>
     const id = el["@iot.id"];
     const description = el.description.toLowerCase();
     const elevation = Number(el.properties.elevationNAVD88);
-    // const observation = el.Datastreams[0].Observations[0];
+
     const datastreams = el.Datastreams.map(datastream => {
       const id = datastream["@iot.id"];
       const name = datastream.name;
       const unitSymbol = datastream.unitOfMeasurement.symbol;
       return new Datastream(id, name, unitSymbol);
     });
-
-    const sensor = new Sensor(
-      id,
-      coordinates,
-      name,
-      description,
-      elevation,
-      datastreams
+    // Ensure that water level datastream is the first element, so that it appears first in the graphs
+    const waterlevelIndex = datastreams.findIndex(
+      datastream => datastream.name === "Water Level"
     );
+    const waterlevelDatastream = datastreams.splice(waterlevelIndex, 1)[0];
+    // Sensor elevation is used as an offset on water level observations
+    waterlevelDatastream.offset = elevation;
+    datastreams.unshift(waterlevelDatastream);
+
+    const sensor = new Sensor(id, coordinates, name, description, datastreams);
     sensors.set(id, sensor);
 
     return sensor.geoJSON;
@@ -162,7 +163,11 @@ const pushToDatastream = (
 ) => {
   const diff = Math.abs(differenceInMinutes(time, resultTime));
   if (diff <= store.getters["timelapse/threshold"]) {
-    datastream.observations.push({ result, resultTime });
+    const adjustedResult = +(result + datastream.offset).toFixed(3);
+    datastream.observations.push({
+      result: adjustedResult,
+      resultTime
+    });
     datastream.addToCache(resultTime, curLink); // curLink represents the URL of the page where this observation was obtained
     return true; // the observation was pushed
   } else {
